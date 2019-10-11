@@ -74,11 +74,23 @@ def drag_float(value):
     return value
 
 
-# TODO: cancel unneeded futures, probably by converting this into a class with a destructor
-def block(future):
-    """ Create a widget that returns on future result. Useful for async computations. """
-    while True:
-        if future.done():
-            return future.result()
+class block(object):
+    """ Create a widget that returns on future result. Useful for async computations.
+
+    This widget is constructed manually using a class, because the future must be
+    canceled in the destructor. Destructor isn't available in generator functions.
+    """
+    def __init__(self, future):
+        self.future = future
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.future.done():
+            raise StopIteration(self.future.result())
         else:
-            yield
+            return
+
+    def __del__(self):
+        self.future.cancel()

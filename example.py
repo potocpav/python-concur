@@ -30,14 +30,16 @@ def elm(state):
 
 def timer_button():
     def wait():
+        print('sleeping')
         time.sleep(3)
+        print('slept')
     yield from c.button("Sleep for 3s")
     yield
     future = executor.submit(wait)
     yield from c.orr([c.text("Sleeping"), c.same_line(), c.button("Cancel"), c.block(future)])
 
 
-executor = ThreadPoolExecutor()
+executor = ThreadPoolExecutor(1)
 
 initial_state = dict(checkbox=True, float=123.0)
 view = c.window("Test Window",
@@ -45,8 +47,12 @@ view = c.window("Test Window",
     , c.separator()
     , c.stateful(elm, initial_state)
     , c.separator()
-    , c.forever(timer_button)
-    , c.forever(timer_button)
+    , c.orr(
+        [ c.forever(timer_button)
+        , c.forever(timer_button)
+        , c.forever(timer_button)
+        , c.button("Cancel All")
+        ])
     ])
 
 
