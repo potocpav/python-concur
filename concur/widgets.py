@@ -44,6 +44,15 @@ def input_text(value, buffer_length):
             yield
 
 
+def interactive_elem(elem, *args, **kwargs):
+    while True:
+        changed, value = elem(*args, **kwargs)
+        if changed:
+            return value
+        else:
+            yield
+
+
 def text(s):
     return lift(lambda: imgui.text(s))
 
@@ -56,19 +65,8 @@ def separator():
 def same_line():
     return lift(lambda: imgui.same_line())
 
-
-def interactive_elem(elem, *args, **kwargs):
-    while True:
-        changed, value = elem(*args, **kwargs)
-        if changed:
-            return value
-        else:
-            yield
-
-
 def checkbox(*args, **kwargs):
     return interactive_elem(imgui.checkbox, *args, **kwargs)
-
 
 def drag_float(*args, **kwargs):
     return interactive_elem(imgui.drag_float, *args, **kwargs)
