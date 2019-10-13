@@ -1,5 +1,6 @@
 
 from imgui import push_id, pop_id
+import queue
 
 
 def forever(elem_gen, *args, **kwargs):
@@ -94,3 +95,32 @@ class block(object):
 
     def __del__(self):
         self.future.cancel()
+
+
+def remote_widget(future):
+    """ Separate the effect of the widget from its result """
+    q = queue.SimpleQueue()
+
+    def action():
+        while True:
+            if future.done():
+                q.put(future.result())
+            yield
+
+    def value():
+        while True:
+            try:
+                return q.get_nowait()
+            except queue.Empty:
+                yield
+
+    return action(), value()
+
+
+def fork_action(future, rest):
+    """ A common pattern - running a long running action and keeping the GUI responsive.
+
+    Because the action can't be restarted on every gui event, we must *fork* it off in the beginning.
+    """
+    action, value = remote_widget(future)
+    orr([action, rest(value)])
