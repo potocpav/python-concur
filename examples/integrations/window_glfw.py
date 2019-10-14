@@ -11,11 +11,8 @@ def main(view):
     imgui.create_context()
     window = impl_glfw_init()
     impl = GlfwRenderer(window)
-    # start_time = time.time()
 
     while not glfw.window_should_close(window):
-        # print("DT:", (time.time() - start_time))
-        # start_time = time.time()
         time.sleep(1/60)
 
         glfw.poll_events()
@@ -40,7 +37,7 @@ def main(view):
 
 
 def impl_glfw_init():
-    width, height = 1280, 720
+    width, height = 550, 550
     window_name = "minimal ImGui/GLFW3 example"
 
     if not glfw.init():

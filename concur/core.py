@@ -61,12 +61,6 @@ def stateful(elem, initial_state):
         yield
 
 
-
-def drag_float(value):
-    value = yield from c.orr([c.drag_float("Value", value), c.text("value: " + str(value))])
-    return value
-
-
 class block(object):
     """ Create a widget that returns on future result. Useful for async computations.
 
@@ -82,31 +76,43 @@ class block(object):
     def __next__(self):
         if self.future.done():
             raise StopIteration(self.future.result())
-        else:
-            return
 
     def __del__(self):
         self.future.cancel()
 
 
+class RemoteAction(object):
+    def __init__(self, future, que):
+        self.que = que
+        self.future = future
+        self.sent = False
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.future is not None and not self.sent and self.future.done():
+            self.que.put(self.future.result())
+            self.sent = True
+
+    def __del__(self):
+        if self.future is not None:
+            self.future.cancel()
+
+
 def remote_widget(future):
     """ Separate the effect of the widget from its result """
-    q = queue.SimpleQueue()
-
-    def action():
-        while True:
-            if future.done():
-                q.put(future.result())
-            yield
+    q = queue.Queue()
 
     def value():
         while True:
             try:
-                return q.get_nowait()
+                v = q.get_nowait()
+                return v
             except queue.Empty:
                 yield
 
-    return action(), value()
+    return RemoteAction(future, q), value
 
 
 def fork_action(future, rest):
@@ -114,5 +120,5 @@ def fork_action(future, rest):
 
     Because the action can't be restarted on every gui event, we must *fork* it off in the beginning.
     """
-    action, value = remote_widget(future)
-    orr([action, rest(value)])
+    action, value_gen = remote_widget(future)
+    return orr([action, rest(value_gen)])

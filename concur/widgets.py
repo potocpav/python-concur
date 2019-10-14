@@ -48,12 +48,12 @@ def orr_same_line(elems):
 def button(text, value=None):
     while not imgui.button(text):
         yield
-    return value or text
+    return value if value is not None else text
 
 def radio_button(text, active, value=None):
     while not imgui.radio_button(text, active):
         yield
-    return value or text
+    return value if value is not None else text
 
 
 def input_text(value, buffer_length):
