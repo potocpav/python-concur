@@ -45,21 +45,13 @@ def lift(f):
         yield
 
 
-class Tagged(object):
-    def __init__(self, tag, value):
-        self.tag, self.value = tag, value
-
-    def __repr__(self):
-        return f"{self.tag} {self.value}"
-
-
 def tag(tag_name, elem):
     while True:
         try:
             next(elem)
             yield
         except StopIteration as e:
-            return Tagged(tag_name, e.value)
+            return tag_name, e.value
 
 
 def stateful(elem, initial_state):
