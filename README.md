@@ -17,7 +17,9 @@ A discussion of Concur concepts can also be found in the [Documentation for the 
 
 Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications.
 
-![Example Screenshot](screenshot.png)
+<p align="center">
+<img src="screenshot.png">
+</p>
 
 ## Sample Code
 
