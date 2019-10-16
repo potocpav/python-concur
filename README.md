@@ -9,6 +9,10 @@ Concur can be thought of as a layer on top of [PyImGui](https://github.com/swist
 
 A discussion of Concur concepts can also be found in the [Documentation for the Haskell/Purescript versions](https://github.com/ajnsit/concur-documentation/blob/master/README.md). This obviously uses Haskell/Purescript syntax and semantics, but many of the concepts will apply to the Python version.
 
+Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications.
+
+![Example Screenshot](screenshot.png)
+
 ## Sample Code
 
 Code samples can be found in the [examples directory](examples).
