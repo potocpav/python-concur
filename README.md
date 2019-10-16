@@ -85,13 +85,13 @@ pair = concur.orr([button("First"), button("Second")])
 yield from pair # display `pair` as a normal widget
 ```
 
-The result of `concur.orr`  returns as soon as any child widget returns, passing the return value along. How can we tell which button was pressed? We don't, they must simply return different values. In fact, buttons in Concur normally return their identifier instead of `None` to be readily composable. By convention, primitive widgets return a tuple `(identifier, value)`.
+The result of `concur.orr`  returns as soon as any child widget returns, passing the return value along. How can we tell which button was pressed? We can't, they must simply return different values. In fact, buttons in Concur normally return their identifier instead of `None` to be readily composable. By convention, primitive widgets return a tuple `(identifier, value)`. For example, built-in buttons can be composed like this:
 
 ```python
 pair = concur.orr([concur.button("First"), concur.button("Second")])
-if pair == "First", None:
+if pair == "First", _:
     print("first!")
-if pair == "Second", None:
+if pair == "Second", _:
     print("second!")
 ```
 
