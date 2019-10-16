@@ -1,5 +1,11 @@
 
-# Python Concur
+<h1 align="center">
+  Python Concur
+</h1>
+
+<p align="center">
+   <img src="https://raw.githubusercontent.com/ajnsit/purescript-concur/master/docs/logo.png" height="100">
+</p>
 
 Concur is a Python UI framework based on synchronous generators.
 
