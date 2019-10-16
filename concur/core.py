@@ -39,9 +39,9 @@ def orr(elems):
             yield
 
 
-def lift(f):
+def lift(f, *args, **argv):
     while True:
-        f()
+        f(*args, **argv)
         yield
 
 

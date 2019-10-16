@@ -7,9 +7,9 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(view):
+def main(view, name, width, height):
     imgui.create_context()
-    window = impl_glfw_init()
+    window = create_window(name, width, height)
     impl = GlfwRenderer(window)
 
     while not glfw.window_should_close(window):
@@ -36,10 +36,7 @@ def main(view):
     glfw.terminate()
 
 
-def impl_glfw_init():
-    width, height = 550, 550
-    window_name = "minimal ImGui/GLFW3 example"
-
+def create_window(window_name, width, height):
     if not glfw.init():
         print("Could not initialize OpenGL context")
         exit(1)

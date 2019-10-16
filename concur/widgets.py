@@ -48,7 +48,7 @@ def orr_same_line(elems):
 def button(text, value=None):
     while not imgui.button(text):
         yield
-    return value if value is not None else text
+    return (value if value is not None else text, None)
 
 def radio_button(text, active, value=None):
     while not imgui.radio_button(text, active):
@@ -56,28 +56,25 @@ def radio_button(text, active, value=None):
     return value if value is not None else text
 
 
-def input_text(value, buffer_length):
+def input_text(name, value, buffer_length):
     while True:
-        changed, new_value = imgui.input_text("input_text", value, buffer_length)
+        changed, new_value = imgui.input_text(name, value, buffer_length)
         if changed:
-            return new_value
+            return name, new_value
         else:
             yield
 
 
-def interactive_elem(elem, *args, **kwargs):
+def interactive_elem(elem, name, *args, **kwargs):
     if 'tag' in kwargs:
         tag = kwargs['tag']
         del kwargs['tag']
     else:
-        tag = None
+        tag = name
     while True:
-        changed, value = elem(*args, **kwargs)
+        changed, value = elem(name, *args, **kwargs)
         if changed:
-            if tag:
-                return (tag, value)
-            else:
-                return value
+            return (tag, value)
         else:
             yield
 

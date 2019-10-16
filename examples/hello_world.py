@@ -1,10 +1,16 @@
+#!/usr/bin/env python3
 
 import concur as c
-import integrations.window_glfw as window
+import concur.integrations.glfw as window
+
 
 def app():
-    yield from c.button("Hello!")
-    yield
-    yield from c.text("Hello, sailor!")
+    while True:
+        yield from c.button("Hello!")
+        yield
+        yield from c.orr([c.text("Hello, world!"), c.button("Restart?")])
+        yield
 
-window.main(app())
+
+if __name__ == "__main__":
+    window.main(app(), "Hello World", 500, 500)
