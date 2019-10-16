@@ -1,17 +1,59 @@
 
 # Python Concur
 
-[Concur UI Lib](https://github.com/ajnsit/concur) is a brand new UI framework that explores an entirely new paradigm. It does not follow FRP (think Reflex or Reactive Banana), or Elm architecture, but aims to combine the best parts of both. This repo contains the Concur implementation for Python, using the PyImGui library as a backend.
+Concur is a Python UI framework based on synchronous generators.
 
-## Documentation
+It is a port of [Concur for Haskell](https://github.com/ajnsit/concur) and [Concur for Purescript](https://github.com/ajnsit/purescript-concur).
 
-For now, there is no API reference. Look at the source code.
+Concur can be thought of as a layer on top of [PyImGui](https://github.com/swistakm/pyimgui), which is a set of bindings for the [ImGui](https://github.com/ocornut/imgui) UI library. It helps you to get rid of unprincipled code with mutable state, and lets you build structured and composable abstractions.
 
-Python-Concur uses an UI paradigm inspired by the [Purescript-Concur library](https://github.com/ajnsit/purescript-concur), but there are some differences. For composition in time, Python's synchronous generators are used instead of the `Widget` monad. All code blocks UI actions unless wrapped by the `block` function <sup>(TODO: rename)</sup> which accepts futures.
+A discussion of Concur concepts can also be found in the [Documentation for the Haskell/Purescript versions](https://github.com/ajnsit/concur-documentation/blob/master/README.md). This obviously uses Haskell/Purescript syntax and semantics, but many of the concepts will apply to the Python version.
 
-Python-Concur is built on top of [PyImGui](https://github.com/swistakm/pyimgui), which itself is a thin wrapper around the C++ library [Dear ImGui](https://github.com/ocornut/imgui). Widgets in python-concur mostly correspond one-to-one to PyImGui widgets. The main differences are:
+## Sample Code
 
-* Containers accept children as parameters. No begin/end pairs.
-* Widgets are by default composed in time, not in space. For composition in space, use the `orr` function.
-* No need to uniquely name widgets, no name clashes.
-* Much less spaghetti (especially in asynchronous code), at the cost of conceptual difficulty and some syntactic quirks.
+Code samples can be found in the [examples directory](examples).
+
+## Usage
+
+Clone and install a PyImGui fork:
+
+```sh
+git clone git@github.com:potocpav/pyimgui.git --recurse-submodules
+cd pyimgui
+pip install -e.[glfw] --user
+cd ..
+```
+
+Clone and install the Concur repo:
+
+```sh
+git clone git@github.com:potocpav/python-concur.git
+cd python-concur
+pip install -e. --user
+```
+
+Run the examples:
+
+```sh
+python examples/all.py
+```
+
+## Introduction
+
+TODO
+
+## Quirks and Issues
+
+Here's a list of known issues that probably can't be fixed easily:
+
+**Widget flicker**
+
+Between any two `yield from _` statements that can return, there must be a `yield` statement. Otherwise, elements may get duplicated in a frame after triggering an action. If there are too many `yield` statemets, however, elements may momentarily disappear.
+
+I don't think this bit of syntactic inconvenience can be solved without introducing other quirks.
+
+**Event congestion**
+
+On each frame, at most one action can get triggered from an `orr` block. Actions from first sub-widgets are prioritized, and any actions from further sub-widgets may get thrown out. This is a problem when there are rapidly-firing widgets, such as video playback. Move it down the `orr` block to decrease the priority.
+
+This limitation can be lifted by changing the widgets to return lists of actions instead of only one action. It would make the API a bit uglier though, so I am not sold on the idea. If you have a better solution, or your use-case necessitates such change, file an issue.
