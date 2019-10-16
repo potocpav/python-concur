@@ -57,3 +57,7 @@ I don't think this bit of syntactic inconvenience can be solved without introduc
 On each frame, at most one action can get triggered from an `orr` block. Actions from first sub-widgets are prioritized, and any actions from further sub-widgets may get thrown out. This is a problem when there are rapidly-firing widgets, such as video playback. Move it down the `orr` block to decrease the priority.
 
 This limitation can be lifted by changing the widgets to return lists of actions instead of only one action. It would make the API a bit uglier though, so I am not sold on the idea. If you have a better solution, or your use-case necessitates such change, file an issue.
+
+**Asynchronous computations**
+
+In other versions of Concur, all widgets are triggered asynchronously. This may not be possible in Python, due to a limitation of async generators: they can't `return` a value, they only `yield`. Synchronous generators are used instead, which means that all widget code is run in the main thread. Any asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the `block` function. See the [timers example](examples/timers.py) for details.
