@@ -82,8 +82,8 @@ def interactive_elem(elem, name, *args, **kwargs):
 def text(s):
     return lift(lambda: imgui.text(s))
 
-def text_colored(s, *args):
-    return lift(lambda: imgui.text_colored(s, *args))
+def text_colored(s, r, g, b, a=1.):
+    return lift(lambda: imgui.text(s), r, g, b, a=1.)
 
 def show_test_window():
     return lift(lambda: imgui.show_test_window())

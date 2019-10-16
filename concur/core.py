@@ -1,9 +1,14 @@
 
-from imgui import push_id, pop_id
 import queue
+from typing import Iterable, Iterator, Any, Callable, TypeVar, Tuple
+from imgui import push_id, pop_id
 
 
-def forever(elem_gen, *args, **kwargs):
+Widget = Iterator
+T = TypeVar('T')
+
+
+def forever(elem_gen: Callable[..., Widget], *args, **kwargs) -> Widget:
     """ Repeat an element forever.
 
     Function generating the element must be passed as the first argument;
@@ -18,7 +23,7 @@ def forever(elem_gen, *args, **kwargs):
         yield
 
 
-def orr(elems):
+def orr(elems: Iterable[Widget]) -> Widget:
     """ Chain elements in space. """
     stop = False
     value = None
@@ -39,13 +44,13 @@ def orr(elems):
             yield
 
 
-def lift(f, *args, **argv):
+def lift(f: Callable[..., Any], *args, **argv) -> Widget:
     while True:
         f(*args, **argv)
         yield
 
 
-def tag(tag_name, elem):
+def tag(tag_name: Any, elem: Widget) -> Widget:
     while True:
         try:
             next(elem)
@@ -54,7 +59,7 @@ def tag(tag_name, elem):
             return tag_name, e.value
 
 
-def stateful(elem, initial_state):
+def stateful(elem: Callable[[T], Widget], initial_state: T) -> Widget:
     state = initial_state
     while True:
         state = yield from elem(state)
@@ -100,9 +105,9 @@ class RemoteAction(object):
             self.future.cancel()
 
 
-def remote_widget(future):
+def remote_widget(future) -> Tuple[Widget, Callable[[], Widget]]:
     """ Separate the effect of the widget from its result """
-    q = queue.Queue()
+    q: queue.Queue = queue.Queue()
 
     def value():
         while True:
