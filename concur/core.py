@@ -19,7 +19,7 @@ def forever(elem_gen, *args, **kwargs):
 
 
 def orr(elems):
-    """ Chain elements in space. """
+    """ Chain elements in space, returning the first event fired. """
     stop = False
     value = None
     while True:
@@ -37,6 +37,22 @@ def orr(elems):
             return value
         else:
             yield
+
+
+def multi_orr(elems):
+    """ Chain elements in space, returning all the events fired as a list """
+    events = []
+    while events == []:
+        for i, elem in enumerate(elems):
+            try:
+                push_id(i)
+                next(elem)
+            except StopIteration as e:
+                events.append(e.value)
+            finally:
+                pop_id()
+        yield
+    return events
 
 
 def lift(f, *args, **argv):
