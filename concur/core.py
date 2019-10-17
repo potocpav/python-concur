@@ -3,21 +3,6 @@ from imgui import push_id, pop_id
 import queue
 
 
-def forever(elem_gen, *args, **kwargs):
-    """ Repeat an element forever.
-
-    Function generating the element must be passed as the first argument;
-    remaining arguments are passed to said function.
-    """
-    elem = elem_gen(*args, **kwargs)
-    while True:
-        try:
-            next(elem)
-        except StopIteration:
-            elem = elem_gen(*args, **kwargs)
-        yield
-
-
 def orr(elems):
     """ Chain elements in space, returning the first event fired. """
     stop = False
@@ -53,6 +38,22 @@ def multi_orr(elems):
                 pop_id()
         yield
     return events
+
+
+def forever(elem_gen, *args, **kwargs):
+    """ Repeat an element forever.
+
+    Function generating the element must be passed as the first argument;
+    remaining arguments are passed to said function.
+    """
+    elem = elem_gen(*args, **kwargs)
+    while True:
+        try:
+            next(elem)
+        except StopIteration:
+            elem = elem_gen(*args, **kwargs)
+        yield
+
 
 
 def lift(f, *args, **argv):
