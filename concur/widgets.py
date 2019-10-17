@@ -4,6 +4,19 @@ import imgui
 from concur.core import orr, lift
 
 
+def orr_same_line(elems):
+    """ Use instead of :func:`orr` to layout child widgets horizontally.
+
+    Intersperses :func:`same_line` between each pair of consecutive widgets in ``elems``.
+    """
+    def intersperse(delimiter, seq):
+        """ https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element """
+        from itertools import chain, repeat
+        return list(chain.from_iterable(zip(repeat(delimiter), seq)))[1:]
+
+    return orr(intersperse(same_line(), elems))
+
+
 def window(title, elems, position=None, size=None, flags=0):
     while True:
         imgui.push_id(title)
@@ -36,21 +49,14 @@ def child(name, width, height, border=False, flags=0, elems=[]):
         yield
 
 
-def orr_same_line(elems):
-    def intersperse(delimiter, seq):
-        """ https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element """
-        from itertools import chain, repeat
-        return list(chain.from_iterable(zip(repeat(delimiter), seq)))[1:]
-
-    return orr(intersperse(same_line(), elems))
-
-
 def button(text, value=None):
+    """ Button. Returns ``(text, value)`` on click. """
     while not imgui.button(text):
         yield
     return (value if value is not None else text, None)
 
 def radio_button(text, active, value=None):
+    """ Radio button. Returns ``(text, value)`` on click. """
     while not imgui.radio_button(text, active):
         yield
     return value if value is not None else text
@@ -95,6 +101,7 @@ def spacing():
     return lift(lambda: imgui.spacing())
 
 def same_line():
+    """ Call between widgets to layout them horizontally. """
     return lift(lambda: imgui.same_line())
 
 def checkbox(*args, **kwargs):
