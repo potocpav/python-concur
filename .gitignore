@@ -2,4 +2,4 @@ __pycache__
 concur.egg-info
 .mypy_cache
 
-doc/_build
+docs/_build
