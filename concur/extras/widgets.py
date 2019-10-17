@@ -12,3 +12,12 @@ def simple_image(tex_id, w, h):
     uvb = 1, 1
     draw_list = imgui.get_window_draw_list()
     draw_list.add_image(tex_id, (pos.x, pos.y), (pos.x + w, pos.y + h), uva, uvb);
+
+
+def key_pressed(state, key, tag):
+    io = imgui.get_io()
+    while True:
+        st = bool(io.keys_down[key])
+        if state != st:
+            return tag, st
+        yield
