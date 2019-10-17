@@ -7,9 +7,9 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(view, name, width, height):
+def main(view, name, width, height, maximized=True):
     imgui.create_context()
-    window = create_window(name, width, height)
+    window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)
 
     while not glfw.window_should_close(window):
@@ -36,7 +36,7 @@ def main(view, name, width, height):
     glfw.terminate()
 
 
-def create_window(window_name, width, height):
+def create_window(window_name, width, height, maximized):
     if not glfw.init():
         print("Could not initialize OpenGL context")
         exit(1)
@@ -47,6 +47,8 @@ def create_window(window_name, width, height):
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 
     glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
+    if maximized:
+        glfw.window_hint(glfw.MAXIMIZED, gl.GL_TRUE)
 
     # Create a windowed mode window and its OpenGL context
     window = glfw.create_window(

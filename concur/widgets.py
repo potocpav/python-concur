@@ -49,11 +49,11 @@ def child(name, width, height, border=False, flags=0, elems=[]):
         yield
 
 
-def button(text, value=None):
-    """ Button. Returns ``(text, value)`` on click. """
+def button(text, tag=None):
+    """ Button. Returns ``(text, value)`` on click, or ``(tag, value)`` if tag is specified. """
     while not imgui.button(text):
         yield
-    return (value if value is not None else text, None)
+    return tag if tag is not None else text, None
 
 def radio_button(text, active, value=None):
     """ Radio button. Returns ``(text, value)`` on click. """
