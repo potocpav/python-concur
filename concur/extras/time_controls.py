@@ -3,13 +3,13 @@ import concur as c
 
 
 class TimeControls(object):
-    def __init__(self, start, end):
+    def __init__(self, start, end, hotkey=None):
         self.frame_id = 0.0
         self.start = 0
         self.end = end - 1
         self.playing = False
         self.stride = 10
-        self.space_state = False
+        self.hotkey = hotkey
 
 def time_controls(state):
     def clock():
@@ -25,8 +25,9 @@ def time_controls(state):
             , c.button("Prev")
             , c.button("Pause" if state.playing else "Play", tag="PlayPause")
             ])
-        , c.extras.key_pressed(state.space_state, ord(' '), tag="space")
-        ] + ([] if not state.playing else [clock()]))
+        ]
+         + ([] if not state.hotkey else [c.extras.key_pressed("space", state.hotkey, True)])
+         + ([] if not state.playing else [clock()]))
 
     last_frame_id = state.frame_id
     if tag == "seek":
@@ -42,9 +43,8 @@ def time_controls(state):
     elif tag == "PlayPause":
         state.playing = not state.playing
     elif tag == "space":
-        if value:
-            state.playing = not state.playing
-        state.space_state = value
+        print("space pressed.")
+        state.playing = not state.playing
     elif tag == "tick":
         state.frame_id += state.stride
     else:

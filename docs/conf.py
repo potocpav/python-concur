@@ -81,7 +81,8 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 #
 
-html_theme = 'nature'
+# html_theme = 'nature'
+html_theme = "python_docs_theme"
 html_css_files = ['css/set-width.css']
 
 # Theme options are theme-specific and customize the look and feel of a theme

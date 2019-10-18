@@ -7,7 +7,7 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(view, name, width, height, maximized=True):
+def main(view, name, width, height, maximized=False):
     imgui.create_context()
     window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)

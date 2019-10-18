@@ -14,10 +14,8 @@ def simple_image(tex_id, w, h):
     draw_list.add_image(tex_id, (pos.x, pos.y), (pos.x + w, pos.y + h), uva, uvb);
 
 
-def key_pressed(state, key, tag):
-    io = imgui.get_io()
+def key_pressed(name, key_index, repeat=True):
     while True:
-        st = bool(io.keys_down[key])
-        if state != st:
-            return tag, st
+        if imgui.is_key_pressed(key_index, repeat):
+            return name, None
         yield
