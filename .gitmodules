@@ -1,0 +1,3 @@
+[submodule "pyimgui"]
+	path = pyimgui
+	url = git@github.com:potocpav/pyimgui.git
