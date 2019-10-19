@@ -35,23 +35,25 @@ yield from button("Another Button")
 
 This creates one button, and after it is clicked, another button is created. If the code above isn't in a loop or in another widget (see below), there is nothing more to do after clicking the second button and the application is closed.
 
-Composition in space (that is, rendering multiple widgets at once) is done using the `concur.orr` combinator. The result of the composition is yet another widget:
+Composition in space (that is, rendering multiple widgets at once) is done using the :func:`concur.orr` combinator. The result of the composition is yet another widget:
 
 ```python
 pair = concur.orr([button("First"), button("Second")])
 yield from pair # display `pair` as a normal widget
 ```
 
-The result of `concur.orr`  is returned as soon as any child widget returns, passing the return value along. How can we tell which button was pressed? We can't, they must simply return different values. In fact, buttons in Concur normally return their identifier instead of `None` to be readily composable. By convention, primitive widgets return a tuple `(identifier, value)`. For example, built-in buttons can be composed like this:
+The result of :func:`concur.orr`  is returned as soon as any child widget returns, passing the return value along. How can we tell which button was pressed? We can't, they must simply return different values. By convention, primitive widgets return a tuple `(identifier, value)` to be easily identifiable when inside `orr`. For example, built-in buttons can be composed like this:
 
 ```python
-pair = concur.orr([concur.button("First"), concur.button("Second")])
-if pair == "First", _:
+tag, value = concur.orr([concur.button("First"), concur.button("Second")])
+if tag == "First":
     print("first!")
-if pair == "Second", _:
+if tag == "Second":
     print("second!")
 ```
 
 Note that containers (such as a window) are widgets too, with the same semantics. They take as an argument a list of other widgets that will be drawn inside.
 
-That's it for now. Play around with it. You will discover that these handful of concepts go a *long* way, and can be used to create even large UIs in a straightforward and clear manner. As a starting point, you can use the [examples](examples).
+Once the whole user interface is represented as as single widget, it can be displayed using the :func:`concur.integrations.main` function.
+
+That's it for now. Play around with it. You will discover that these handful of concepts go a *long* way, and can be used to create even large UIs in a straightforward and clear manner. As a starting point, you can use the [examples](https://github.com/potocpav/python-concur/tree/master/examples).
