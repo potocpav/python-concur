@@ -1,3 +1,8 @@
+""" Functions providing core functionality, widget creation, manipulation, and composition.
+
+All of the functions in this module are re-exported in the root module for convenience.
+"""
+
 
 import queue
 from typing import Generator, Any, Iterable, List, Callable, Tuple
@@ -115,7 +120,7 @@ def stateful(elem: Callable[[Any], Widget], initial_state: Any) -> Widget:
         yield
 
 
-class block(object):
+class Block(object):
     """ Create a widget that returns on future result. Useful for async computations.
 
     This widget is constructed manually using a class, because the future must be

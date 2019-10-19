@@ -15,7 +15,7 @@ def timer():
         yield from c.orr([c.text(""), c.button("Start timer")])
         yield
         future = executor.submit(lambda: time.sleep(3))
-        yield from c.orr([c.text("waiting for 3s..."), c.button("Cancel"), c.block(future)])
+        yield from c.orr([c.text("waiting for 3s..."), c.button("Cancel"), c.Block(future)])
         yield
 
 
