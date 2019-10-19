@@ -2,7 +2,7 @@
 from typing import Iterable, Any, Tuple
 import imgui
 
-from concur.core import orr, lift, Widget
+from concur.core import orr, lift, Widget, interactive_elem
 
 
 def orr_same_line(widgets):
@@ -91,7 +91,7 @@ def key_pressed(name, key_index, repeat=True):
 
 def text(s):
     """ Passive text display widget. """
-    return lift(imgui.text)
+    return lift(imgui.text, s)
 
 def text_colored(s, r, g, b, a=1.):
     """ Passive colored text display widget. """

@@ -22,7 +22,7 @@ def main(widget, name, width, height, maximized=False):
         imgui.new_frame()
 
         try:
-            next(view)
+            next(widget)
         except StopIteration:
             exit(1)
 
