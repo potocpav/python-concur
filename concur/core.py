@@ -1,9 +1,14 @@
 
-from imgui import push_id, pop_id
 import queue
+from typing import Generator, Any, Iterable, List, Callable, Tuple
+from imgui import push_id, pop_id
+from asyncio import Future
 
 
-def orr(elems):
+Widget = Generator[None, None, Any]
+
+
+def orr(elems: Iterable[Widget]) -> Widget:
     """ Chain elements in space, returning the first event fired. """
     stop = False
     value = None
@@ -24,9 +29,9 @@ def orr(elems):
             yield
 
 
-def multi_orr(elems):
+def multi_orr(elems: Iterable[Widget]) -> Widget:
     """ Chain elements in space, returning all the events fired as a list """
-    events = []
+    events: List = []
     while events == []:
         for i, elem in enumerate(elems):
             try:
@@ -40,7 +45,7 @@ def multi_orr(elems):
     return events
 
 
-def forever(elem_gen, *args, **kwargs):
+def forever(elem_gen: Callable[..., Widget], *args, **kwargs) -> Widget:
     """ Repeat an element forever.
 
     Function generating the element must be passed as the first argument;
@@ -56,13 +61,13 @@ def forever(elem_gen, *args, **kwargs):
 
 
 
-def lift(f, *args, **argv):
+def lift(f: Callable[..., Any], *args, **argv) -> Widget:
     while True:
         f(*args, **argv)
         yield
 
 
-def tag(tag_name, elem):
+def tag(tag_name: Any, elem: Widget) -> Widget:
     while True:
         try:
             next(elem)
@@ -71,7 +76,7 @@ def tag(tag_name, elem):
             return tag_name, e.value
 
 
-def stateful(elem, initial_state):
+def stateful(elem: Callable[[Any], Widget], initial_state: Any) -> Widget:
     state = initial_state
     while True:
         state = yield from elem(state)
