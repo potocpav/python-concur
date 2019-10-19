@@ -1,3 +1,14 @@
+""" A collection of widgets based off of ImGui.
+
+By convention, all widgets take a string identifier as the first parameter, and return the ``(identifier, value)`` pair. This is done to increase convenience, as Python syntax for mapping values is a bit busy.
+
+Most widgets are just thin wrappers over [widgets in PyImGui](https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html). If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing generators, or by using helper functions `concur.core.interactive_elem` or `concur.core.lift` from `concur.core`.
+
+Some widgets don't do any drawing and serve purely for control flow, or user interaction.
+
+All of the functions in this module are re-exported in the root module for convenience.
+"""
+
 
 from typing import Iterable, Any, Tuple
 import imgui
