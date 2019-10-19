@@ -7,6 +7,9 @@ import imgui
 
 
 def simple_image(tex_id, w, h):
+    """ Passive fixed-size image widget.
+
+    Takes as an argument OpenGL texture ID, which can be created by raw OpenGL calls, or by the :func:`concur.integrations.texture` function. """
     pos = imgui.get_cursor_screen_pos()
     uva = 0, 0
     uvb = 1, 1

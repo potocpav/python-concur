@@ -8,12 +8,12 @@ from asyncio import Future
 Widget = Generator[None, None, Any]
 
 
-def orr(elems: Iterable[Widget]) -> Widget:
+def orr(widgets: Iterable[Widget]) -> Widget:
     """ Chain elements in space, returning the first event fired. """
     stop = False
     value = None
     while True:
-        for i, elem in enumerate(elems):
+        for i, elem in enumerate(widgets):
             try:
                 push_id(i)
                 next(elem)
@@ -29,11 +29,11 @@ def orr(elems: Iterable[Widget]) -> Widget:
             yield
 
 
-def multi_orr(elems: Iterable[Widget]) -> Widget:
+def multi_orr(widgets: Iterable[Widget]) -> Widget:
     """ Chain elements in space, returning all the events fired as a list """
     events: List = []
     while events == []:
-        for i, elem in enumerate(elems):
+        for i, elem in enumerate(widgets):
             try:
                 push_id(i)
                 next(elem)
@@ -65,6 +65,38 @@ def lift(f: Callable[..., Any], *args, **argv) -> Widget:
     while True:
         f(*args, **argv)
         yield
+
+
+def interactive_elem(elem, name, *args, **kwargs):
+    """ Function useful for wrapping a wide range of ImGui widgets.
+
+    Elements which take ``name`` as the first argument and return
+    a pair ``(changed, value)`` can be wrapped using this function.
+    """
+    if 'tag' in kwargs:
+        tag = kwargs['tag']
+        del kwargs['tag']
+    else:
+        tag = name
+    while True:
+        changed, value = elem(name, *args, **kwargs)
+        if changed:
+            return tag, value
+        else:
+            yield
+
+
+def nothing():
+    """ Widget that does nothing. """
+    while True: yield
+
+
+def optional(exists, widget):
+    """ Optionally display a widget. """
+    if exists:
+        return widget
+    else:
+        return nothing()
 
 
 def tag(tag_name: Any, elem: Widget) -> Widget:

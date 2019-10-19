@@ -7,7 +7,8 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(view, name, width, height, maximized=False):
+def main(widget, name, width, height, maximized=False):
+    """ Create a GLFW window, spin up the main loop, and display a given widget inside. """
     imgui.create_context()
     window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)
@@ -37,6 +38,7 @@ def main(view, name, width, height, maximized=False):
 
 
 def create_window(window_name, width, height, maximized):
+    """ Create a GLFW window. """
     if not glfw.init():
         print("Could not initialize OpenGL context")
         exit(1)
