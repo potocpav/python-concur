@@ -1,7 +1,8 @@
 
+from typing import Iterable, Any, Tuple
 import imgui
 
-from concur.core import orr, lift
+from concur.core import orr, lift, Widget
 
 
 def orr_same_line(elems):
@@ -17,7 +18,21 @@ def orr_same_line(elems):
     return orr(intersperse(same_line(), elems))
 
 
-def window(title, elems, position=None, size=None, flags=0):
+def window(title: str,
+           elems: Iterable[Widget],
+           position: Tuple[int, int] = None,
+           size: Tuple[int, int] = None,
+           flags: int = 0) -> Widget:
+    """ Create a window with a given list of ``elems`` inside.
+
+    Wraps `imgui.begin`, as well as multiple sequential calls to ImGui such as `set_next_window_position`.
+
+    :param title: window title
+    :param elems: a list of elements to put inside the window
+    :param position: position of the upper-left window corner
+    :param size: the size of the window
+    :param flags: window flags
+    """
     while True:
         imgui.push_id(title)
         if position is not None:
@@ -83,6 +98,13 @@ def interactive_elem(elem, name, *args, **kwargs):
             return (tag, value)
         else:
             yield
+
+
+def key_pressed(name, key_index, repeat=True):
+    while True:
+        if imgui.is_key_pressed(key_index, repeat):
+            return name, None
+        yield
 
 
 def text(s):

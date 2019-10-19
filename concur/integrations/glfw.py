@@ -25,7 +25,7 @@ def main(view, name, width, height, maximized=False):
         except StopIteration:
             exit(1)
 
-        gl.glClearColor(1., 1., 1., 1)
+        gl.glClearColor(0.9, 0.9, 0.9, 1)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
         imgui.render()

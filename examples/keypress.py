@@ -6,15 +6,9 @@ import imgui
 import glfw
 
 
-def key_press(key_index, repeat=True, tag=None):
-    while True:
-        if imgui.is_key_pressed(key_index, repeat):
-            return tag
-        yield
-
 def app():
     while True:
-        key = yield from c.orr([key_press(glfw.KEY_K)])
+        key, _ = yield from c.orr([c.key_pressed("K", glfw.KEY_K)])
         yield
         print(key)
 

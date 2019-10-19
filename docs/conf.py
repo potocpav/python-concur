@@ -165,3 +165,5 @@ texinfo_documents = [
 
 
 # -- Extension configuration -------------------------------------------------
+
+autodoc_typehints = 'none'
