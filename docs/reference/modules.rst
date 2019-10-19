@@ -1,13 +1,10 @@
-API reference
+API Reference
 =============
 
-.. toctree::
-   :hidden:
 
 .. toctree::
    :maxdepth: 5
 
-   widgets
    concur
-   concur-extras
-   concur-integrations
+   integrations
+   extras
