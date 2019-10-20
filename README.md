@@ -7,6 +7,8 @@
    <img src="https://raw.githubusercontent.com/ajnsit/purescript-concur/master/docs/logo.png" height="100">
 </p>
 
+[Documentation](https://potocpav.github.io/python-concur/html/concur/)
+
 Concur is a Python UI framework based on synchronous generators.
 
 It is a port of [Concur for Haskell](https://github.com/ajnsit/concur) and [Concur for Purescript](https://github.com/ajnsit/purescript-concur).
@@ -49,11 +51,6 @@ Run the examples:
 ```sh
 python examples/all.py
 ```
-
-## Documentation
-
-See https://python-concur.readthedocs.io/en/latest/
-
 
 # Introduction
 
