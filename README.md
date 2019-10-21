@@ -25,7 +25,7 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 <img src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
 </p>
 
-## Usage
+## Installation
 
 Clone the Concur repo including submodules:
 
