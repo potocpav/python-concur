@@ -1,4 +1,0 @@
-[submodule "pyimgui"]
-	path = pyimgui
-	branch = merge
-	url = https://github.com/potocpav/pyimgui.git
