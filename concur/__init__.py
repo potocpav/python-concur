@@ -1,6 +1,10 @@
 """
 .. include:: ../README.md
-   :start-line: 3
+   :start-after: [Examples](examples)
+
+.. include:: introduction.md
+
+.. include:: troubleshooting.md
 
 # API
 
