@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.1" />
+<title>concur.widgets API documentation</title>
+<meta name="description" content="A collection of widgets based off of ImGui …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>concur.widgets</code></h1>
+</header>
+<section id="section-intro">
+<p>A collection of widgets based off of ImGui.</p>
+<p>By convention, all widgets take a string identifier as the first parameter, and return the <code>(identifier, value)</code> pair. This is done to increase convenience, as Python syntax for mapping values is a bit busy.</p>
+<p>Most widgets are just thin wrappers over <a href="https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html">widgets in PyImGui</a>. If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing generators, or by using helper functions <code>concur.core.interactive_elem</code> or <code>concur.core.lift</code> from <code>concur.core</code>.</p>
+<p>Some widgets don't do any drawing and serve purely for control flow, or user interaction.</p>
+<p>All of the functions in this module are re-exported in the root module for convenience.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34; A collection of widgets based off of ImGui.
+
+By convention, all widgets take a string identifier as the first parameter, and return the ``(identifier, value)`` pair. This is done to increase convenience, as Python syntax for mapping values is a bit busy.
+
+Most widgets are just thin wrappers over [widgets in PyImGui](https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html). If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing generators, or by using helper functions `concur.core.interactive_elem` or `concur.core.lift` from `concur.core`.
+
+Some widgets don&#39;t do any drawing and serve purely for control flow, or user interaction.
+
+All of the functions in this module are re-exported in the root module for convenience.
+&#34;&#34;&#34;
+
+
+from typing import Iterable, Any, Tuple
+import imgui
+
+from concur.core import orr, lift, Widget, interactive_elem
+
+
+def orr_same_line(widgets):
+    &#34;&#34;&#34; Use instead of :func:`orr` to layout child widgets horizontally.
+    &#34;&#34;&#34;
+    def intersperse(delimiter, seq):
+        &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
+        from itertools import chain, repeat
+        return list(chain.from_iterable(zip(repeat(delimiter), seq)))[1:]
+
+    return orr(intersperse(same_line(), widgets))
+
+
+def window(title: str,
+           widgets: Iterable[Widget],
+           position: Tuple[int, int] = None,
+           size: Tuple[int, int] = None,
+           flags: int = 0) -&gt; Widget:
+    &#34;&#34;&#34; Create a window with a given list of ``widgets`` inside. &#34;&#34;&#34;
+    while True:
+        imgui.push_id(title)
+        if position is not None:
+            imgui.set_next_window_position(*position)
+        if size is not None:
+            imgui.set_next_window_size(*size)
+        imgui.begin(title, flags=flags)
+        try:
+            next(orr(widgets))
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end()
+            imgui.pop_id()
+        yield
+
+
+def child(name, width, height, border=False, flags=0, widgets=[]):
+    &#34;&#34;&#34; Create a sized box with elements inside a window. &#34;&#34;&#34;
+    while True:
+        imgui.push_id(name)
+        imgui.begin_child(name, width, height, border, flags)
+        try:
+            next(orr(widgets))
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_child()
+            imgui.pop_id()
+        yield
+
+
+def button(text, tag=None):
+    &#34;&#34;&#34; Button. Returns ``(text, value)`` on click, or ``(tag, value)`` if tag is specified. &#34;&#34;&#34;
+    while not imgui.button(text):
+        yield
+    return tag if tag is not None else text, None
+
+
+def radio_button(text, active, tag=None):
+    &#34;&#34;&#34; Radio button. Returns ``(text, value)`` on click. &#34;&#34;&#34;
+    while not imgui.radio_button(text, active):
+        yield
+    return (tag if tag is not None else text), None
+
+
+def input_text(name, value, buffer_length, tag=None):
+    &#34;&#34;&#34; Text input. &#34;&#34;&#34;
+    while True:
+        changed, new_value = imgui.input_text(name, value, buffer_length)
+        if changed:
+            return (name if tag is None else tag), new_value
+        else:
+            yield
+
+
+def key_pressed(name, key_index, repeat=True):
+    &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
+
+    Key codes are specified by the integration layer, e.g. ``glfw.KEY_A``.
+    &#34;&#34;&#34;
+    while True:
+        if imgui.is_key_pressed(key_index, repeat):
+            return name, None
+        yield
+
+
+def text(s):
+    &#34;&#34;&#34; Passive text display widget. &#34;&#34;&#34;
+    return lift(imgui.text, s)
+
+def text_colored(s, r, g, b, a=1.):
+    &#34;&#34;&#34; Passive colored text display widget. &#34;&#34;&#34;
+    return lift(imgui.text_colored, s, r, g, b, a)
+
+def test_window():
+    &#34;&#34;&#34; ImGui test window with a multitude of widgets. &#34;&#34;&#34;
+    return lift(imgui.show_test_window)
+
+def separator():
+    &#34;&#34;&#34; Horizontal separator. &#34;&#34;&#34;
+    return lift(imgui.separator)
+
+def spacing():
+    &#34;&#34;&#34; Extra horizontal space. &#34;&#34;&#34;
+    return lift(imgui.spacing)
+
+def same_line():
+    &#34;&#34;&#34; Call between widgets to layout them horizontally.
+
+    Consider using :func:`orr_same_line` instead.
+    &#34;&#34;&#34;
+    return lift(imgui.same_line)
+
+def checkbox(*args, **kwargs):
+    &#34;&#34;&#34; Two-state checkbox. &#34;&#34;&#34;
+    return interactive_elem(imgui.checkbox, *args, **kwargs)
+
+def drag_float(label, value, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
+    return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
+
+def slider_int(label, min_value, max_value, *args, **kwargs):
+    &#34;&#34;&#34; Int selection slider. &#34;&#34;&#34;
+    return interactive_elem(imgui.slider_int, name, min_value, max_value, *args, **kwargs)
+
+def slider_float(label, min_value, max_value, *args, **kwargs):
+    &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
+    return interactive_elem(imgui.slider_float, name, min_value, max_value, *args, **kwargs)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="concur.widgets.button"><code class="name flex">
+<span>def <span class="ident">button</span></span>(<span>text, tag=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Button. Returns <code>(text, value)</code> on click, or <code>(tag, value)</code> if tag is specified.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def button(text, tag=None):
+    &#34;&#34;&#34; Button. Returns ``(text, value)`` on click, or ``(tag, value)`` if tag is specified. &#34;&#34;&#34;
+    while not imgui.button(text):
+        yield
+    return tag if tag is not None else text, None</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.checkbox"><code class="name flex">
+<span>def <span class="ident">checkbox</span></span>(<span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Two-state checkbox.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def checkbox(*args, **kwargs):
+    &#34;&#34;&#34; Two-state checkbox. &#34;&#34;&#34;
+    return interactive_elem(imgui.checkbox, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.child"><code class="name flex">
+<span>def <span class="ident">child</span></span>(<span>name, width, height, border=False, flags=0, widgets=[])</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Create a sized box with elements inside a window.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def child(name, width, height, border=False, flags=0, widgets=[]):
+    &#34;&#34;&#34; Create a sized box with elements inside a window. &#34;&#34;&#34;
+    while True:
+        imgui.push_id(name)
+        imgui.begin_child(name, width, height, border, flags)
+        try:
+            next(orr(widgets))
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_child()
+            imgui.pop_id()
+        yield</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.drag_float"><code class="name flex">
+<span>def <span class="ident">drag_float</span></span>(<span>label, value, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Float selection widget without a slider.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def drag_float(label, value, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
+    return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.input_text"><code class="name flex">
+<span>def <span class="ident">input_text</span></span>(<span>name, value, buffer_length, tag=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Text input.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def input_text(name, value, buffer_length, tag=None):
+    &#34;&#34;&#34; Text input. &#34;&#34;&#34;
+    while True:
+        changed, new_value = imgui.input_text(name, value, buffer_length)
+        if changed:
+            return (name if tag is None else tag), new_value
+        else:
+            yield</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.key_pressed"><code class="name flex">
+<span>def <span class="ident">key_pressed</span></span>(<span>name, key_index, repeat=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Invisible widget that waits for a given key to be pressed.</p>
+<p>Key codes are specified by the integration layer, e.g. <code>glfw.KEY_A</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def key_pressed(name, key_index, repeat=True):
+    &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
+
+    Key codes are specified by the integration layer, e.g. ``glfw.KEY_A``.
+    &#34;&#34;&#34;
+    while True:
+        if imgui.is_key_pressed(key_index, repeat):
+            return name, None
+        yield</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.orr_same_line"><code class="name flex">
+<span>def <span class="ident">orr_same_line</span></span>(<span>widgets)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Use instead of :func:<code>orr</code> to layout child widgets horizontally.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def orr_same_line(widgets):
+    &#34;&#34;&#34; Use instead of :func:`orr` to layout child widgets horizontally.
+    &#34;&#34;&#34;
+    def intersperse(delimiter, seq):
+        &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
+        from itertools import chain, repeat
+        return list(chain.from_iterable(zip(repeat(delimiter), seq)))[1:]
+
+    return orr(intersperse(same_line(), widgets))</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.radio_button"><code class="name flex">
+<span>def <span class="ident">radio_button</span></span>(<span>text, active, tag=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Radio button. Returns <code>(text, value)</code> on click.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def radio_button(text, active, tag=None):
+    &#34;&#34;&#34; Radio button. Returns ``(text, value)`` on click. &#34;&#34;&#34;
+    while not imgui.radio_button(text, active):
+        yield
+    return (tag if tag is not None else text), None</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.same_line"><code class="name flex">
+<span>def <span class="ident">same_line</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Call between widgets to layout them horizontally.</p>
+<p>Consider using :func:<a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line"><code>orr_same_line()</code></a> instead.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def same_line():
+    &#34;&#34;&#34; Call between widgets to layout them horizontally.
+
+    Consider using :func:`orr_same_line` instead.
+    &#34;&#34;&#34;
+    return lift(imgui.same_line)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.separator"><code class="name flex">
+<span>def <span class="ident">separator</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Horizontal separator.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def separator():
+    &#34;&#34;&#34; Horizontal separator. &#34;&#34;&#34;
+    return lift(imgui.separator)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.slider_float"><code class="name flex">
+<span>def <span class="ident">slider_float</span></span>(<span>label, min_value, max_value, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Float selection slider.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def slider_float(label, min_value, max_value, *args, **kwargs):
+    &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
+    return interactive_elem(imgui.slider_float, name, min_value, max_value, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.slider_int"><code class="name flex">
+<span>def <span class="ident">slider_int</span></span>(<span>label, min_value, max_value, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Int selection slider.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def slider_int(label, min_value, max_value, *args, **kwargs):
+    &#34;&#34;&#34; Int selection slider. &#34;&#34;&#34;
+    return interactive_elem(imgui.slider_int, name, min_value, max_value, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.spacing"><code class="name flex">
+<span>def <span class="ident">spacing</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Extra horizontal space.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def spacing():
+    &#34;&#34;&#34; Extra horizontal space. &#34;&#34;&#34;
+    return lift(imgui.spacing)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.test_window"><code class="name flex">
+<span>def <span class="ident">test_window</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>ImGui test window with a multitude of widgets.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_window():
+    &#34;&#34;&#34; ImGui test window with a multitude of widgets. &#34;&#34;&#34;
+    return lift(imgui.show_test_window)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.text"><code class="name flex">
+<span>def <span class="ident">text</span></span>(<span>s)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Passive text display widget.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def text(s):
+    &#34;&#34;&#34; Passive text display widget. &#34;&#34;&#34;
+    return lift(imgui.text, s)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.text_colored"><code class="name flex">
+<span>def <span class="ident">text_colored</span></span>(<span>s, r, g, b, a=1.0)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Passive colored text display widget.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def text_colored(s, r, g, b, a=1.):
+    &#34;&#34;&#34; Passive colored text display widget. &#34;&#34;&#34;
+    return lift(imgui.text_colored, s, r, g, b, a)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.window"><code class="name flex">
+<span>def <span class="ident">window</span></span>(<span>title, widgets, position=None, size=None, flags=0)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Create a window with a given list of <code>widgets</code> inside.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def window(title: str,
+           widgets: Iterable[Widget],
+           position: Tuple[int, int] = None,
+           size: Tuple[int, int] = None,
+           flags: int = 0) -&gt; Widget:
+    &#34;&#34;&#34; Create a window with a given list of ``widgets`` inside. &#34;&#34;&#34;
+    while True:
+        imgui.push_id(title)
+        if position is not None:
+            imgui.set_next_window_position(*position)
+        if size is not None:
+            imgui.set_next_window_size(*size)
+        imgui.begin(title, flags=flags)
+        try:
+            next(orr(widgets))
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end()
+            imgui.pop_id()
+        yield</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="concur" href="index.html">concur</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="concur.widgets.button" href="#concur.widgets.button">button</a></code></li>
+<li><code><a title="concur.widgets.checkbox" href="#concur.widgets.checkbox">checkbox</a></code></li>
+<li><code><a title="concur.widgets.child" href="#concur.widgets.child">child</a></code></li>
+<li><code><a title="concur.widgets.drag_float" href="#concur.widgets.drag_float">drag_float</a></code></li>
+<li><code><a title="concur.widgets.input_text" href="#concur.widgets.input_text">input_text</a></code></li>
+<li><code><a title="concur.widgets.key_pressed" href="#concur.widgets.key_pressed">key_pressed</a></code></li>
+<li><code><a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line">orr_same_line</a></code></li>
+<li><code><a title="concur.widgets.radio_button" href="#concur.widgets.radio_button">radio_button</a></code></li>
+<li><code><a title="concur.widgets.same_line" href="#concur.widgets.same_line">same_line</a></code></li>
+<li><code><a title="concur.widgets.separator" href="#concur.widgets.separator">separator</a></code></li>
+<li><code><a title="concur.widgets.slider_float" href="#concur.widgets.slider_float">slider_float</a></code></li>
+<li><code><a title="concur.widgets.slider_int" href="#concur.widgets.slider_int">slider_int</a></code></li>
+<li><code><a title="concur.widgets.spacing" href="#concur.widgets.spacing">spacing</a></code></li>
+<li><code><a title="concur.widgets.test_window" href="#concur.widgets.test_window">test_window</a></code></li>
+<li><code><a title="concur.widgets.text" href="#concur.widgets.text">text</a></code></li>
+<li><code><a title="concur.widgets.text_colored" href="#concur.widgets.text_colored">text_colored</a></code></li>
+<li><code><a title="concur.widgets.window" href="#concur.widgets.window">window</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
