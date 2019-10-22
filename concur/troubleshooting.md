@@ -14,4 +14,4 @@ On each frame, at most one action can get triggered from an `orr` block. Actions
 
 **Asynchronous computations**
 
-In other versions of Concur, all widgets are triggered asynchronously. This may not be practical in Python, due to a limitation of async generators: they can't `return`, they only `yield`. Synchronous generators are used instead, which means that all widget code is run in the main thread. Asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the `block` function. See the [timers example](examples/timers.py) for details.
+In other versions of Concur, all widgets are triggered asynchronously. This may not be practical in Python, due to a limitation of async generators: they can't `return`, they only `yield`. Synchronous generators are used instead, which means that all widget code is run in the main thread. Asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the `block` function. See the [timers example](https://github.com/potocpav/python-concur/blob/master/examples/timers.py) for details.
