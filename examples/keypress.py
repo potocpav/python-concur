@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
 import concur as c
-import concur.integrations.glfw as window
-import imgui
+import concur.integrations as window
 import glfw
 
 
 def app():
+    count = 0
     while True:
-        key, _ = yield from c.orr([c.key_pressed("K", glfw.KEY_K)])
+        key, _ = yield from c.orr([c.key_pressed("K", glfw.KEY_K), c.text(f"Key 'K' pressed {count} times")])
         yield
-        print(key)
+        count += 1
 
 
 if __name__ == "__main__":
