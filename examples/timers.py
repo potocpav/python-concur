@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import concur as c
-import concur.integrations.glfw as window
-
 import time
 from concurrent.futures import ThreadPoolExecutor
+
+import concur as c
+import concur.integrations as window
 
 
 executor = ThreadPoolExecutor()
