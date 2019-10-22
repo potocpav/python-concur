@@ -8,7 +8,7 @@ import glfw
 def app():
     count = 0
     while True:
-        key, _ = yield from c.orr([c.key_pressed("K", glfw.KEY_K), c.text(f"Key 'K' pressed {count} times")])
+        yield from c.orr([c.key_pressed("K", glfw.KEY_K), c.text(f"Key 'K' pressed {count} times")])
         yield
         count += 1
 
