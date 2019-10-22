@@ -7,7 +7,7 @@
    <img src="https://raw.githubusercontent.com/ajnsit/purescript-concur/master/docs/logo.png" height="100">
 </p>
 
-[**Documentation**](https://potocpav.github.io/python-concur/docs/)
+[**Documentation**](https://potocpav.github.io/python-concur/)
 
 [**Examples**](examples)
 
