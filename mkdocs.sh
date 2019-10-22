@@ -1,3 +1,3 @@
 pdoc --html  --force --output-dir docs concur
-mv docs/concur/* docs
-rmdir docs/concur
+cp -r docs/concur/* docs
+rm -r docs/concur
