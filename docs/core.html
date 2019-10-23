@@ -168,6 +168,15 @@ class Block(object):
         self.future.cancel()
 
 
+def listen(que):
+    &#34;&#34;&#34; Listen to messages on a given queue. &#34;&#34;&#34;
+    while True:
+        try:
+            return que.get_nowait()
+        except queue.Empty:
+            yield
+
+
 class RemoteAction(object):
     def __init__(self, future, que):
         self.que = que
@@ -306,6 +315,24 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
     while True:
         f(*args, **argv)
         yield</code></pre>
+</details>
+</dd>
+<dt id="concur.core.listen"><code class="name flex">
+<span>def <span class="ident">listen</span></span>(<span>que)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Listen to messages on a given queue.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listen(que):
+    &#34;&#34;&#34; Listen to messages on a given queue. &#34;&#34;&#34;
+    while True:
+        try:
+            return que.get_nowait()
+        except queue.Empty:
+            yield</code></pre>
 </details>
 </dd>
 <dt id="concur.core.multi_orr"><code class="name flex">
@@ -538,6 +565,7 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 <li><code><a title="concur.core.fork_action" href="#concur.core.fork_action">fork_action</a></code></li>
 <li><code><a title="concur.core.interactive_elem" href="#concur.core.interactive_elem">interactive_elem</a></code></li>
 <li><code><a title="concur.core.lift" href="#concur.core.lift">lift</a></code></li>
+<li><code><a title="concur.core.listen" href="#concur.core.listen">listen</a></code></li>
 <li><code><a title="concur.core.multi_orr" href="#concur.core.multi_orr">multi_orr</a></code></li>
 <li><code><a title="concur.core.nothing" href="#concur.core.nothing">nothing</a></code></li>
 <li><code><a title="concur.core.optional" href="#concur.core.optional">optional</a></code></li>

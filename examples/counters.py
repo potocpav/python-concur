@@ -25,4 +25,4 @@ def app():
 
 
 if __name__ == "__main__":
-    window.main(app(), "Counter", 500, 500)
+    window.main("Counter", app(), 500, 500)

@@ -36,4 +36,4 @@ def app():
 
 
 if __name__ == "__main__":
-    window.main(app(), "Todo List", 500, 500)
+    window.main("Todo List", app(), 500, 500)
