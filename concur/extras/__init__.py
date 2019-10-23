@@ -2,7 +2,7 @@
 """
 
 
-from .widgets import *
+from .simple_image import *
 from .time_controls import *
 from .image import *
 from .poly import *

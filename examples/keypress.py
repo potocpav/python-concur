@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import concur as c
-import concur.integrations as window
 import glfw
 
 
@@ -14,4 +13,4 @@ def app():
 
 
 if __name__ == "__main__":
-    window.main("Keypress", app(), 500, 500)
+    c.integrations.main("Keypress", app(), 500, 500)

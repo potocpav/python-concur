@@ -96,12 +96,9 @@ def nothing():
     while True: yield
 
 
-def optional(exists, widget):
+def optional(exists, widget, *args, **kwargs):
     """ Optionally display a widget. """
-    if exists:
-        return widget
-    else:
-        return nothing()
+    return (widget(*args, **kwargs) if exists else nothing())
 
 
 def tag(tag_name: Any, elem: Widget) -> Widget:
