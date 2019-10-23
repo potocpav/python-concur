@@ -25,6 +25,11 @@ def main(widget, name, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9))
             next(widget)
         except StopIteration:
             exit(1)
+        except:
+            # Cleanup on exception for iPython
+            imgui.render()
+            glfw.terminate()
+            raise
 
         gl.glClearColor(*bg_color, 1)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
