@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import concur as c
-import concur.integrations as window
 
 import counters
 import hello_world
