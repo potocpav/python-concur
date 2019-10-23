@@ -14,8 +14,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9))
     impl = GlfwRenderer(window)
 
     while not glfw.window_should_close(window):
-        time.sleep(1/60)
-
+        t0 = time.perf_counter()
         glfw.poll_events()
         impl.process_inputs()
 
@@ -37,6 +36,10 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9))
         imgui.render()
         impl.render(imgui.get_draw_data())
         glfw.swap_buffers(window)
+
+        t1 = time.perf_counter()
+        if t1 - t0 < 1/60:
+            time.sleep(1/60 - (t1 - t0))
 
     impl.shutdown()
     glfw.terminate()
