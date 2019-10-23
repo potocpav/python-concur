@@ -4,3 +4,5 @@
 
 from .widgets import *
 from .time_controls import *
+from .image import *
+from .poly import *
