@@ -124,12 +124,9 @@ def nothing():
     while True: yield
 
 
-def optional(exists, widget):
+def optional(exists, widget, *args, **kwargs):
     &#34;&#34;&#34; Optionally display a widget. &#34;&#34;&#34;
-    if exists:
-        return widget
-    else:
-        return nothing()
+    return (widget(*args, **kwargs) if exists else nothing())
 
 
 def tag(tag_name: Any, elem: Widget) -&gt; Widget:
@@ -375,7 +372,7 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
 </details>
 </dd>
 <dt id="concur.core.optional"><code class="name flex">
-<span>def <span class="ident">optional</span></span>(<span>exists, widget)</span>
+<span>def <span class="ident">optional</span></span>(<span>exists, widget, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Optionally display a widget.</p></section>
@@ -383,12 +380,9 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def optional(exists, widget):
+<pre><code class="python">def optional(exists, widget, *args, **kwargs):
     &#34;&#34;&#34; Optionally display a widget. &#34;&#34;&#34;
-    if exists:
-        return widget
-    else:
-        return nothing()</code></pre>
+    return (widget(*args, **kwargs) if exists else nothing())</code></pre>
 </details>
 </dd>
 <dt id="concur.core.orr"><code class="name flex">

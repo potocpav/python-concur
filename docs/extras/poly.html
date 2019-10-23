@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.1" />
-<title>concur.extras.widgets API documentation</title>
-<meta name="description" content="" />
+<title>concur.extras.poly API documentation</title>
+<meta name="description" content="Polygon widget intended to mark areas in image/video." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,25 +17,58 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>concur.extras.widgets</code></h1>
+<h1 class="title">Module <code>concur.extras.poly</code></h1>
 </header>
 <section id="section-intro">
+<p>Polygon widget intended to mark areas in image/video.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import imgui
+<pre><code class="python">&#34;&#34;&#34; Polygon widget intended to mark areas in image/video. &#34;&#34;&#34;
+
+import imgui
 
 
-def simple_image(tex_id, w, h):
-    &#34;&#34;&#34; Passive fixed-size image widget.
+def _poly(name, pts, im2scr=None, scr2im=None):
+    point_size = 10
 
-    Takes as an argument OpenGL texture ID, which can be created by raw OpenGL calls, or by the `concur.integrations.opengl.texture` function. &#34;&#34;&#34;
-    pos = imgui.get_cursor_screen_pos()
-    uva = 0, 0
-    uvb = 1, 1
+    spts = [im2scr(p) for p in pts]
+
     draw_list = imgui.get_window_draw_list()
-    draw_list.add_image(tex_id, (pos.x, pos.y), (pos.x + w, pos.y + h), uva, uvb);</code></pre>
+    pos = imgui.get_cursor_screen_pos()
+    io = imgui.get_io()
+
+    for p1, p2 in zip(spts, spts[1:] + [spts[0]]):
+        draw_list.add_line(p1[0], p1[1], p2[0], p2[1], imgui.get_color_u32_rgba(1, 1, 0, 1), 2)
+
+    mx, my = io.mouse_pos[0], io.mouse_pos[1]
+    changed = False
+    for i, p in enumerate(spts):
+        imgui.set_cursor_screen_pos((p[0] - point_size, p[1] - point_size))
+        imgui.invisible_button(&#34;Point {}{}&#34;.format(i, name), point_size*2, point_size*2)
+        imgui.set_cursor_screen_pos((p[0] - 30, p[1] + point_size))
+        imgui.button(&#34;Point {}{}&#34;.format(i, name), 60, 20)
+
+        if imgui.is_item_active() and imgui.is_mouse_down(0):
+            color = imgui.get_color_u32_rgba(1, 1, 0, 1)
+            spts[i] = (p[0] + io.mouse_delta[0], p[1] + io.mouse_delta[1])
+            changed = io.mouse_delta[0] != 0 or io.mouse_delta[1] != 0
+        else:
+            color = imgui.get_color_u32_rgba(1, 1, 0, 1)
+
+        draw_list.add_rect(p[0] - point_size/2, p[1] - point_size/2, p[0] + point_size/2, p[1] + point_size/2, color, thickness=2)
+
+    imgui.set_cursor_screen_pos(pos)
+    return changed, [scr2im(p) for p in spts]
+
+
+def poly(state, im2scr=None, scr2im=None):
+    while True:
+        changed, st = _poly(&#34;p&#34;, state, im2scr, scr2im)
+        if changed:
+            return st
+        yield</code></pre>
 </details>
 </section>
 <section>
@@ -45,25 +78,21 @@ def simple_image(tex_id, w, h):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="concur.extras.widgets.simple_image"><code class="name flex">
-<span>def <span class="ident">simple_image</span></span>(<span>tex_id, w, h)</span>
+<dt id="concur.extras.poly.poly"><code class="name flex">
+<span>def <span class="ident">poly</span></span>(<span>state, im2scr=None, scr2im=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Passive fixed-size image widget.</p>
-<p>Takes as an argument OpenGL texture ID, which can be created by raw OpenGL calls, or by the <a title="concur.integrations.opengl.texture" href="../integrations/opengl.html#concur.integrations.opengl.texture"><code>texture()</code></a> function.</p></section>
+<section class="desc"></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def simple_image(tex_id, w, h):
-    &#34;&#34;&#34; Passive fixed-size image widget.
-
-    Takes as an argument OpenGL texture ID, which can be created by raw OpenGL calls, or by the `concur.integrations.opengl.texture` function. &#34;&#34;&#34;
-    pos = imgui.get_cursor_screen_pos()
-    uva = 0, 0
-    uvb = 1, 1
-    draw_list = imgui.get_window_draw_list()
-    draw_list.add_image(tex_id, (pos.x, pos.y), (pos.x + w, pos.y + h), uva, uvb);</code></pre>
+<pre><code class="python">def poly(state, im2scr=None, scr2im=None):
+    while True:
+        changed, st = _poly(&#34;p&#34;, state, im2scr, scr2im)
+        if changed:
+            return st
+        yield</code></pre>
 </details>
 </dd>
 </dl>
@@ -84,7 +113,7 @@ def simple_image(tex_id, w, h):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="concur.extras.widgets.simple_image" href="#concur.extras.widgets.simple_image">simple_image</a></code></li>
+<li><code><a title="concur.extras.poly.poly" href="#concur.extras.poly.poly">poly</a></code></li>
 </ul>
 </li>
 </ul>

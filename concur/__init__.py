@@ -17,5 +17,8 @@ import concur as c
 
 """
 
+import concur.extras
+import concur.integrations
+
 from .core import *
 from .widgets import *

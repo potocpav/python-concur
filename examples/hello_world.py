@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import concur as c
-import concur.integrations as window
 
 
 def app():
@@ -13,4 +12,4 @@ def app():
 
 
 if __name__ == "__main__":
-    window.main("Hello World", app(), 500, 500)
+    c.integrations.main("Hello World", app(), 500, 500)

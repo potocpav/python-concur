@@ -4,7 +4,6 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 import concur as c
-import concur.integrations as window
 
 
 executor = ThreadPoolExecutor()
@@ -24,4 +23,4 @@ def app():
 
 
 if __name__ == "__main__":
-    window.main("Timers", app(), 500, 500)
+    c.integrations.main("Timers", app(), 500, 500)

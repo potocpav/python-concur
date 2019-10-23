@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.1" />
-<title>concur.extras API documentation</title>
-<meta name="description" content="Extra widgets that do not directly correspond to ImGui calls." />
+<title>concur.extras.simple_image API documentation</title>
+<meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,48 +17,60 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>concur.extras</code></h1>
+<h1 class="title">Module <code>concur.extras.simple_image</code></h1>
 </header>
 <section id="section-intro">
-<p>Extra widgets that do not directly correspond to ImGui calls.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Extra widgets that do not directly correspond to ImGui calls.
-&#34;&#34;&#34;
+<pre><code class="python">import imgui
 
 
-from .simple_image import *
-from .time_controls import *
-from .image import *
-from .poly import *</code></pre>
+def simple_image(tex_id, w, h):
+    &#34;&#34;&#34; Passive fixed-size image widget.
+
+    Takes as an argument OpenGL texture ID, which can be created by raw OpenGL calls, or by the `concur.integrations.opengl.texture` function. &#34;&#34;&#34;
+    while True:
+        pos = imgui.get_cursor_screen_pos()
+        uva = 0, 0
+        uvb = 1, 1
+        draw_list = imgui.get_window_draw_list()
+        draw_list.add_image(tex_id, (pos.x, pos.y), (pos.x + w, pos.y + h), uva, uvb)
+        yield</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="concur.extras.image" href="image.html">concur.extras.image</a></code></dt>
+<dt id="concur.extras.simple_image.simple_image"><code class="name flex">
+<span>def <span class="ident">simple_image</span></span>(<span>tex_id, w, h)</span>
+</code></dt>
 <dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="concur.extras.poly" href="poly.html">concur.extras.poly</a></code></dt>
-<dd>
-<section class="desc"><p>Polygon widget intended to mark areas in image/video.</p></section>
-</dd>
-<dt><code class="name"><a title="concur.extras.simple_image" href="simple_image.html">concur.extras.simple_image</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="concur.extras.time_controls" href="time_controls.html">concur.extras.time_controls</a></code></dt>
-<dd>
-<section class="desc"></section>
+<section class="desc"><p>Passive fixed-size image widget.</p>
+<p>Takes as an argument OpenGL texture ID, which can be created by raw OpenGL calls, or by the <a title="concur.integrations.opengl.texture" href="../integrations/opengl.html#concur.integrations.opengl.texture"><code>texture()</code></a> function.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simple_image(tex_id, w, h):
+    &#34;&#34;&#34; Passive fixed-size image widget.
+
+    Takes as an argument OpenGL texture ID, which can be created by raw OpenGL calls, or by the `concur.integrations.opengl.texture` function. &#34;&#34;&#34;
+    while True:
+        pos = imgui.get_cursor_screen_pos()
+        uva = 0, 0
+        uvb = 1, 1
+        draw_list = imgui.get_window_draw_list()
+        draw_list.add_image(tex_id, (pos.x, pos.y), (pos.x + w, pos.y + h), uva, uvb)
+        yield</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -71,15 +83,12 @@ from .poly import *</code></pre>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="concur" href="../index.html">concur</a></code></li>
+<li><code><a title="concur.extras" href="index.html">concur.extras</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
-<ul>
-<li><code><a title="concur.extras.image" href="image.html">concur.extras.image</a></code></li>
-<li><code><a title="concur.extras.poly" href="poly.html">concur.extras.poly</a></code></li>
-<li><code><a title="concur.extras.simple_image" href="simple_image.html">concur.extras.simple_image</a></code></li>
-<li><code><a title="concur.extras.time_controls" href="time_controls.html">concur.extras.time_controls</a></code></li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="concur.extras.simple_image.simple_image" href="#concur.extras.simple_image.simple_image">simple_image</a></code></li>
 </ul>
 </li>
 </ul>
