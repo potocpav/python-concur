@@ -140,6 +140,15 @@ class Block(object):
         self.future.cancel()
 
 
+def listen(que):
+    """ Listen to messages on a given queue. """
+    while True:
+        try:
+            return que.get_nowait()
+        except queue.Empty:
+            yield
+
+
 class RemoteAction(object):
     def __init__(self, future, que):
         self.que = que

@@ -7,7 +7,7 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(widget, name, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9)):
+def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9)):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside. """
     imgui.create_context()
     window = create_window(name, width, height, maximized)

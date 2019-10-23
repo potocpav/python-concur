@@ -14,4 +14,4 @@ def app():
 
 
 if __name__ == "__main__":
-    window.main(app(), "Hello World", 500, 500)
+    window.main("Keypress", app(), 500, 500)
