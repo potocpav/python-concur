@@ -37,9 +37,9 @@ cd python-concur
 Install a forked version of PyImGui from a submodule, then install Concur itself:
 
 ```sh
-make -Cpyimgui build
-pip install -epyimgui[glfw] --user
-pip install -e. --user
+make -C pyimgui build
+pip install -e pyimgui[glfw]
+pip install -e .
 ```
 
 Run the examples to verify the installation:
