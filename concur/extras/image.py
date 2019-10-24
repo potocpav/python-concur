@@ -4,7 +4,6 @@ import copy
 
 import imgui
 from OpenGL.GL import *
-import numpy as np
 from concur.integrations import replace_texture
 
 
