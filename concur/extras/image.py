@@ -4,7 +4,7 @@ import copy
 
 import imgui
 from OpenGL.GL import *
-from concur.integrations import replace_texture
+from concur.integrations import replace_texture, texture
 
 
 def _image_begin(state, width=None, height=None):
@@ -102,7 +102,7 @@ def image(name, state, width=None, height=None, content_gen=None):
 
         if content_gen is not None:
             try:
-                next(content_gen(im_to_screen, screen_to_im, hovered))
+                next(content_gen(dict(i2s=im_to_screen, s2i=screen_to_im, hovered=hovered)))
             except StopIteration as e:
                 _image_end()
                 return name, ('content', e.value)
@@ -116,10 +116,11 @@ def image(name, state, width=None, height=None, content_gen=None):
 
 class ViewState(object):
     def __init__(self, center=(0.5, 0.5), zoom=1, is_dragging=False):
+        import numpy as np
         self.default_center, self.default_zoom = center, zoom
         self.center, self.zoom, self.is_dragging = center, zoom, is_dragging
-        self.tex_id = None
-        self.tex_w, self.tex_h = None, None
+        self.tex_id = texture(np.zeros((1,1,3)))
+        self.tex_w, self.tex_h = 1, 1
 
     def change_image(self, image):
         self.tex_id = replace_texture(image, self.tex_id)

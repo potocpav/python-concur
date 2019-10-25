@@ -46,7 +46,8 @@ def multi_orr(widgets: Iterable[Widget]) -> Widget:
                 events.append(e.value)
             finally:
                 pop_id()
-        yield
+        if events == []:
+            yield
     return events
 
 
