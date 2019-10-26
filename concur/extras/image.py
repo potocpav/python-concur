@@ -109,11 +109,11 @@ def image(name, state, width=None, height=None, content_gen=None):
 
     `state` is an instance of `concur.extras.image.ViewState`. Width and
     height are optional; if not specified, the widget stretches to fill
-    the parent element.
+    the parent element. Returns a modified `ViewState` object on user interaction.
 
     `content_gen` is a function that takes as an argument a transformation
     object `concur.extras.image.TF`, and returns a widget that will be displayed as image
-    overlay.
+    overlay. Any events fired by the overlay widget are passed through unchanged.
 
     The transformation object can be used to display overlay on the image, positioned
     and scaled appropriately. It can be used explicitly, or passed as the `tf` argument to any
@@ -129,11 +129,11 @@ def image(name, state, width=None, height=None, content_gen=None):
                 next(content_gen(tf))
             except StopIteration as e:
                 _image_end()
-                return name, (None, e.value)
+                return e.value
 
         _image_end()
         if changed:
-            return name, (state, None)
+            return name, state
         else:
             yield
 

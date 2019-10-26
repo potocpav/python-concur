@@ -18,7 +18,7 @@ def app():
             [ c.text("Drag using right mouse button,\nscroll using mouse wheel.")
             , c.extras.image("Image", view, content_gen=overlay)
             ])
-        view = value[0] or view
+        view = value
         yield
 
 
