@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.1" />
 <title>concur.extras.image API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Scrollable, zoomable image widget with overlay support." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,17 +20,19 @@
 <h1 class="title">Module <code>concur.extras.image</code></h1>
 </header>
 <section id="section-intro">
+<p>Scrollable, zoomable image widget with overlay support.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from functools import partial
+<pre><code class="python">&#34;&#34;&#34; Scrollable, zoomable image widget with overlay support. &#34;&#34;&#34;
+from functools import partial
 import copy
 
+import numpy as np
 import imgui
 from OpenGL.GL import *
-import numpy as np
-from concur.integrations import replace_texture
+from concur.integrations import replace_texture, texture
 
 
 def _image_begin(state, width=None, height=None):
@@ -121,37 +123,77 @@ def _image_end():
     imgui.pop_clip_rect()
 
 
+class TF(object):
+    &#34;&#34;&#34; Transformation object, relating screen space to image space, both in pixels. &#34;&#34;&#34;
+    def __init__(self, i2s, s2i, hovered):
+        self.i2s = i2s
+        self.s2i = s2i
+        self.hovered = hovered
+
+
 def image(name, state, width=None, height=None, content_gen=None):
+    &#34;&#34;&#34; The image widget.
+
+    `state` is an instance of `concur.extras.image.ViewState`. Width and
+    height are optional; if not specified, the widget stretches to fill
+    the parent element.
+
+    `content_gen` is a function that takes as an argument a transformation
+    object `concur.extras.image.TF`, and returns a widget that will be displayed as image
+    overlay.
+
+    The transformation object can be used to display overlay on the image, positioned
+    and scaled appropriately. It can be used explicitly, or passed as the `tf` argument to any
+    Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
+    &#34;&#34;&#34;
     while True:
         changed, state, im_to_screen, screen_to_im, hovered = \
             _image_begin(state, width, height)
 
         if content_gen is not None:
             try:
-                next(content_gen(im_to_screen, screen_to_im, hovered))
+                tf = TF(im_to_screen, screen_to_im, hovered)
+                next(content_gen(tf))
             except StopIteration as e:
                 _image_end()
-                return name, (&#39;content&#39;, e.value)
+                return name, (None, e.value)
 
         _image_end()
         if changed:
-            return name, (&#39;view&#39;, state)
+            return name, (state, None)
         else:
             yield
 
 
 class ViewState(object):
-    def __init__(self, center=(0.5, 0.5), zoom=1, is_dragging=False):
+    &#34;&#34;&#34; Image state, contaiining pan and zoom information, and texture data. &#34;&#34;&#34;
+    def __init__(self, image=None, center=(0.5, 0.5), zoom=1):
+        &#34;&#34;&#34; Initialize view state.
+
+        `image` must be something convertible to `numpy.array`: greyscale or RGB, channel is
+        in the last dimension.
+        &#34;&#34;&#34;
+        import numpy as np
         self.default_center, self.default_zoom = center, zoom
-        self.center, self.zoom, self.is_dragging = center, zoom, is_dragging
-        self.tex_id = None
-        self.tex_w, self.tex_h = None, None
+        self.center, self.zoom = center, zoom
+        self.is_dragging = False
+        if image is None:
+            self.tex_id = texture(np.zeros((1,1,3)))
+            self.tex_w, self.tex_h = 1, 1
+        else:
+            self.tex_id = None
+            self.change_image(image)
 
     def change_image(self, image):
+        &#34;&#34;&#34; Change the image for a different one. `image` must be something convertible to
+        `numpy.array`: greyscale or RGB, channel is in the last dimension.
+        &#34;&#34;&#34;
+        image = np.array(image)
         self.tex_id = replace_texture(image, self.tex_id)
         self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 
     def reset_view(self):
+        &#34;&#34;&#34; Reset view so that the whole image fits into the widget. &#34;&#34;&#34;
         self.center, self.zoom = self.default_center, self.default_zoom</code></pre>
 </details>
 </section>
@@ -166,26 +208,50 @@ class ViewState(object):
 <span>def <span class="ident">image</span></span>(<span>name, state, width=None, height=None, content_gen=None)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>The image widget.</p>
+<p><code>state</code> is an instance of <a title="concur.extras.image.ViewState" href="#concur.extras.image.ViewState"><code>ViewState</code></a>. Width and
+height are optional; if not specified, the widget stretches to fill
+the parent element.</p>
+<p><code>content_gen</code> is a function that takes as an argument a transformation
+object <a title="concur.extras.image.TF" href="#concur.extras.image.TF"><code>TF</code></a>, and returns a widget that will be displayed as image
+overlay.</p>
+<p>The transformation object can be used to display overlay on the image, positioned
+and scaled appropriately. It can be used explicitly, or passed as the <code>tf</code> argument to any
+Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/image.py">image example</a> for example usage.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def image(name, state, width=None, height=None, content_gen=None):
+    &#34;&#34;&#34; The image widget.
+
+    `state` is an instance of `concur.extras.image.ViewState`. Width and
+    height are optional; if not specified, the widget stretches to fill
+    the parent element.
+
+    `content_gen` is a function that takes as an argument a transformation
+    object `concur.extras.image.TF`, and returns a widget that will be displayed as image
+    overlay.
+
+    The transformation object can be used to display overlay on the image, positioned
+    and scaled appropriately. It can be used explicitly, or passed as the `tf` argument to any
+    Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
+    &#34;&#34;&#34;
     while True:
         changed, state, im_to_screen, screen_to_im, hovered = \
             _image_begin(state, width, height)
 
         if content_gen is not None:
             try:
-                next(content_gen(im_to_screen, screen_to_im, hovered))
+                tf = TF(im_to_screen, screen_to_im, hovered)
+                next(content_gen(tf))
             except StopIteration as e:
                 _image_end()
-                return name, (&#39;content&#39;, e.value)
+                return name, (None, e.value)
 
         _image_end()
         if changed:
-            return name, (&#39;view&#39;, state)
+            return name, (state, None)
         else:
             yield</code></pre>
 </details>
@@ -195,28 +261,66 @@ class ViewState(object):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="concur.extras.image.ViewState"><code class="flex name class">
-<span>class <span class="ident">ViewState</span></span>
-<span>(</span><span>center=(0.5, 0.5), zoom=1, is_dragging=False)</span>
+<dt id="concur.extras.image.TF"><code class="flex name class">
+<span>class <span class="ident">TF</span></span>
+<span>(</span><span>i2s, s2i, hovered)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Transformation object, relating screen space to image space, both in pixels.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TF(object):
+    &#34;&#34;&#34; Transformation object, relating screen space to image space, both in pixels. &#34;&#34;&#34;
+    def __init__(self, i2s, s2i, hovered):
+        self.i2s = i2s
+        self.s2i = s2i
+        self.hovered = hovered</code></pre>
+</details>
+</dd>
+<dt id="concur.extras.image.ViewState"><code class="flex name class">
+<span>class <span class="ident">ViewState</span></span>
+<span>(</span><span>image=None, center=(0.5, 0.5), zoom=1)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Image state, contaiining pan and zoom information, and texture data. </p>
+<p>Initialize view state.</p>
+<p><a title="concur.extras.image.image" href="#concur.extras.image.image"><code>image()</code></a> must be something convertible to <code>numpy.array</code>: greyscale or RGB, channel is
+in the last dimension.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ViewState(object):
-    def __init__(self, center=(0.5, 0.5), zoom=1, is_dragging=False):
+    &#34;&#34;&#34; Image state, contaiining pan and zoom information, and texture data. &#34;&#34;&#34;
+    def __init__(self, image=None, center=(0.5, 0.5), zoom=1):
+        &#34;&#34;&#34; Initialize view state.
+
+        `image` must be something convertible to `numpy.array`: greyscale or RGB, channel is
+        in the last dimension.
+        &#34;&#34;&#34;
+        import numpy as np
         self.default_center, self.default_zoom = center, zoom
-        self.center, self.zoom, self.is_dragging = center, zoom, is_dragging
-        self.tex_id = None
-        self.tex_w, self.tex_h = None, None
+        self.center, self.zoom = center, zoom
+        self.is_dragging = False
+        if image is None:
+            self.tex_id = texture(np.zeros((1,1,3)))
+            self.tex_w, self.tex_h = 1, 1
+        else:
+            self.tex_id = None
+            self.change_image(image)
 
     def change_image(self, image):
+        &#34;&#34;&#34; Change the image for a different one. `image` must be something convertible to
+        `numpy.array`: greyscale or RGB, channel is in the last dimension.
+        &#34;&#34;&#34;
+        image = np.array(image)
         self.tex_id = replace_texture(image, self.tex_id)
         self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 
     def reset_view(self):
+        &#34;&#34;&#34; Reset view so that the whole image fits into the widget. &#34;&#34;&#34;
         self.center, self.zoom = self.default_center, self.default_zoom</code></pre>
 </details>
 <h3>Methods</h3>
@@ -225,12 +329,17 @@ class ViewState(object):
 <span>def <span class="ident">change_image</span></span>(<span>self, image)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Change the image for a different one. <a title="concur.extras.image.image" href="#concur.extras.image.image"><code>image()</code></a> must be something convertible to
+<code>numpy.array</code>: greyscale or RGB, channel is in the last dimension.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def change_image(self, image):
+    &#34;&#34;&#34; Change the image for a different one. `image` must be something convertible to
+    `numpy.array`: greyscale or RGB, channel is in the last dimension.
+    &#34;&#34;&#34;
+    image = np.array(image)
     self.tex_id = replace_texture(image, self.tex_id)
     self.tex_w, self.tex_h = image.shape[1], image.shape[0]</code></pre>
 </details>
@@ -239,12 +348,13 @@ class ViewState(object):
 <span>def <span class="ident">reset_view</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Reset view so that the whole image fits into the widget.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reset_view(self):
+    &#34;&#34;&#34; Reset view so that the whole image fits into the widget. &#34;&#34;&#34;
     self.center, self.zoom = self.default_center, self.default_zoom</code></pre>
 </details>
 </dd>
@@ -271,6 +381,9 @@ class ViewState(object):
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="concur.extras.image.TF" href="#concur.extras.image.TF">TF</a></code></h4>
+</li>
 <li>
 <h4><code><a title="concur.extras.image.ViewState" href="#concur.extras.image.ViewState">ViewState</a></code></h4>
 <ul class="">

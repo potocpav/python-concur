@@ -74,7 +74,8 @@ def multi_orr(widgets: Iterable[Widget]) -&gt; Widget:
                 events.append(e.value)
             finally:
                 pop_id()
-        yield
+        if events == []:
+            yield
     return events
 
 
@@ -353,7 +354,8 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
                 events.append(e.value)
             finally:
                 pop_id()
-        yield
+        if events == []:
+            yield
     return events</code></pre>
 </details>
 </dd>
