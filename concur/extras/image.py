@@ -1,7 +1,8 @@
-
+""" Scrollable, zoomable image widget with overlay support. """
 from functools import partial
 import copy
 
+import numpy as np
 import imgui
 from OpenGL.GL import *
 from concur.integrations import replace_texture, texture
@@ -95,36 +96,75 @@ def _image_end():
     imgui.pop_clip_rect()
 
 
+class TF(object):
+    """ Transformation object, relating screen space to image space, both in pixels. """
+    def __init__(self, i2s, s2i, hovered):
+        self.i2s = i2s
+        self.s2i = s2i
+        self.hovered = hovered
+
+
 def image(name, state, width=None, height=None, content_gen=None):
+    """ The image widget.
+
+    `state` is an instance of `concur.extras.image.ViewState`. Width and
+    height are optional; if not specified, the widget stretches to fill
+    the parent element.
+
+    `content_gen` is a function that takes as an argument a transformation
+    object `concur.extras.image.TF`, and returns a widget that will be displayed as image
+    overlay.
+
+    The transformation object can be used to display overlay on the image, positioned
+    and scaled appropriately. It can be used explicitly, or passed as the `tf` argument to any
+    Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
+    """
     while True:
         changed, state, im_to_screen, screen_to_im, hovered = \
             _image_begin(state, width, height)
 
         if content_gen is not None:
             try:
-                next(content_gen(dict(i2s=im_to_screen, s2i=screen_to_im, hovered=hovered)))
+                tf = TF(im_to_screen, screen_to_im, hovered)
+                next(content_gen(tf))
             except StopIteration as e:
                 _image_end()
-                return name, ('content', e.value)
+                return name, (None, e.value)
 
         _image_end()
         if changed:
-            return name, ('view', state)
+            return name, (state, None)
         else:
             yield
 
 
 class ViewState(object):
-    def __init__(self, center=(0.5, 0.5), zoom=1, is_dragging=False):
+    """ Image state, contaiining pan and zoom information, and texture data. """
+    def __init__(self, image=None, center=(0.5, 0.5), zoom=1):
+        """ Initialize view state.
+
+        `image` must be something convertible to `numpy.array`: greyscale or RGB, channel is
+        in the last dimension.
+        """
         import numpy as np
         self.default_center, self.default_zoom = center, zoom
-        self.center, self.zoom, self.is_dragging = center, zoom, is_dragging
-        self.tex_id = texture(np.zeros((1,1,3)))
-        self.tex_w, self.tex_h = 1, 1
+        self.center, self.zoom = center, zoom
+        self.is_dragging = False
+        if image is None:
+            self.tex_id = texture(np.zeros((1,1,3)))
+            self.tex_w, self.tex_h = 1, 1
+        else:
+            self.tex_id = None
+            self.change_image(image)
 
     def change_image(self, image):
+        """ Change the image for a different one. `image` must be something convertible to
+        `numpy.array`: greyscale or RGB, channel is in the last dimension.
+        """
+        image = np.array(image)
         self.tex_id = replace_texture(image, self.tex_id)
         self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 
     def reset_view(self):
+        """ Reset view so that the whole image fits into the widget. """
         self.center, self.zoom = self.default_center, self.default_zoom
