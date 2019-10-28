@@ -8,6 +8,7 @@ def overlay(tf):
     return c.orr(
         [ c.extras.geom.line(20, 20, 20, 200, (1,1,0,1), 2, tf=tf)
         , c.extras.geom.rect(40, 20, 100, 200, (1,1,0,1), 2, 5, tf=tf)
+        , c.extras.geom.circle(70, 110, 10, (0,1,0,1), 1, 16, tf=tf)
         ])
 
 
