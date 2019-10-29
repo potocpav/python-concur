@@ -3,7 +3,7 @@ import concur as c
 
 
 class TimeControls(object):
-    """ State for the :func:`time_controls` widget. """
+    """ State for the `concur.extras.time_controls.time_controls` widget. """
     def __init__(self, start, end, hotkey=None):
         """ Initialize. """
         self.frame_id = 0.0
@@ -16,7 +16,10 @@ class TimeControls(object):
 def time_controls(state):
     """ Experimental widget for image sequence or video seeking.
 
-    Takes :class:`TimeControls` as an argument. Returns a pair ``(state, frame_id)``, where ``state`` is the modified :class:`TimeControls` struct, and ``frame_id`` is an integer signalling a new position in the video frame, or ``None`` if user didn't seek. """
+    Takes `concur.extras.time_controls.TimeControls` as an argument. Returns a pair `(state, frame_id)`, where `state`
+    is the modified `TimeControls` struct, and `frame_id` is an integer signalling a new position in the video frame,
+    or `None` if user didn't seek.
+    """
     def clock():
         return "tick", None
         yield
