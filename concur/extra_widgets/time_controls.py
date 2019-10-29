@@ -1,3 +1,5 @@
+""" Experimental widget for image sequence or video seeking. """
+
 
 import concur as c
 
