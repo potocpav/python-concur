@@ -31,7 +31,7 @@ def time_controls(state):
             , c.button("Pause" if state.playing else "Play", tag="PlayPause")
             ])
         ]
-         + ([] if not state.hotkey else [c.extras.key_pressed("space", state.hotkey, True)])
+         + ([] if not state.hotkey else [c.key_pressed("space", state.hotkey, True)])
          + ([] if not state.playing else [clock()]))
 
     last_frame_id = state.frame_id
