@@ -36,23 +36,28 @@ def _image_begin(state, width=None, height=None):
     io = imgui.get_io()
     changed = False
 
-    def screen_to_gl(pos, tex, view, center, zoom, x):
-        tex_ratio = tex[0] / tex[1]
-        view_ratio = view[0] / view[1]
-        return max(1, view_ratio / tex_ratio) / zoom * ((x[0] - pos[0]) / view[0] - 0.5) + center[0], \
-               max(1, tex_ratio / view_ratio) / zoom * ((x[1] - pos[1]) / view[1] - 0.5) + center[1]
-
-    def gl_to_screen(pos, tex, view, center, zoom, x):
-        tex_ratio = tex[0] / tex[1]
-        view_ratio = view[0] / view[1]
-        return ((x[0] - center[0]) * zoom / max(1, view_ratio / tex_ratio) + 0.5) * view[0] + pos.x, \
-               ((x[1] - center[1]) * zoom / max(1, tex_ratio / view_ratio) + 0.5) * view[1] + pos.y
-
-    scr_to_gl = partial(screen_to_gl, pos, (state.tex_w, state.tex_h), (width, height), state.center, state.zoom)
-    gl_to_scr = partial(gl_to_screen, pos, (state.tex_w, state.tex_h), (width, height), state.center, state.zoom)
-
     tex_ratio = state.tex_w / state.tex_h
     view_ratio = width / height
+    fact_x = max(1, view_ratio / tex_ratio) / state.zoom
+    fact_y = max(1, tex_ratio / view_ratio) / state.zoom
+
+    scr_to_gl = np.array(
+        [ [fact_x / width,  0, state.center[0] - fact_x * (pos[0] / width + 0.5)]
+        , [0, fact_y / height, state.center[1] - fact_y * (pos[1] / height + 0.5)]
+        ])
+
+    gl_to_scr = np.array(
+        [ [width / fact_x,  0, (-state.center[0] / fact_x + 0.5) * width + pos[0]]
+        , [0, height / fact_y, (-state.center[1] / fact_y + 0.5) * height + pos[1]]
+        ])
+    # print('real\n', gl_to_scr)
+    # def gl_to_screen(view, center, x):
+    #     return ((x[0] - center[0]) / fact_x + 0.5) * view[0] + pos.x, \
+    #            ((x[1] - center[1]) / fact_y + 0.5) * view[1] + pos.y
+    #
+    # gl_to_scr = partial(gl_to_screen, (width, height), state.center)
+    # print('fake\n', np.linalg.inv(np.row_stack([scr_to_gl, [0,0,1]])))
+
     pixel = max(width / state.tex_w, height / state.tex_h) * state.zoom
     unit_x = min(width, height * tex_ratio) * state.zoom
     unit_y = min(height, width / tex_ratio) * state.zoom
@@ -71,28 +76,31 @@ def _image_begin(state, width=None, height=None):
         changed |= True
 
     if is_hovered:
-        mx, my = scr_to_gl(io.mouse_pos)
+        mx, my = np.matmul(scr_to_gl, [*io.mouse_pos, 1])
         factor = 1.3 ** io.mouse_wheel
         state.zoom *= factor
         state.center = state.center[0] + (mx - state.center[0]) * (1 - 1 / factor), \
                  state.center[1] + (my - state.center[1]) * (1 - 1 / factor)
         changed |= io.mouse_wheel != 0
 
-    uva = scr_to_gl(pos)
-    uvb = scr_to_gl((pos[0] + width, pos[1] + height))
+    uva = np.matmul(scr_to_gl,  [*pos, 1])
+    uvb = np.matmul(scr_to_gl,  [pos[0] + width, pos[1] + height, 1])
+
+    # print(tuple(uva), uvb)
 
     if state.tex_id is not None:
-        draw_list.add_image(state.tex_id, (pos.x, pos.y), (pos.x + width, pos.y + height), uva, uvb);
+        draw_list.add_image(state.tex_id, (pos.x, pos.y), (pos.x + width, pos.y + height), tuple(uva), tuple(uvb));
 
     imgui.push_clip_rect(*pos, pos[0] + width, pos[1] + height, True)
 
     return \
         changed, \
         state, \
-        lambda x: gl_to_scr((x[0] / state.tex_w, x[1] / state.tex_h)), \
-        lambda x: [a*b for a, b in zip(scr_to_gl(x), [state.tex_w, state.tex_h])], \
+        gl_to_scr / [state.tex_w, state.tex_h, 1], \
+        scr_to_gl * [[state.tex_w], [state.tex_h]], \
         is_hovered
-
+        # lambda x: gl_to_scr((x[0] / state.tex_w, x[1] / state.tex_h)), \
+        # [a*b for a, b in zip(scr_to_gl(x), [state.tex_w, state.tex_h])], \
 
 def _image_end():
     imgui.pop_clip_rect()
