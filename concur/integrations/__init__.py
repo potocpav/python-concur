@@ -3,7 +3,7 @@
 
 import concur.integrations.glfw
 import concur.integrations.opengl
-# 
+#
 # __all__ = glfw.__all__ + opengl.__all__
 
 from .glfw import *

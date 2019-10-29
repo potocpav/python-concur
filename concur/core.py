@@ -76,8 +76,8 @@ def lift(f: Callable[..., Any], *args, **argv) -> Widget:
 def interactive_elem(elem, name, *args, **kwargs):
     """ Function useful for wrapping a wide range of ImGui widgets.
 
-    Elements which take ``name`` as the first argument and return
-    a pair ``(changed, value)`` can be wrapped using this function.
+    Elements which take `name` as the first argument and return
+    a pair `(changed, value)` can be wrapped using this function.
     """
     if 'tag' in kwargs:
         tag = kwargs['tag']
@@ -181,10 +181,10 @@ def remote_widget(future):
     return RemoteAction(future, q), value
 
 
-def fork_action(future, rest):
-    """ A common pattern - running a long running action and keeping the GUI responsive.
+def fork_action(future, rest_gen):
+    """ A common pattern - running a long running action (`future`) and keeping the GUI (`rest`) responsive.
 
     Because the action can't be restarted on every gui event, we must *fork* it off in the beginning.
     """
     action, value_gen = remote_widget(future)
-    return orr([action, rest(value_gen)])
+    return orr([action, rest_gen(value_gen)])

@@ -7,11 +7,18 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9)):
-    """ Create a GLFW window, spin up the main loop, and display a given widget inside. """
+def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+    """ Create a GLFW window, spin up the main loop, and display a given widget inside.
+
+    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
+    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
+    with the GLFW window.
+    """
     imgui.create_context()
     window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)
+    if pass_window_to_widget:
+        widget = widget(window)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
