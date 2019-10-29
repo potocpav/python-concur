@@ -79,7 +79,8 @@ if tag == &quot;Second&quot;:
 <p><strong>Asynchronous computations</strong></p>
 <p>In other versions of Concur, all widgets are triggered asynchronously. This may not be practical in Python, due to a limitation of async generators: they can't <code>return</code>, they only <code>yield</code>. Synchronous generators are used instead, which means that all widget code is run in the main thread. Asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the <code>block</code> function. See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/timers.py">timers example</a> for details.</p>
 <h1 id="api">API</h1>
-<p>All the functions and classes from <code>concur.core</code> and <code>concur.widgets</code> are re-exported in the <code>concur</code> module. The most convenient way to access them is by importing <code>concur</code> qualified:</p>
+<p>All the functions and classes from <code>concur.core</code>, <code>concur.widgets</code>, and <code>concur.extra_widgets</code> are re-exported in the
+<code>concur</code> module. The most convenient way to access them is by importing <code>concur</code> qualified:</p>
 <pre><code class="python">import concur as c
 </code></pre>
 <details class="source">
@@ -97,7 +98,8 @@ if tag == &quot;Second&quot;:
 
 # API
 
-All the functions and classes from `concur.core` and `concur.widgets` are re-exported in the `concur` module. The most convenient way to access them is by importing `concur` qualified:
+All the functions and classes from `concur.core`, `concur.widgets`, and `concur.extra_widgets` are re-exported in the
+`concur` module. The most convenient way to access them is by importing `concur` qualified:
 
 ```python
 import concur as c
