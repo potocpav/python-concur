@@ -37,7 +37,7 @@ such as buttons.
 import imgui
 
 
-def line(x0, y0, x1, y1, color, width=1, tf=None):
+def line(x0, y0, x1, y1, color, thickness=1, tf=None):
     &#34;&#34;&#34; Line connecting two points.
 
     For color, use a RGBA tuple with values between 0 and 1.
@@ -46,11 +46,11 @@ def line(x0, y0, x1, y1, color, width=1, tf=None):
         if tf is not None:
             [x0, y0], [x1, y1] = tf.i2s([x0, y0]), tf.i2s([x1, y1])
         draw_list = imgui.get_window_draw_list()
-        draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), width)
+        draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), thickness)
         yield
 
 
-def rect(x0, y0, x1, y1, color, width=1, rounding=0, tf=None):
+def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
     &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners.
 
     For color, use a RGBA tuple with values between 0 and 1.
@@ -59,7 +59,20 @@ def rect(x0, y0, x1, y1, color, width=1, rounding=0, tf=None):
         if tf is not None:
             [x0, y0], [x1, y1] = tf.i2s([x0, y0]), tf.i2s([x1, y1])
         draw_list = imgui.get_window_draw_list()
-        draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, width)
+        draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, thickness)
+        yield
+
+
+def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
+    &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners.
+
+    For color, use a RGBA tuple with values between 0 and 1.
+    &#34;&#34;&#34;
+    while(True):
+        if tf is not None:
+            [cx, cy] = tf.i2s([cx, cy])
+        draw_list = imgui.get_window_draw_list()
+        draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
         yield
 
 
@@ -111,8 +124,31 @@ def poly(state, im2scr=None, scr2im=None):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="concur.extras.geom.circle"><code class="name flex">
+<span>def <span class="ident">circle</span></span>(<span>cx, cy, radius, color, thickness=1, num_segments=16, tf=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Straight non-filled rectangle specified by its two corners.</p>
+<p>For color, use a RGBA tuple with values between 0 and 1.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
+    &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners.
+
+    For color, use a RGBA tuple with values between 0 and 1.
+    &#34;&#34;&#34;
+    while(True):
+        if tf is not None:
+            [cx, cy] = tf.i2s([cx, cy])
+        draw_list = imgui.get_window_draw_list()
+        draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
+        yield</code></pre>
+</details>
+</dd>
 <dt id="concur.extras.geom.line"><code class="name flex">
-<span>def <span class="ident">line</span></span>(<span>x0, y0, x1, y1, color, width=1, tf=None)</span>
+<span>def <span class="ident">line</span></span>(<span>x0, y0, x1, y1, color, thickness=1, tf=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Line connecting two points.</p>
@@ -121,7 +157,7 @@ def poly(state, im2scr=None, scr2im=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def line(x0, y0, x1, y1, color, width=1, tf=None):
+<pre><code class="python">def line(x0, y0, x1, y1, color, thickness=1, tf=None):
     &#34;&#34;&#34; Line connecting two points.
 
     For color, use a RGBA tuple with values between 0 and 1.
@@ -130,7 +166,7 @@ def poly(state, im2scr=None, scr2im=None):
         if tf is not None:
             [x0, y0], [x1, y1] = tf.i2s([x0, y0]), tf.i2s([x1, y1])
         draw_list = imgui.get_window_draw_list()
-        draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), width)
+        draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), thickness)
         yield</code></pre>
 </details>
 </dd>
@@ -152,7 +188,7 @@ def poly(state, im2scr=None, scr2im=None):
 </details>
 </dd>
 <dt id="concur.extras.geom.rect"><code class="name flex">
-<span>def <span class="ident">rect</span></span>(<span>x0, y0, x1, y1, color, width=1, rounding=0, tf=None)</span>
+<span>def <span class="ident">rect</span></span>(<span>x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Straight non-filled rectangle specified by its two corners.</p>
@@ -161,7 +197,7 @@ def poly(state, im2scr=None, scr2im=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rect(x0, y0, x1, y1, color, width=1, rounding=0, tf=None):
+<pre><code class="python">def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
     &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners.
 
     For color, use a RGBA tuple with values between 0 and 1.
@@ -170,7 +206,7 @@ def poly(state, im2scr=None, scr2im=None):
         if tf is not None:
             [x0, y0], [x1, y1] = tf.i2s([x0, y0]), tf.i2s([x1, y1])
         draw_list = imgui.get_window_draw_list()
-        draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, width)
+        draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, thickness)
         yield</code></pre>
 </details>
 </dd>
@@ -192,6 +228,7 @@ def poly(state, im2scr=None, scr2im=None):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="concur.extras.geom.circle" href="#concur.extras.geom.circle">circle</a></code></li>
 <li><code><a title="concur.extras.geom.line" href="#concur.extras.geom.line">line</a></code></li>
 <li><code><a title="concur.extras.geom.poly" href="#concur.extras.geom.poly">poly</a></code></li>
 <li><code><a title="concur.extras.geom.rect" href="#concur.extras.geom.rect">rect</a></code></li>
