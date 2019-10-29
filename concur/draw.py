@@ -46,3 +46,16 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
         draw_list = imgui.get_window_draw_list()
         draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
         yield
+
+
+def text(x, y, color, string, tf=None):
+    """ Text, using the default font and font size.
+
+    For color, use a RGBA tuple with values between 0 and 1.
+    """
+    while(True):
+        if tf is not None:
+            x, y = np.matmul(tf.i2s, [x, y, 1])
+        draw_list = imgui.get_window_draw_list()
+        draw_list.add_text(x, y, imgui.get_color_u32_rgba(*color), string)
+        yield
