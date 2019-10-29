@@ -32,11 +32,18 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9)):
-    &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside. &#34;&#34;&#34;
+def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+    &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
+
+    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
+    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
+    with the GLFW window.
+    &#34;&#34;&#34;
     imgui.create_context()
     window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)
+    if pass_window_to_widget:
+        widget = widget(window)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
@@ -145,19 +152,29 @@ def create_window(window_name, width, height, maximized):
 </details>
 </dd>
 <dt id="concur.integrations.glfw.main"><code class="name flex">
-<span>def <span class="ident">main</span></span>(<span>name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9))</span>
+<span>def <span class="ident">main</span></span>(<span>name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a GLFW window, spin up the main loop, and display a given widget inside.</p></section>
+<section class="desc"><p>Create a GLFW window, spin up the main loop, and display a given widget inside.</p>
+<p>If <code>pass_window_to_widget</code> is <code>True</code>, the <code>widget</code> parameter must be a function which takes a GLFW window handle
+and returns a widget. Else, <code>widget</code> is just a widget. This is useful if the widget should, for example, scale
+with the GLFW window.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9)):
-    &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside. &#34;&#34;&#34;
+<pre><code class="python">def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+    &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
+
+    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
+    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
+    with the GLFW window.
+    &#34;&#34;&#34;
     imgui.create_context()
     window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)
+    if pass_window_to_widget:
+        widget = widget(window)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()

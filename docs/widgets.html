@@ -21,8 +21,11 @@
 </header>
 <section id="section-intro">
 <p>A collection of widgets based off of ImGui.</p>
-<p>By convention, all widgets take a string identifier as the first parameter, and return the <code>(identifier, value)</code> pair. This is done to increase convenience, as Python syntax for mapping values is a bit busy.</p>
-<p>Most widgets are just thin wrappers over <a href="https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html">widgets in PyImGui</a>. If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing generators, or by using helper functions <code>concur.core.interactive_elem</code> or <code>concur.core.lift</code> from <code>concur.core</code>.</p>
+<p>By convention, all widgets take a string identifier as the first parameter, and return the <code>(identifier, value)</code> pair.
+This is done to increase convenience, as Python syntax for mapping values is a bit busy.</p>
+<p>Most widgets are just thin wrappers over <a href="https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html">widgets in PyImGui</a>.
+If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing
+generators, or by using helper functions <a title="concur.core.interactive_elem" href="core.html#concur.core.interactive_elem"><code>interactive_elem()</code></a> or <a title="concur.core.lift" href="core.html#concur.core.lift"><code>lift()</code></a> from <a title="concur.core" href="core.html"><code>concur.core</code></a>.</p>
 <p>Some widgets don't do any drawing and serve purely for control flow, or user interaction.</p>
 <p>All of the functions in this module are re-exported in the root module for convenience.</p>
 <details class="source">
@@ -31,9 +34,12 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34; A collection of widgets based off of ImGui.
 
-By convention, all widgets take a string identifier as the first parameter, and return the ``(identifier, value)`` pair. This is done to increase convenience, as Python syntax for mapping values is a bit busy.
+By convention, all widgets take a string identifier as the first parameter, and return the `(identifier, value)` pair.
+This is done to increase convenience, as Python syntax for mapping values is a bit busy.
 
-Most widgets are just thin wrappers over [widgets in PyImGui](https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html). If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing generators, or by using helper functions `concur.core.interactive_elem` or `concur.core.lift` from `concur.core`.
+Most widgets are just thin wrappers over [widgets in PyImGui](https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html).
+If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing
+generators, or by using helper functions `concur.core.interactive_elem` or `concur.core.lift` from `concur.core`.
 
 Some widgets don&#39;t do any drawing and serve purely for control flow, or user interaction.
 
@@ -48,7 +54,7 @@ from concur.core import orr, lift, Widget, interactive_elem
 
 
 def orr_same_line(widgets):
-    &#34;&#34;&#34; Use instead of :func:`orr` to layout child widgets horizontally.
+    &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally.
     &#34;&#34;&#34;
     def intersperse(delimiter, seq):
         &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
@@ -63,7 +69,7 @@ def window(title: str,
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -&gt; Widget:
-    &#34;&#34;&#34; Create a window with a given list of ``widgets`` inside. &#34;&#34;&#34;
+    &#34;&#34;&#34; Create a window with a given list of `widgets` inside. &#34;&#34;&#34;
     while True:
         imgui.push_id(title)
         if position is not None:
@@ -97,7 +103,7 @@ def child(name, width, height, border=False, flags=0, widgets=[]):
 
 
 def button(text, tag=None):
-    &#34;&#34;&#34; Button. Returns ``(text, value)`` on click, or ``(tag, value)`` if tag is specified. &#34;&#34;&#34;
+    &#34;&#34;&#34; Button. Returns `(text, value)` on click, or `(tag, value)` if tag is specified. &#34;&#34;&#34;
     while not imgui.button(text):
         yield
     return tag if tag is not None else text, None
@@ -123,7 +129,7 @@ def input_text(name, value, buffer_length, tag=None):
 def key_pressed(name, key_index, repeat=True):
     &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
 
-    Key codes are specified by the integration layer, e.g. ``glfw.KEY_A``.
+    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
     &#34;&#34;&#34;
     while True:
         if imgui.is_key_pressed(key_index, repeat):
@@ -154,7 +160,7 @@ def spacing():
 def same_line():
     &#34;&#34;&#34; Call between widgets to layout them horizontally.
 
-    Consider using :func:`orr_same_line` instead.
+    Consider using `concur.widgets.orr_same_line` instead.
     &#34;&#34;&#34;
     return lift(imgui.same_line)
 
@@ -168,11 +174,11 @@ def drag_float(label, value, *args, **kwargs):
 
 def slider_int(label, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Int selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_int, name, min_value, max_value, *args, **kwargs)
+    return interactive_elem(imgui.slider_int, label, min_value, max_value, *args, **kwargs)
 
 def slider_float(label, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_float, name, min_value, max_value, *args, **kwargs)</code></pre>
+    return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)</code></pre>
 </details>
 </section>
 <section>
@@ -192,7 +198,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def button(text, tag=None):
-    &#34;&#34;&#34; Button. Returns ``(text, value)`` on click, or ``(tag, value)`` if tag is specified. &#34;&#34;&#34;
+    &#34;&#34;&#34; Button. Returns `(text, value)` on click, or `(tag, value)` if tag is specified. &#34;&#34;&#34;
     while not imgui.button(text):
         yield
     return tag if tag is not None else text, None</code></pre>
@@ -282,7 +288,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 <pre><code class="python">def key_pressed(name, key_index, repeat=True):
     &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
 
-    Key codes are specified by the integration layer, e.g. ``glfw.KEY_A``.
+    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
     &#34;&#34;&#34;
     while True:
         if imgui.is_key_pressed(key_index, repeat):
@@ -294,13 +300,13 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 <span>def <span class="ident">orr_same_line</span></span>(<span>widgets)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Use instead of :func:<code>orr</code> to layout child widgets horizontally.</p></section>
+<section class="desc"><p>Use instead of <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> to layout child widgets horizontally.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def orr_same_line(widgets):
-    &#34;&#34;&#34; Use instead of :func:`orr` to layout child widgets horizontally.
+    &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally.
     &#34;&#34;&#34;
     def intersperse(delimiter, seq):
         &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
@@ -331,7 +337,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 </code></dt>
 <dd>
 <section class="desc"><p>Call between widgets to layout them horizontally.</p>
-<p>Consider using :func:<a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line"><code>orr_same_line()</code></a> instead.</p></section>
+<p>Consider using <a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line"><code>orr_same_line()</code></a> instead.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -339,7 +345,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 <pre><code class="python">def same_line():
     &#34;&#34;&#34; Call between widgets to layout them horizontally.
 
-    Consider using :func:`orr_same_line` instead.
+    Consider using `concur.widgets.orr_same_line` instead.
     &#34;&#34;&#34;
     return lift(imgui.same_line)</code></pre>
 </details>
@@ -369,7 +375,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 </summary>
 <pre><code class="python">def slider_float(label, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_float, name, min_value, max_value, *args, **kwargs)</code></pre>
+    return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.slider_int"><code class="name flex">
@@ -383,7 +389,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 </summary>
 <pre><code class="python">def slider_int(label, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Int selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_int, name, min_value, max_value, *args, **kwargs)</code></pre>
+    return interactive_elem(imgui.slider_int, label, min_value, max_value, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.spacing"><code class="name flex">
@@ -456,7 +462,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -&gt; Widget:
-    &#34;&#34;&#34; Create a window with a given list of ``widgets`` inside. &#34;&#34;&#34;
+    &#34;&#34;&#34; Create a window with a given list of `widgets` inside. &#34;&#34;&#34;
     while True:
         imgui.push_id(title)
         if position is not None:

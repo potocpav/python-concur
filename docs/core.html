@@ -104,8 +104,8 @@ def lift(f: Callable[..., Any], *args, **argv) -&gt; Widget:
 def interactive_elem(elem, name, *args, **kwargs):
     &#34;&#34;&#34; Function useful for wrapping a wide range of ImGui widgets.
 
-    Elements which take ``name`` as the first argument and return
-    a pair ``(changed, value)`` can be wrapped using this function.
+    Elements which take `name` as the first argument and return
+    a pair `(changed, value)` can be wrapped using this function.
     &#34;&#34;&#34;
     if &#39;tag&#39; in kwargs:
         tag = kwargs[&#39;tag&#39;]
@@ -209,13 +209,13 @@ def remote_widget(future):
     return RemoteAction(future, q), value
 
 
-def fork_action(future, rest):
-    &#34;&#34;&#34; A common pattern - running a long running action and keeping the GUI responsive.
+def fork_action(future, rest_gen):
+    &#34;&#34;&#34; A common pattern - running a long running action (`future`) and keeping the GUI (`rest`) responsive.
 
     Because the action can&#39;t be restarted on every gui event, we must *fork* it off in the beginning.
     &#34;&#34;&#34;
     action, value_gen = remote_widget(future)
-    return orr([action, rest(value_gen)])</code></pre>
+    return orr([action, rest_gen(value_gen)])</code></pre>
 </details>
 </section>
 <section>
@@ -252,22 +252,22 @@ remaining arguments are passed to said function.</p></section>
 </details>
 </dd>
 <dt id="concur.core.fork_action"><code class="name flex">
-<span>def <span class="ident">fork_action</span></span>(<span>future, rest)</span>
+<span>def <span class="ident">fork_action</span></span>(<span>future, rest_gen)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>A common pattern - running a long running action and keeping the GUI responsive.</p>
+<section class="desc"><p>A common pattern - running a long running action (<code>future</code>) and keeping the GUI (<code>rest</code>) responsive.</p>
 <p>Because the action can't be restarted on every gui event, we must <em>fork</em> it off in the beginning.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def fork_action(future, rest):
-    &#34;&#34;&#34; A common pattern - running a long running action and keeping the GUI responsive.
+<pre><code class="python">def fork_action(future, rest_gen):
+    &#34;&#34;&#34; A common pattern - running a long running action (`future`) and keeping the GUI (`rest`) responsive.
 
     Because the action can&#39;t be restarted on every gui event, we must *fork* it off in the beginning.
     &#34;&#34;&#34;
     action, value_gen = remote_widget(future)
-    return orr([action, rest(value_gen)])</code></pre>
+    return orr([action, rest_gen(value_gen)])</code></pre>
 </details>
 </dd>
 <dt id="concur.core.interactive_elem"><code class="name flex">
@@ -284,8 +284,8 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
 <pre><code class="python">def interactive_elem(elem, name, *args, **kwargs):
     &#34;&#34;&#34; Function useful for wrapping a wide range of ImGui widgets.
 
-    Elements which take ``name`` as the first argument and return
-    a pair ``(changed, value)`` can be wrapped using this function.
+    Elements which take `name` as the first argument and return
+    a pair `(changed, value)` can be wrapped using this function.
     &#34;&#34;&#34;
     if &#39;tag&#39; in kwargs:
         tag = kwargs[&#39;tag&#39;]
