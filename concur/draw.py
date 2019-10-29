@@ -48,6 +48,19 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
         yield
 
 
+def polyline(points, color, closed=False, thickness=1, tf=None):
+    """ Polygonal line or a closed polygon.
+
+    For color, use a RGBA tuple with values between 0 and 1.
+    """
+    while(True):
+        if tf is not None:
+            points = [list(np.matmul(tf.i2s, [x, y, 1])) for x, y in points]
+        draw_list = imgui.get_window_draw_list()
+        draw_list.add_polyline(points, imgui.get_color_u32_rgba(*color), closed, thickness)
+        yield
+
+
 def text(x, y, color, string, tf=None):
     """ Text, using the default font and font size.
 
