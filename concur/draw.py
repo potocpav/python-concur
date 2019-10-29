@@ -1,4 +1,4 @@
-""" Passive geometric shape widgets to be drawn as image overlay, or on their own.
+""" Passive geometric shape widgets to be drawn as `concur.extra_widgets.image.image` overlay, or on their own.
 
 All these widgets have the following in common:
 
@@ -14,10 +14,7 @@ import imgui
 
 
 def line(x0, y0, x1, y1, color, thickness=1, tf=None):
-    """ Line connecting two points.
-
-    For color, use a RGBA tuple with values between 0 and 1.
-    """
+    """ Line connecting two points. """
     while(True):
         if tf is not None:
             [x0, y0], [x1, y1] = np.matmul(tf.i2s, [x0, y0, 1]), np.matmul(tf.i2s, [x1, y1, 1])
@@ -27,10 +24,7 @@ def line(x0, y0, x1, y1, color, thickness=1, tf=None):
 
 
 def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
-    """ Straight non-filled rectangle specified by its two corners.
-
-    For color, use a RGBA tuple with values between 0 and 1.
-    """
+    """ Straight non-filled rectangle specified by its two corners. """
     while(True):
         if tf is not None:
             [x0, y0], [x1, y1] = np.matmul(tf.i2s, [x0, y0, 1]), np.matmul(tf.i2s, [x1, y1, 1])
@@ -40,10 +34,7 @@ def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
 
 
 def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
-    """ Circle specified by its center and radius.
-
-    For color, use a RGBA tuple with values between 0 and 1.
-    """
+    """ Circle specified by its center and radius. """
     while(True):
         if tf is not None:
             assert np.allclose(tf.i2s[0,0], tf.i2s[1,1])
@@ -54,10 +45,7 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
 
 
 def polyline(points, color, closed=False, thickness=1, tf=None):
-    """ Polygonal line or a closed polygon.
-
-    For color, use a RGBA tuple with values between 0 and 1.
-    """
+    """ Polygonal line or a closed polygon. """
     while(True):
         if tf is not None:
             points = [list(np.matmul(tf.i2s, [x, y, 1])) for x, y in points]
@@ -67,10 +55,7 @@ def polyline(points, color, closed=False, thickness=1, tf=None):
 
 
 def text(x, y, color, string, tf=None):
-    """ Text, using the default font and font size.
-
-    For color, use a RGBA tuple with values between 0 and 1.
-    """
+    """ Text, using the default font and font size. """
     while(True):
         if tf is not None:
             x, y = np.matmul(tf.i2s, [x, y, 1])
