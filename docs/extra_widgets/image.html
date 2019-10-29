@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.1" />
-<title>concur.extras.image API documentation</title>
+<title>concur.extra_widgets.image API documentation</title>
 <meta name="description" content="Scrollable, zoomable image widget with overlay support." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>concur.extras.image</code></h1>
+<h1 class="title">Module <code>concur.extra_widgets.image</code></h1>
 </header>
 <section id="section-intro">
 <p>Scrollable, zoomable image widget with overlay support.</p>
@@ -153,12 +153,12 @@ class TF(object):
 def image(name, state, width=None, height=None, content_gen=None):
     &#34;&#34;&#34; The image widget.
 
-    `state` is an instance of `concur.extras.image.ViewState`. Width and
+    `state` is an instance of `concur.extra_widgets.image.ViewState`. Width and
     height are optional; if not specified, the widget stretches to fill
     the parent element. Returns a modified `ViewState` object on user interaction.
 
     `content_gen` is a function that takes as an argument a transformation
-    object `concur.extras.image.TF`, and returns a widget that will be displayed as image
+    object `concur.extra_widgets.image.TF`, and returns a widget that will be displayed as image
     overlay. Any events fired by the overlay widget are passed through unchanged.
 
     The transformation object can be used to display overlay on the image, positioned
@@ -223,16 +223,16 @@ class ViewState(object):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="concur.extras.image.image"><code class="name flex">
+<dt id="concur.extra_widgets.image.image"><code class="name flex">
 <span>def <span class="ident">image</span></span>(<span>name, state, width=None, height=None, content_gen=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>The image widget.</p>
-<p><code>state</code> is an instance of <a title="concur.extras.image.ViewState" href="#concur.extras.image.ViewState"><code>ViewState</code></a>. Width and
+<p><code>state</code> is an instance of <a title="concur.extra_widgets.image.ViewState" href="#concur.extra_widgets.image.ViewState"><code>ViewState</code></a>. Width and
 height are optional; if not specified, the widget stretches to fill
-the parent element. Returns a modified <a title="concur.extras.image.ViewState" href="#concur.extras.image.ViewState"><code>ViewState</code></a> object on user interaction.</p>
+the parent element. Returns a modified <a title="concur.extra_widgets.image.ViewState" href="#concur.extra_widgets.image.ViewState"><code>ViewState</code></a> object on user interaction.</p>
 <p><code>content_gen</code> is a function that takes as an argument a transformation
-object <a title="concur.extras.image.TF" href="#concur.extras.image.TF"><code>TF</code></a>, and returns a widget that will be displayed as image
+object <a title="concur.extra_widgets.image.TF" href="#concur.extra_widgets.image.TF"><code>TF</code></a>, and returns a widget that will be displayed as image
 overlay. Any events fired by the overlay widget are passed through unchanged.</p>
 <p>The transformation object can be used to display overlay on the image, positioned
 and scaled appropriately. It can be used explicitly, or passed as the <code>tf</code> argument to any
@@ -244,12 +244,12 @@ Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/
 <pre><code class="python">def image(name, state, width=None, height=None, content_gen=None):
     &#34;&#34;&#34; The image widget.
 
-    `state` is an instance of `concur.extras.image.ViewState`. Width and
+    `state` is an instance of `concur.extra_widgets.image.ViewState`. Width and
     height are optional; if not specified, the widget stretches to fill
     the parent element. Returns a modified `ViewState` object on user interaction.
 
     `content_gen` is a function that takes as an argument a transformation
-    object `concur.extras.image.TF`, and returns a widget that will be displayed as image
+    object `concur.extra_widgets.image.TF`, and returns a widget that will be displayed as image
     overlay. Any events fired by the overlay widget are passed through unchanged.
 
     The transformation object can be used to display overlay on the image, positioned
@@ -280,7 +280,7 @@ Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="concur.extras.image.TF"><code class="flex name class">
+<dt id="concur.extra_widgets.image.TF"><code class="flex name class">
 <span>class <span class="ident">TF</span></span>
 <span>(</span><span>i2s, s2i, hovered)</span>
 </code></dt>
@@ -332,14 +332,14 @@ such as draggable widgets.</dd>
         self.hovered = hovered</code></pre>
 </details>
 </dd>
-<dt id="concur.extras.image.ViewState"><code class="flex name class">
+<dt id="concur.extra_widgets.image.ViewState"><code class="flex name class">
 <span>class <span class="ident">ViewState</span></span>
 <span>(</span><span>image=None, center=(0.5, 0.5), zoom=1)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Image state, contaiining pan and zoom information, and texture data. </p>
 <p>Initialize view state.</p>
-<p><a title="concur.extras.image.image" href="#concur.extras.image.image"><code>image()</code></a> must be something convertible to <code>numpy.array</code>: greyscale or RGB, channel is
+<p><a title="concur.extra_widgets.image.image" href="#concur.extra_widgets.image.image"><code>image()</code></a> must be something convertible to <code>numpy.array</code>: greyscale or RGB, channel is
 in the last dimension.</p></section>
 <details class="source">
 <summary>
@@ -378,11 +378,11 @@ in the last dimension.</p></section>
 </details>
 <h3>Methods</h3>
 <dl>
-<dt id="concur.extras.image.ViewState.change_image"><code class="name flex">
+<dt id="concur.extra_widgets.image.ViewState.change_image"><code class="name flex">
 <span>def <span class="ident">change_image</span></span>(<span>self, image)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Change the image for a different one. <a title="concur.extras.image.image" href="#concur.extras.image.image"><code>image()</code></a> must be something convertible to
+<section class="desc"><p>Change the image for a different one. <a title="concur.extra_widgets.image.image" href="#concur.extra_widgets.image.image"><code>image()</code></a> must be something convertible to
 <code>numpy.array</code>: greyscale or RGB, channel is in the last dimension.</p></section>
 <details class="source">
 <summary>
@@ -397,7 +397,7 @@ in the last dimension.</p></section>
     self.tex_w, self.tex_h = image.shape[1], image.shape[0]</code></pre>
 </details>
 </dd>
-<dt id="concur.extras.image.ViewState.reset_view"><code class="name flex">
+<dt id="concur.extra_widgets.image.ViewState.reset_view"><code class="name flex">
 <span>def <span class="ident">reset_view</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -424,24 +424,24 @@ in the last dimension.</p></section>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="concur.extras" href="index.html">concur.extras</a></code></li>
+<li><code><a title="concur.extra_widgets" href="index.html">concur.extra_widgets</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="concur.extras.image.image" href="#concur.extras.image.image">image</a></code></li>
+<li><code><a title="concur.extra_widgets.image.image" href="#concur.extra_widgets.image.image">image</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="concur.extras.image.TF" href="#concur.extras.image.TF">TF</a></code></h4>
+<h4><code><a title="concur.extra_widgets.image.TF" href="#concur.extra_widgets.image.TF">TF</a></code></h4>
 </li>
 <li>
-<h4><code><a title="concur.extras.image.ViewState" href="#concur.extras.image.ViewState">ViewState</a></code></h4>
+<h4><code><a title="concur.extra_widgets.image.ViewState" href="#concur.extra_widgets.image.ViewState">ViewState</a></code></h4>
 <ul class="">
-<li><code><a title="concur.extras.image.ViewState.change_image" href="#concur.extras.image.ViewState.change_image">change_image</a></code></li>
-<li><code><a title="concur.extras.image.ViewState.reset_view" href="#concur.extras.image.ViewState.reset_view">reset_view</a></code></li>
+<li><code><a title="concur.extra_widgets.image.ViewState.change_image" href="#concur.extra_widgets.image.ViewState.change_image">change_image</a></code></li>
+<li><code><a title="concur.extra_widgets.image.ViewState.reset_view" href="#concur.extra_widgets.image.ViewState.reset_view">reset_view</a></code></li>
 </ul>
 </li>
 </ul>

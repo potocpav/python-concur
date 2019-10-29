@@ -126,12 +126,12 @@ class TF(object):
 def image(name, state, width=None, height=None, content_gen=None):
     """ The image widget.
 
-    `state` is an instance of `concur.extras.image.ViewState`. Width and
+    `state` is an instance of `concur.extra_widgets.image.ViewState`. Width and
     height are optional; if not specified, the widget stretches to fill
     the parent element. Returns a modified `ViewState` object on user interaction.
 
     `content_gen` is a function that takes as an argument a transformation
-    object `concur.extras.image.TF`, and returns a widget that will be displayed as image
+    object `concur.extra_widgets.image.TF`, and returns a widget that will be displayed as image
     overlay. Any events fired by the overlay widget are passed through unchanged.
 
     The transformation object can be used to display overlay on the image, positioned

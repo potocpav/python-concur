@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.1" />
-<title>concur.extras.time_controls API documentation</title>
+<title>concur.extra_widgets.time_controls API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>concur.extras.time_controls</code></h1>
+<h1 class="title">Module <code>concur.extra_widgets.time_controls</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -28,7 +28,7 @@
 
 
 class TimeControls(object):
-    &#34;&#34;&#34; State for the `concur.extras.time_controls.time_controls` widget. &#34;&#34;&#34;
+    &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget. &#34;&#34;&#34;
     def __init__(self, start, end, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
         self.frame_id = 0.0
@@ -41,7 +41,7 @@ class TimeControls(object):
 def time_controls(state):
     &#34;&#34;&#34; Experimental widget for image sequence or video seeking.
 
-    Takes `concur.extras.time_controls.TimeControls` as an argument. Returns a pair `(state, frame_id)`, where `state`
+    Takes `concur.extra_widgets.time_controls.TimeControls` as an argument. Returns a pair `(state, frame_id)`, where `state`
     is the modified `TimeControls` struct, and `frame_id` is an integer signalling a new position in the video frame,
     or `None` if user didn&#39;t seek.
     &#34;&#34;&#34;
@@ -98,13 +98,13 @@ def time_controls(state):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="concur.extras.time_controls.time_controls"><code class="name flex">
+<dt id="concur.extra_widgets.time_controls.time_controls"><code class="name flex">
 <span>def <span class="ident">time_controls</span></span>(<span>state)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Experimental widget for image sequence or video seeking.</p>
-<p>Takes <a title="concur.extras.time_controls.TimeControls" href="#concur.extras.time_controls.TimeControls"><code>TimeControls</code></a> as an argument. Returns a pair <code>(state, frame_id)</code>, where <code>state</code>
-is the modified <a title="concur.extras.time_controls.TimeControls" href="#concur.extras.time_controls.TimeControls"><code>TimeControls</code></a> struct, and <code>frame_id</code> is an integer signalling a new position in the video frame,
+<p>Takes <a title="concur.extra_widgets.time_controls.TimeControls" href="#concur.extra_widgets.time_controls.TimeControls"><code>TimeControls</code></a> as an argument. Returns a pair <code>(state, frame_id)</code>, where <code>state</code>
+is the modified <a title="concur.extra_widgets.time_controls.TimeControls" href="#concur.extra_widgets.time_controls.TimeControls"><code>TimeControls</code></a> struct, and <code>frame_id</code> is an integer signalling a new position in the video frame,
 or <code>None</code> if user didn't seek.</p></section>
 <details class="source">
 <summary>
@@ -113,7 +113,7 @@ or <code>None</code> if user didn't seek.</p></section>
 <pre><code class="python">def time_controls(state):
     &#34;&#34;&#34; Experimental widget for image sequence or video seeking.
 
-    Takes `concur.extras.time_controls.TimeControls` as an argument. Returns a pair `(state, frame_id)`, where `state`
+    Takes `concur.extra_widgets.time_controls.TimeControls` as an argument. Returns a pair `(state, frame_id)`, where `state`
     is the modified `TimeControls` struct, and `frame_id` is an integer signalling a new position in the video frame,
     or `None` if user didn&#39;t seek.
     &#34;&#34;&#34;
@@ -168,19 +168,19 @@ or <code>None</code> if user didn't seek.</p></section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="concur.extras.time_controls.TimeControls"><code class="flex name class">
+<dt id="concur.extra_widgets.time_controls.TimeControls"><code class="flex name class">
 <span>class <span class="ident">TimeControls</span></span>
 <span>(</span><span>start, end, hotkey=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>State for the <a title="concur.extras.time_controls.time_controls" href="#concur.extras.time_controls.time_controls"><code>time_controls()</code></a> widget. </p>
+<section class="desc"><p>State for the <a title="concur.extra_widgets.time_controls.time_controls" href="#concur.extra_widgets.time_controls.time_controls"><code>time_controls()</code></a> widget. </p>
 <p>Initialize.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TimeControls(object):
-    &#34;&#34;&#34; State for the `concur.extras.time_controls.time_controls` widget. &#34;&#34;&#34;
+    &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget. &#34;&#34;&#34;
     def __init__(self, start, end, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
         self.frame_id = 0.0
@@ -202,18 +202,18 @@ or <code>None</code> if user didn't seek.</p></section>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="concur.extras" href="index.html">concur.extras</a></code></li>
+<li><code><a title="concur.extra_widgets" href="index.html">concur.extra_widgets</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="concur.extras.time_controls.time_controls" href="#concur.extras.time_controls.time_controls">time_controls</a></code></li>
+<li><code><a title="concur.extra_widgets.time_controls.time_controls" href="#concur.extra_widgets.time_controls.time_controls">time_controls</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="concur.extras.time_controls.TimeControls" href="#concur.extras.time_controls.TimeControls">TimeControls</a></code></h4>
+<h4><code><a title="concur.extra_widgets.time_controls.TimeControls" href="#concur.extra_widgets.time_controls.TimeControls">TimeControls</a></code></h4>
 </li>
 </ul>
 </li>
