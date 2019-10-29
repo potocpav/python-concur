@@ -19,6 +19,7 @@ import concur as c
 
 import concur.extras
 import concur.integrations
+import concur.draw
 
 from .core import *
 from .widgets import *
