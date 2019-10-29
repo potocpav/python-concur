@@ -98,7 +98,25 @@ def _image_end():
 
 
 class TF(object):
-    """ Transformation object, relating screen space to image space, both in pixels. """
+    """ Transformation object containing information necessary for converting between screen-space and image-space.
+
+    Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
+    Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).
+
+    For example, a point `[px, py]` can be transformed to screen-space by left multiplication:
+
+    ```python
+    q = np.matmul(i2s, [px, py, 1])
+    ```
+
+    Mostly, the necessary conversions are performed by overlay widgets.
+
+    Attributes:
+        i2s: Image-to-screen transformation matrix.
+        s2i: Screen-to-image transformation matrix.
+        hovered: `True` if the image widget is hovered over. Useful for some interactive elements,
+            such as draggable widgets.
+    """
     def __init__(self, i2s, s2i, hovered):
         self.i2s = i2s
         self.s2i = s2i

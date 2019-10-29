@@ -125,7 +125,25 @@ def _image_end():
 
 
 class TF(object):
-    &#34;&#34;&#34; Transformation object, relating screen space to image space, both in pixels. &#34;&#34;&#34;
+    &#34;&#34;&#34; Transformation object containing information necessary for converting between screen-space and image-space.
+
+    Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
+    Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).
+
+    For example, a point `[px, py]` can be transformed to screen-space by left multiplication:
+
+    ```python
+    q = np.matmul(i2s, [px, py, 1])
+    ```
+
+    Mostly, the necessary conversions are performed by overlay widgets.
+
+    Attributes:
+        i2s: Image-to-screen transformation matrix.
+        s2i: Screen-to-image transformation matrix.
+        hovered: `True` if the image widget is hovered over. Useful for some interactive elements,
+            such as draggable widgets.
+    &#34;&#34;&#34;
     def __init__(self, i2s, s2i, hovered):
         self.i2s = i2s
         self.s2i = s2i
@@ -267,13 +285,47 @@ Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/
 <span>(</span><span>i2s, s2i, hovered)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Transformation object, relating screen space to image space, both in pixels.</p></section>
+<section class="desc"><p>Transformation object containing information necessary for converting between screen-space and image-space.</p>
+<p>Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
+Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).</p>
+<p>For example, a point <code>[px, py]</code> can be transformed to screen-space by left multiplication:</p>
+<pre><code class="python">q = np.matmul(i2s, [px, py, 1])
+</code></pre>
+<p>Mostly, the necessary conversions are performed by overlay widgets.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>i2s</code></strong></dt>
+<dd>Image-to-screen transformation matrix.</dd>
+<dt><strong><code>s2i</code></strong></dt>
+<dd>Screen-to-image transformation matrix.</dd>
+<dt><strong><code>hovered</code></strong></dt>
+<dd><code>True</code> if the image widget is hovered over. Useful for some interactive elements,
+such as draggable widgets.</dd>
+</dl></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TF(object):
-    &#34;&#34;&#34; Transformation object, relating screen space to image space, both in pixels. &#34;&#34;&#34;
+    &#34;&#34;&#34; Transformation object containing information necessary for converting between screen-space and image-space.
+
+    Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
+    Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).
+
+    For example, a point `[px, py]` can be transformed to screen-space by left multiplication:
+
+    ```python
+    q = np.matmul(i2s, [px, py, 1])
+    ```
+
+    Mostly, the necessary conversions are performed by overlay widgets.
+
+    Attributes:
+        i2s: Image-to-screen transformation matrix.
+        s2i: Screen-to-image transformation matrix.
+        hovered: `True` if the image widget is hovered over. Useful for some interactive elements,
+            such as draggable widgets.
+    &#34;&#34;&#34;
     def __init__(self, i2s, s2i, hovered):
         self.i2s = i2s
         self.s2i = s2i

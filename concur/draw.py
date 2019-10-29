@@ -1,6 +1,11 @@
 """ Passive geometric shape widgets to be drawn as image overlay, or on their own.
 
-As these widgets are passive, they don't need a name. For active overlay, use normal widgets such as buttons.
+All these widgets have the following in common:
+
+* They are passive, so they don't need names. For active overlay, use normal widgets such as buttons.
+* `color` is specified as RGBA tuple with values between 0 and 1. For example, `(0.5, 0.5, 1, 1)` is light blue.
+* `tf` is the `concur.extras.image.TF` object specifying transformations from screen-space to image-space and back.
+  If no transformation is supplied, the element is drawn in screen space units.
 """
 
 
