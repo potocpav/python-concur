@@ -28,7 +28,7 @@
 
 
 class TimeControls(object):
-    &#34;&#34;&#34; State for the :func:`time_controls` widget. &#34;&#34;&#34;
+    &#34;&#34;&#34; State for the `concur.extras.time_controls.time_controls` widget. &#34;&#34;&#34;
     def __init__(self, start, end, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
         self.frame_id = 0.0
@@ -41,7 +41,10 @@ class TimeControls(object):
 def time_controls(state):
     &#34;&#34;&#34; Experimental widget for image sequence or video seeking.
 
-    Takes :class:`TimeControls` as an argument. Returns a pair ``(state, frame_id)``, where ``state`` is the modified :class:`TimeControls` struct, and ``frame_id`` is an integer signalling a new position in the video frame, or ``None`` if user didn&#39;t seek. &#34;&#34;&#34;
+    Takes `concur.extras.time_controls.TimeControls` as an argument. Returns a pair `(state, frame_id)`, where `state`
+    is the modified `TimeControls` struct, and `frame_id` is an integer signalling a new position in the video frame,
+    or `None` if user didn&#39;t seek.
+    &#34;&#34;&#34;
     def clock():
         return &#34;tick&#34;, None
         yield
@@ -100,7 +103,9 @@ def time_controls(state):
 </code></dt>
 <dd>
 <section class="desc"><p>Experimental widget for image sequence or video seeking.</p>
-<p>Takes :class:<a title="concur.extras.time_controls.TimeControls" href="#concur.extras.time_controls.TimeControls"><code>TimeControls</code></a> as an argument. Returns a pair <code>(state, frame_id)</code>, where <code>state</code> is the modified :class:<code>TimeControls</code> struct, and <code>frame_id</code> is an integer signalling a new position in the video frame, or <code>None</code> if user didn't seek.</p></section>
+<p>Takes <a title="concur.extras.time_controls.TimeControls" href="#concur.extras.time_controls.TimeControls"><code>TimeControls</code></a> as an argument. Returns a pair <code>(state, frame_id)</code>, where <code>state</code>
+is the modified <a title="concur.extras.time_controls.TimeControls" href="#concur.extras.time_controls.TimeControls"><code>TimeControls</code></a> struct, and <code>frame_id</code> is an integer signalling a new position in the video frame,
+or <code>None</code> if user didn't seek.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -108,7 +113,10 @@ def time_controls(state):
 <pre><code class="python">def time_controls(state):
     &#34;&#34;&#34; Experimental widget for image sequence or video seeking.
 
-    Takes :class:`TimeControls` as an argument. Returns a pair ``(state, frame_id)``, where ``state`` is the modified :class:`TimeControls` struct, and ``frame_id`` is an integer signalling a new position in the video frame, or ``None`` if user didn&#39;t seek. &#34;&#34;&#34;
+    Takes `concur.extras.time_controls.TimeControls` as an argument. Returns a pair `(state, frame_id)`, where `state`
+    is the modified `TimeControls` struct, and `frame_id` is an integer signalling a new position in the video frame,
+    or `None` if user didn&#39;t seek.
+    &#34;&#34;&#34;
     def clock():
         return &#34;tick&#34;, None
         yield
@@ -165,14 +173,14 @@ def time_controls(state):
 <span>(</span><span>start, end, hotkey=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>State for the :func:<a title="concur.extras.time_controls.time_controls" href="#concur.extras.time_controls.time_controls"><code>time_controls()</code></a> widget. </p>
+<section class="desc"><p>State for the <a title="concur.extras.time_controls.time_controls" href="#concur.extras.time_controls.time_controls"><code>time_controls()</code></a> widget. </p>
 <p>Initialize.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TimeControls(object):
-    &#34;&#34;&#34; State for the :func:`time_controls` widget. &#34;&#34;&#34;
+    &#34;&#34;&#34; State for the `concur.extras.time_controls.time_controls` widget. &#34;&#34;&#34;
     def __init__(self, start, end, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
         self.frame_id = 0.0

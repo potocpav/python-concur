@@ -1,4 +1,6 @@
 """ Scrollable, zoomable image widget with overlay support. """
+
+
 from functools import partial
 import copy
 
