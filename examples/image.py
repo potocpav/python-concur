@@ -16,11 +16,11 @@ def overlay(tf):
 
 
 def app():
-    view = c.extras.ViewState(Image.open("examples/lenna.png"))
+    view = c.ViewState(Image.open("examples/lenna.png"))
     while True:
         tag, value = yield from c.orr(
             [ c.text("Drag using right mouse button,\nscroll using mouse wheel.")
-            , c.extras.image("Image", view, content_gen=overlay)
+            , c.image("Image", view, content_gen=overlay)
             ])
         view = value
         yield
