@@ -64,7 +64,7 @@ def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
 
 
 def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
-    &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners.
+    &#34;&#34;&#34; Circle specified by its center and radius.
 
     For color, use a RGBA tuple with values between 0 and 1.
     &#34;&#34;&#34;
@@ -73,47 +73,6 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
             [cx, cy] = tf.i2s([cx, cy])
         draw_list = imgui.get_window_draw_list()
         draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
-        yield
-
-
-def _poly(name, pts, im2scr=None, scr2im=None):
-    point_size = 10
-
-    spts = [im2scr(p) for p in pts]
-
-    draw_list = imgui.get_window_draw_list()
-    pos = imgui.get_cursor_screen_pos()
-    io = imgui.get_io()
-
-    for p1, p2 in zip(spts, spts[1:] + [spts[0]]):
-        draw_list.add_line(p1[0], p1[1], p2[0], p2[1], imgui.get_color_u32_rgba(1, 1, 0, 1), 2)
-
-    mx, my = io.mouse_pos[0], io.mouse_pos[1]
-    changed = False
-    for i, p in enumerate(spts):
-        imgui.set_cursor_screen_pos((p[0] - point_size, p[1] - point_size))
-        imgui.invisible_button(&#34;Point {}{}&#34;.format(i, name), point_size*2, point_size*2)
-        imgui.set_cursor_screen_pos((p[0] - 30, p[1] + point_size))
-        imgui.button(&#34;Point {}{}&#34;.format(i, name), 60, 20)
-
-        if imgui.is_item_active() and imgui.is_mouse_down(0):
-            color = imgui.get_color_u32_rgba(1, 1, 0, 1)
-            spts[i] = (p[0] + io.mouse_delta[0], p[1] + io.mouse_delta[1])
-            changed = io.mouse_delta[0] != 0 or io.mouse_delta[1] != 0
-        else:
-            color = imgui.get_color_u32_rgba(1, 1, 0, 1)
-
-        draw_list.add_rect(p[0] - point_size/2, p[1] - point_size/2, p[0] + point_size/2, p[1] + point_size/2, color, thickness=2)
-
-    imgui.set_cursor_screen_pos(pos)
-    return changed, [scr2im(p) for p in spts]
-
-
-def poly(state, im2scr=None, scr2im=None):
-    while True:
-        changed, st = _poly(&#34;p&#34;, state, im2scr, scr2im)
-        if changed:
-            return st
         yield</code></pre>
 </details>
 </section>
@@ -128,14 +87,14 @@ def poly(state, im2scr=None, scr2im=None):
 <span>def <span class="ident">circle</span></span>(<span>cx, cy, radius, color, thickness=1, num_segments=16, tf=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Straight non-filled rectangle specified by its two corners.</p>
+<section class="desc"><p>Circle specified by its center and radius.</p>
 <p>For color, use a RGBA tuple with values between 0 and 1.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
-    &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners.
+    &#34;&#34;&#34; Circle specified by its center and radius.
 
     For color, use a RGBA tuple with values between 0 and 1.
     &#34;&#34;&#34;
@@ -167,23 +126,6 @@ def poly(state, im2scr=None, scr2im=None):
             [x0, y0], [x1, y1] = tf.i2s([x0, y0]), tf.i2s([x1, y1])
         draw_list = imgui.get_window_draw_list()
         draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), thickness)
-        yield</code></pre>
-</details>
-</dd>
-<dt id="concur.extras.geom.poly"><code class="name flex">
-<span>def <span class="ident">poly</span></span>(<span>state, im2scr=None, scr2im=None)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def poly(state, im2scr=None, scr2im=None):
-    while True:
-        changed, st = _poly(&#34;p&#34;, state, im2scr, scr2im)
-        if changed:
-            return st
         yield</code></pre>
 </details>
 </dd>
@@ -230,7 +172,6 @@ def poly(state, im2scr=None, scr2im=None):
 <ul class="">
 <li><code><a title="concur.extras.geom.circle" href="#concur.extras.geom.circle">circle</a></code></li>
 <li><code><a title="concur.extras.geom.line" href="#concur.extras.geom.line">line</a></code></li>
-<li><code><a title="concur.extras.geom.poly" href="#concur.extras.geom.poly">poly</a></code></li>
 <li><code><a title="concur.extras.geom.rect" href="#concur.extras.geom.rect">rect</a></code></li>
 </ul>
 </li>
