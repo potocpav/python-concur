@@ -50,17 +50,7 @@ def _image_begin(state, width=None, height=None):
         [ [width / fact_x,  0, (-state.center[0] / fact_x + 0.5) * width + pos[0]]
         , [0, height / fact_y, (-state.center[1] / fact_y + 0.5) * height + pos[1]]
         ])
-    # print('real\n', gl_to_scr)
-    # def gl_to_screen(view, center, x):
-    #     return ((x[0] - center[0]) / fact_x + 0.5) * view[0] + pos.x, \
-    #            ((x[1] - center[1]) / fact_y + 0.5) * view[1] + pos.y
-    #
-    # gl_to_scr = partial(gl_to_screen, (width, height), state.center)
-    # print('fake\n', np.linalg.inv(np.row_stack([scr_to_gl, [0,0,1]])))
 
-    pixel = max(width / state.tex_w, height / state.tex_h) * state.zoom
-    unit_x = min(width, height * tex_ratio) * state.zoom
-    unit_y = min(height, width / tex_ratio) * state.zoom
 
     is_hovered = io.mouse_pos[0] < width + pos[0] and io.mouse_pos[0] > pos[0] and io.mouse_pos[1] < height + pos[1] and io.mouse_pos[1] > pos[1]
 
@@ -72,6 +62,8 @@ def _image_begin(state, width=None, height=None):
         state.is_dragging = False
 
     if state.is_dragging:
+        unit_x = min(width, height * tex_ratio) * state.zoom
+        unit_y = min(height, width / tex_ratio) * state.zoom
         state.center = state.center[0] - io.mouse_delta[0] / unit_x, state.center[1] - io.mouse_delta[1] / unit_y
         changed |= True
 
@@ -99,8 +91,7 @@ def _image_begin(state, width=None, height=None):
         gl_to_scr / [state.tex_w, state.tex_h, 1], \
         scr_to_gl * [[state.tex_w], [state.tex_h]], \
         is_hovered
-        # lambda x: gl_to_scr((x[0] / state.tex_w, x[1] / state.tex_h)), \
-        # [a*b for a, b in zip(scr_to_gl(x), [state.tex_w, state.tex_h])], \
+
 
 def _image_end():
     imgui.pop_clip_rect()
