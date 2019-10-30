@@ -31,11 +31,11 @@ def orr_same_line(widgets):
 
 
 def window(title: str,
-           widgets: Iterable[Widget],
+           widget: Widget,
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -> Widget:
-    """ Create a window with a given list of `widgets` inside. """
+    """ Create a window with a given `widget` inside. """
     while True:
         imgui.push_id(title)
         if position is not None:
@@ -44,7 +44,7 @@ def window(title: str,
             imgui.set_next_window_size(*size)
         imgui.begin(title, flags=flags)
         try:
-            next(orr(widgets))
+            next(widget)
         except StopIteration as e:
             return e.value
         finally:
@@ -53,13 +53,13 @@ def window(title: str,
         yield
 
 
-def child(name, width, height, border=False, flags=0, widgets=[]):
-    """ Create a sized box with elements inside a window. """
+def child(name, widget, width, height, border=False, flags=0):
+    """ Create a sized box with a `widget` inside a window. """
     while True:
         imgui.push_id(name)
         imgui.begin_child(name, width, height, border, flags)
         try:
-            next(orr(widgets))
+            next(widget)
         except StopIteration as e:
             return e.value
         finally:
