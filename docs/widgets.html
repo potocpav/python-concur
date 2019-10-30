@@ -65,11 +65,11 @@ def orr_same_line(widgets):
 
 
 def window(title: str,
-           widgets: Iterable[Widget],
+           widget: Widget,
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -&gt; Widget:
-    &#34;&#34;&#34; Create a window with a given list of `widgets` inside. &#34;&#34;&#34;
+    &#34;&#34;&#34; Create a window with a given `widget` inside. &#34;&#34;&#34;
     while True:
         imgui.push_id(title)
         if position is not None:
@@ -78,7 +78,7 @@ def window(title: str,
             imgui.set_next_window_size(*size)
         imgui.begin(title, flags=flags)
         try:
-            next(orr(widgets))
+            next(widget)
         except StopIteration as e:
             return e.value
         finally:
@@ -87,13 +87,13 @@ def window(title: str,
         yield
 
 
-def child(name, width, height, border=False, flags=0, widgets=[]):
-    &#34;&#34;&#34; Create a sized box with elements inside a window. &#34;&#34;&#34;
+def child(name, widget, width, height, border=False, flags=0):
+    &#34;&#34;&#34; Create a sized box with a `widget` inside a window. &#34;&#34;&#34;
     while True:
         imgui.push_id(name)
         imgui.begin_child(name, width, height, border, flags)
         try:
-            next(orr(widgets))
+            next(widget)
         except StopIteration as e:
             return e.value
         finally:
@@ -219,21 +219,21 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 </details>
 </dd>
 <dt id="concur.widgets.child"><code class="name flex">
-<span>def <span class="ident">child</span></span>(<span>name, width, height, border=False, flags=0, widgets=[])</span>
+<span>def <span class="ident">child</span></span>(<span>name, widget, width, height, border=False, flags=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a sized box with elements inside a window.</p></section>
+<section class="desc"><p>Create a sized box with a <code>widget</code> inside a window.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def child(name, width, height, border=False, flags=0, widgets=[]):
-    &#34;&#34;&#34; Create a sized box with elements inside a window. &#34;&#34;&#34;
+<pre><code class="python">def child(name, widget, width, height, border=False, flags=0):
+    &#34;&#34;&#34; Create a sized box with a `widget` inside a window. &#34;&#34;&#34;
     while True:
         imgui.push_id(name)
         imgui.begin_child(name, width, height, border, flags)
         try:
-            next(orr(widgets))
+            next(widget)
         except StopIteration as e:
             return e.value
         finally:
@@ -449,20 +449,20 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 </details>
 </dd>
 <dt id="concur.widgets.window"><code class="name flex">
-<span>def <span class="ident">window</span></span>(<span>title, widgets, position=None, size=None, flags=0)</span>
+<span>def <span class="ident">window</span></span>(<span>title, widget, position=None, size=None, flags=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a window with a given list of <code>widgets</code> inside.</p></section>
+<section class="desc"><p>Create a window with a given <code>widget</code> inside.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def window(title: str,
-           widgets: Iterable[Widget],
+           widget: Widget,
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -&gt; Widget:
-    &#34;&#34;&#34; Create a window with a given list of `widgets` inside. &#34;&#34;&#34;
+    &#34;&#34;&#34; Create a window with a given `widget` inside. &#34;&#34;&#34;
     while True:
         imgui.push_id(title)
         if position is not None:
@@ -471,7 +471,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
             imgui.set_next_window_size(*size)
         imgui.begin(title, flags=flags)
         try:
-            next(orr(widgets))
+            next(widget)
         except StopIteration as e:
             return e.value
         finally:
