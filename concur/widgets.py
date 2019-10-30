@@ -13,6 +13,7 @@ All of the functions in this module are re-exported in the root module for conve
 """
 
 
+import numpy as np # for `transform`
 from typing import Iterable, Any, Tuple
 import imgui
 
@@ -145,3 +146,24 @@ def slider_int(label, min_value, max_value, *args, **kwargs):
 def slider_float(label, min_value, max_value, *args, **kwargs):
     """ Float selection slider. """
     return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)
+
+
+def transform(x, y, widget, tf=None):
+    # TODO: move somewhere else
+    """ Use `concur.extra_widgets.image.TF` and a specified position `x, y` to transform a widget.
+
+    Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
+    is at `[x, y]`.
+    """
+    while True:
+        old_pos = imgui.get_cursor_screen_pos()
+        if tf is not None:
+            x, y = np.matmul(tf.i2s, [x, y, 1])
+        imgui.set_cursor_screen_pos((x, y))
+        try:
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.set_cursor_screen_pos(old_pos)
+        yield
