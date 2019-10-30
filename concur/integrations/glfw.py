@@ -20,6 +20,9 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
     if pass_window_to_widget:
         widget = widget(window)
 
+    ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
+    # glfw.swap_interval(-1)
+
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
         glfw.poll_events()
