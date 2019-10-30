@@ -47,6 +47,7 @@ All of the functions in this module are re-exported in the root module for conve
 &#34;&#34;&#34;
 
 
+import numpy as np # for `transform`
 from typing import Iterable, Any, Tuple
 import imgui
 
@@ -178,7 +179,28 @@ def slider_int(label, min_value, max_value, *args, **kwargs):
 
 def slider_float(label, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)</code></pre>
+    return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)
+
+
+def transform(x, y, widget, tf=None):
+    # TODO: move somewhere else
+    &#34;&#34;&#34; Use `concur.extra_widgets.image.TF` and a specified position `x, y` to transform a widget.
+
+    Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
+    is at `[x, y]`.
+    &#34;&#34;&#34;
+    while True:
+        old_pos = imgui.get_cursor_screen_pos()
+        if tf is not None:
+            x, y = np.matmul(tf.i2s, [x, y, 1])
+        imgui.set_cursor_screen_pos((x, y))
+        try:
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.set_cursor_screen_pos(old_pos)
+        yield</code></pre>
 </details>
 </section>
 <section>
@@ -448,6 +470,38 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
     return lift(imgui.text_colored, s, r, g, b, a)</code></pre>
 </details>
 </dd>
+<dt id="concur.widgets.transform"><code class="name flex">
+<span>def <span class="ident">transform</span></span>(<span>x, y, widget, tf=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Use <a title="concur.extra_widgets.image.TF" href="extra_widgets/image.html#concur.extra_widgets.image.TF"><code>TF</code></a> and a specified position <code>x, y</code> to transform a widget.</p>
+<p>Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
+is at <code>[x, y]</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def transform(x, y, widget, tf=None):
+    # TODO: move somewhere else
+    &#34;&#34;&#34; Use `concur.extra_widgets.image.TF` and a specified position `x, y` to transform a widget.
+
+    Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
+    is at `[x, y]`.
+    &#34;&#34;&#34;
+    while True:
+        old_pos = imgui.get_cursor_screen_pos()
+        if tf is not None:
+            x, y = np.matmul(tf.i2s, [x, y, 1])
+        imgui.set_cursor_screen_pos((x, y))
+        try:
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.set_cursor_screen_pos(old_pos)
+        yield</code></pre>
+</details>
+</dd>
 <dt id="concur.widgets.window"><code class="name flex">
 <span>def <span class="ident">window</span></span>(<span>title, widget, position=None, size=None, flags=0)</span>
 </code></dt>
@@ -514,6 +568,7 @@ def slider_float(label, min_value, max_value, *args, **kwargs):
 <li><code><a title="concur.widgets.test_window" href="#concur.widgets.test_window">test_window</a></code></li>
 <li><code><a title="concur.widgets.text" href="#concur.widgets.text">text</a></code></li>
 <li><code><a title="concur.widgets.text_colored" href="#concur.widgets.text_colored">text_colored</a></code></li>
+<li><code><a title="concur.widgets.transform" href="#concur.widgets.transform">transform</a></code></li>
 <li><code><a title="concur.widgets.window" href="#concur.widgets.window">window</a></code></li>
 </ul>
 </li>

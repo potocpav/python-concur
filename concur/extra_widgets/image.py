@@ -8,9 +8,10 @@ import numpy as np
 import imgui
 from OpenGL.GL import *
 from concur.integrations import replace_texture, texture
+from concur.widgets import child
 
 
-def _image_begin(state, width=None, height=None):
+def _image_begin(state, width, height):
     """ A zoomable, draggable image widget.
 
     Three coordinate systems are in use in the widget:
@@ -22,13 +23,6 @@ def _image_begin(state, width=None, height=None):
      - GL space: origin is the same as for image space, but the scaling is
          different: (1,1) marks image's bottom right corner.
     """
-    if width is None:
-        width = imgui.get_content_region_available()[0]
-    if height is None:
-        height = imgui.get_content_region_available()[1]
-    width = max(1, width)
-    height = max(1, height)
-
     state = copy.deepcopy(state)
 
     draw_list = imgui.get_window_draw_list()
@@ -83,7 +77,7 @@ def _image_begin(state, width=None, height=None):
     if state.tex_id is not None:
         draw_list.add_image(state.tex_id, (pos.x, pos.y), (pos.x + width, pos.y + height), tuple(uva), tuple(uvb));
 
-    imgui.push_clip_rect(*pos, pos[0] + width, pos[1] + height, True)
+    # imgui.push_clip_rect(*pos, pos[0] + width, pos[1] + height, True)
 
     return \
         changed, \
@@ -94,7 +88,8 @@ def _image_begin(state, width=None, height=None):
 
 
 def _image_end():
-    imgui.pop_clip_rect()
+    pass
+    # imgui.pop_clip_rect()
 
 
 class TF(object):
@@ -139,18 +134,26 @@ def image(name, state, width=None, height=None, content_gen=None):
     Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
     """
     while True:
-        changed, state, im_to_screen, screen_to_im, hovered = \
-            _image_begin(state, width, height)
+        if width is None:
+            w = imgui.get_content_region_available()[0]
+        if height is None:
+            h = imgui.get_content_region_available()[1]
+        w = max(1, w)
+        h = max(1, h)
 
-        if content_gen is not None:
-            try:
+        imgui.begin_child("Image container", w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE)
+        changed, state, im_to_screen, screen_to_im, hovered = \
+            _image_begin(state, w, h)
+
+        try:
+            if content_gen is not None:
                 tf = TF(im_to_screen, screen_to_im, hovered)
                 next(content_gen(tf))
-            except StopIteration as e:
-                _image_end()
-                return e.value
-
-        _image_end()
+        except StopIteration as e:
+            return e.value
+        finally:
+            _image_end()
+            imgui.end_child()
         if changed:
             return name, state
         else:

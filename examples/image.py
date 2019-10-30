@@ -12,17 +12,23 @@ def overlay(tf):
         , c.draw.circle(70, 110, 20, yellow, 2, 16, tf=tf)
         , c.draw.text(120, 20, (0,0,1,1), "Overlay text", tf=tf)
         , c.draw.polyline([(50, 30), (90, 30), (70, 50)], yellow, True, 2, tf=tf)
+        , c.transform(120, 50, c.button("Rotate"), tf=tf)
         ])
 
 
 def app():
-    view = c.ViewState(Image.open("examples/lenna.png"))
+    image = Image.open("examples/lenna.png")
+    view = c.ViewState(image)
     while True:
         tag, value = yield from c.orr(
             [ c.text("Drag using right mouse button,\nscroll using mouse wheel.")
             , c.image("Image", view, content_gen=overlay)
             ])
-        view = value
+        if tag == "Image":
+            view = value
+        elif tag == "Rotate":
+            image = image.transpose(Image.ROTATE_270)
+            view.change_image(image)
         yield
 
 
