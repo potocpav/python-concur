@@ -87,11 +87,6 @@ def _image_begin(state, width, height):
         is_hovered
 
 
-def _image_end():
-    pass
-    # imgui.pop_clip_rect()
-
-
 class TF(object):
     """ Transformation object containing information necessary for converting between screen-space and image-space.
 
@@ -152,7 +147,6 @@ def image(name, state, width=None, height=None, content_gen=None):
         except StopIteration as e:
             return e.value
         finally:
-            _image_end()
             imgui.end_child()
         if changed:
             return name, state
@@ -161,7 +155,7 @@ def image(name, state, width=None, height=None, content_gen=None):
 
 
 class ViewState(object):
-    """ Image state, contaiining pan and zoom information, and texture data. """
+    """ Image state, containing pan and zoom information, and texture data. """
     def __init__(self, image=None, center=(0.5, 0.5), zoom=1):
         """ Initialize view state.
 
