@@ -174,12 +174,17 @@ class ViewState(object):
             self.change_image(image)
 
     def change_image(self, image):
-        """ Change the image for a different one. `image` must be something convertible to
-        `numpy.array`: greyscale or RGB, channel is in the last dimension.
+        """ Change the image for a different one. `image` must be None, or something convertible to
+        `numpy.array` in greyscale or RGB format, channel is in the last dimension. If None, a black placeholder
+        image is displayed.
         """
-        image = np.array(image)
-        self.tex_id = replace_texture(image, self.tex_id)
-        self.tex_w, self.tex_h = image.shape[1], image.shape[0]
+        if image is None:
+            self.tex_id = replace_texture(np.zeros((1,1,3)), self.tex_id)
+            self.tex_w, self.tex_h = 1, 1
+        else:
+            image = np.array(image)
+            self.tex_id = replace_texture(image, self.tex_id)
+            self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 
     def reset_view(self):
         """ Reset view so that the whole image fits into the widget. """
