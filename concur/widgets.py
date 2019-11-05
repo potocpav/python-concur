@@ -38,6 +38,7 @@ def window(title: str,
            flags: int = 0) -> Widget:
     """ Create a window with a given `widget` inside. """
     while True:
+        # TODO: is it necessary to push an ID here?
         imgui.push_id(title)
         if position is not None:
             imgui.set_next_window_position(*position)
@@ -57,6 +58,7 @@ def window(title: str,
 def child(name, widget, width, height, border=False, flags=0):
     """ Create a sized box with a `widget` inside a window. """
     while True:
+        # TODO: is it necessary to push an ID here?
         imgui.push_id(name)
         imgui.begin_child(name, width, height, border, flags)
         try:
@@ -150,7 +152,7 @@ def slider_float(label, value, min_value, max_value, *args, **kwargs):
 
 def transform(x, y, widget, tf=None):
     # TODO: move somewhere else
-    """ Use `concur.extra_widgets.image.TF` and a specified position `x, y` to transform a widget.
+    """ Use `concur.extra_widgets.pan_zoom.TF` and a specified position `x, y` to transform a widget.
 
     Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
     is at `[x, y]`.

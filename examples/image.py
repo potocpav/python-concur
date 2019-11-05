@@ -18,7 +18,7 @@ def overlay(tf):
 
 def app():
     image = Image.open("examples/lenna.png")
-    view = c.ViewState(image)
+    view = c.ImageState(image)
     while True:
         tag, value = yield from c.orr(
             [ c.text("Drag using right mouse button,\nscroll using mouse wheel.")
