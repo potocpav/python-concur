@@ -9,7 +9,7 @@ from concur.integrations import replace_texture, texture
 from concur.widgets import child
 from concur.draw import image as raw_image
 from concur.extra_widgets.pan_zoom import PanZoom, pan_zoom
-from concur.core import orr
+from concur.core import orr, optional
 
 
 def image(name, state, width=None, height=None, content_gen=None):
@@ -30,7 +30,7 @@ def image(name, state, width=None, height=None, content_gen=None):
     while True:
         tag, value = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr(
             [ raw_image(state.tex_id, state.tex_w, state.tex_h, tf)
-            , content_gen(tf)
+            , optional(content_gen is not None, content_gen, tf)
             ]))
         if tag == name:
             state.pan_zoom = value
@@ -46,13 +46,11 @@ class ImageState(object):
         """ `image` must be something convertible to `numpy.array`: greyscale or RGB, channel is
         in the last dimension.
         """
-        if image is None:
-            self.tex_id = texture(np.zeros((1,1,3)))
-            self.tex_w, self.tex_h = 1, 1
-        else:
-            self.tex_id = None
-            self.change_image(image)
-        self.pan_zoom = PanZoom((0, 0), (self.tex_w, self.tex_h))
+        # TODO: remove this hack with last_{w,h}; create a more principled way of changing content size
+        self.last_w, self.last_h = None, None
+        self.tex_id = None
+        self.pan_zoom = PanZoom((0, 0), (1, 1))
+        self.change_image(image)
 
     def change_image(self, image):
         """ Change the image for a different one. `image` must be None, or something convertible to
@@ -66,6 +64,10 @@ class ImageState(object):
             image = np.array(image)
             self.tex_id = replace_texture(image, self.tex_id)
             self.tex_w, self.tex_h = image.shape[1], image.shape[0]
+
+            if self.last_w != self.tex_w or self.last_h != self.tex_h:
+                self.last_w, self.last_h = self.tex_w, self.tex_h
+                self.pan_zoom.reset_view((0,0), (self.tex_w, self.tex_h))
 
     def reset_view(self):
         """ Reset view so that the whole image fits into the widget. """
