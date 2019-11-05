@@ -15,9 +15,9 @@ from concur.core import orr, optional
 def image(name, state, width=None, height=None, content_gen=None):
     """ The image widget.
 
-    `state` is an instance of `concur.extra_widgets.image.ImageState`. Width and
+    `state` is an instance of `concur.extra_widgets.image.Image`. Width and
     height are optional; if not specified, the widget stretches to fill
-    the parent element. Returns a modified `ImageState` object on user interaction.
+    the parent element. Returns a modified `Image` object on user interaction.
 
     `content_gen` is a function that takes as an argument a transformation
     object `concur.extra_widgets.pan_zoom.TF`, and returns a widget that will be displayed as image
@@ -41,7 +41,7 @@ def image(name, state, width=None, height=None, content_gen=None):
         yield
 
 
-class ImageState(object):
+class Image(object):
     """ Image state, containing pan and zoom information, and texture data. """
     def __init__(self, image=None):
         """ `image` must be something convertible to `numpy.array`: greyscale or RGB, channel is
