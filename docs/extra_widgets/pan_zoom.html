@@ -38,6 +38,13 @@ from concur.widgets import child
 
 
 def pan_zoom(name, state, width=None, height=None, content_gen=None):
+    &#34;&#34;&#34; Create the Pan &amp; Zoom widget.
+
+    This widget is a pannable, zoomable view of a thing given by `content_gen`.
+
+    `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
+    widget. It is up to the widget to do the necessary transformations using the `TF` object.
+    &#34;&#34;&#34;
     while True:
         if width is None:
             w = imgui.get_content_region_available()[0]
@@ -148,13 +155,13 @@ class PanZoom(object):
     def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
         &#34;&#34;&#34;
         Arguments:
-            top_left: TODO
-            bottom_right: TODO
-            kee_aspect: TODO
-            fix_axis: TODO
+            top_left:     Coordinates of the top left corner of the displayed content area.
+            bottom_right: oordinates of the bottom right corner of the displayed content area.
+            keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
+            fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, or `&#39;y&#39;`).
         &#34;&#34;&#34;
         assert not keep_aspect or not fix_axis, &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
-        
+
         self.reset_view(top_left, bottom_right)
         self.is_dragging = False
 
@@ -215,12 +222,22 @@ class TF(object):
 <span>def <span class="ident">pan_zoom</span></span>(<span>name, state, width=None, height=None, content_gen=None)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Create the Pan &amp; Zoom widget.</p>
+<p>This widget is a pannable, zoomable view of a thing given by <code>content_gen</code>.</p>
+<p><code>content_gen</code> is a function that takes the <a title="concur.extra_widgets.pan_zoom.TF" href="#concur.extra_widgets.pan_zoom.TF"><code>TF</code></a> object, and returns a Concur
+widget. It is up to the widget to do the necessary transformations using the <a title="concur.extra_widgets.pan_zoom.TF" href="#concur.extra_widgets.pan_zoom.TF"><code>TF</code></a> object.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pan_zoom(name, state, width=None, height=None, content_gen=None):
+    &#34;&#34;&#34; Create the Pan &amp; Zoom widget.
+
+    This widget is a pannable, zoomable view of a thing given by `content_gen`.
+
+    `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
+    widget. It is up to the widget to do the necessary transformations using the `TF` object.
+    &#34;&#34;&#34;
     while True:
         if width is None:
             w = imgui.get_content_region_available()[0]
@@ -340,13 +357,17 @@ class TF(object):
 <h2 id="arguments">Arguments</h2>
 <dl>
 <dt><strong><code>top_left</code></strong></dt>
-<dd>TODO</dd>
+<dd>
+<p>Coordinates of the top left corner of the displayed content area.</p>
+</dd>
 <dt><strong><code>bottom_right</code></strong></dt>
-<dd>TODO</dd>
-<dt><strong><code>kee_aspect</code></strong></dt>
-<dd>TODO</dd>
+<dd>oordinates of the bottom right corner of the displayed content area.</dd>
+<dt><strong><code>keep_aspect</code></strong></dt>
+<dd>Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.</dd>
 <dt><strong><code>fix_axis</code></strong></dt>
-<dd>TODO</dd>
+<dd>
+<p>Do not zoom in a given axis (<code>'x'</code>, or <code>'y'</code>).</p>
+</dd>
 </dl></section>
 <details class="source">
 <summary>
@@ -357,13 +378,13 @@ class TF(object):
     def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
         &#34;&#34;&#34;
         Arguments:
-            top_left: TODO
-            bottom_right: TODO
-            kee_aspect: TODO
-            fix_axis: TODO
+            top_left:     Coordinates of the top left corner of the displayed content area.
+            bottom_right: oordinates of the bottom right corner of the displayed content area.
+            keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
+            fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, or `&#39;y&#39;`).
         &#34;&#34;&#34;
         assert not keep_aspect or not fix_axis, &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
-        
+
         self.reset_view(top_left, bottom_right)
         self.is_dragging = False
 
