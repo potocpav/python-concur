@@ -25,7 +25,7 @@
 <ul>
 <li>They are passive, so they don't need names. For active overlay, use normal widgets such as buttons.</li>
 <li><code>color</code> is specified as RGBA tuple with values between 0 and 1. For example, <code>(0.5, 0.5, 1, 1)</code> is light blue.</li>
-<li><code>tf</code> is the <a title="concur.extra_widgets.image.TF" href="extra_widgets/image.html#concur.extra_widgets.image.TF"><code>TF</code></a> object specifying transformations from screen-space to image-space and back.
+<li><code>tf</code> is the <a title="concur.extra_widgets.pan_zoom.TF" href="extra_widgets/pan_zoom.html#concur.extra_widgets.pan_zoom.TF"><code>TF</code></a> object specifying transformations from screen-space to image-space and back.
 If no transformation is supplied, the element is drawn in screen space units.</li>
 </ul>
 <details class="source">
@@ -38,7 +38,7 @@ All these widgets have the following in common:
 
 * They are passive, so they don&#39;t need names. For active overlay, use normal widgets such as buttons.
 * `color` is specified as RGBA tuple with values between 0 and 1. For example, `(0.5, 0.5, 1, 1)` is light blue.
-* `tf` is the `concur.extra_widgets.image.TF` object specifying transformations from screen-space to image-space and back.
+* `tf` is the `concur.extra_widgets.pan_zoom.TF` object specifying transformations from screen-space to image-space and back.
   If no transformation is supplied, the element is drawn in screen space units.
 &#34;&#34;&#34;
 
@@ -89,12 +89,31 @@ def polyline(points, color, closed=False, thickness=1, tf=None):
 
 
 def text(x, y, color, string, tf=None):
-    &#34;&#34;&#34; Text, using the default font and font size. &#34;&#34;&#34;
+    &#34;&#34;&#34; Text, using the default font and font size.
+
+    This is a raw drawing function. Use `concur.widgets.text` instead if you want a text widget.
+    &#34;&#34;&#34;
     while(True):
         if tf is not None:
             x, y = np.matmul(tf.i2s, [x, y, 1])
         draw_list = imgui.get_window_draw_list()
         draw_list.add_text(x, y, imgui.get_color_u32_rgba(*color), string)
+        yield
+
+
+def image(tex_id, w, h, tf):
+    &#34;&#34;&#34; Draw an image with given width and height.
+
+    This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
+    &#34;&#34;&#34;
+    while True:
+        draw_list = imgui.get_window_draw_list()
+        l, t, r, b = tf.view_s
+        a_s = tf.view_s[:2]
+        b_s = tf.view_s[2:]
+        a_i = tf.view_i[0] / w, tf.view_i[1] / h
+        b_i = tf.view_i[2] / w, tf.view_i[3] / h
+        draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
         yield</code></pre>
 </details>
 </section>
@@ -122,6 +141,32 @@ def text(x, y, color, string, tf=None):
             [cx, cy], radius = np.matmul(tf.i2s, [cx, cy, 1]), radius * tf.i2s[0,0]
         draw_list = imgui.get_window_draw_list()
         draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
+        yield</code></pre>
+</details>
+</dd>
+<dt id="concur.draw.image"><code class="name flex">
+<span>def <span class="ident">image</span></span>(<span>tex_id, w, h, tf)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Draw an image with given width and height.</p>
+<p>This is a raw drawing function. Use <a title="concur.extra_widgets.image.image" href="extra_widgets/image.html#concur.extra_widgets.image.image"><code>image()</code></a> instead if you want an image widget.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def image(tex_id, w, h, tf):
+    &#34;&#34;&#34; Draw an image with given width and height.
+
+    This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
+    &#34;&#34;&#34;
+    while True:
+        draw_list = imgui.get_window_draw_list()
+        l, t, r, b = tf.view_s
+        a_s = tf.view_s[:2]
+        b_s = tf.view_s[2:]
+        a_i = tf.view_i[0] / w, tf.view_i[1] / h
+        b_i = tf.view_i[2] / w, tf.view_i[3] / h
+        draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
         yield</code></pre>
 </details>
 </dd>
@@ -186,13 +231,17 @@ def text(x, y, color, string, tf=None):
 <span>def <span class="ident">text</span></span>(<span>x, y, color, string, tf=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Text, using the default font and font size.</p></section>
+<section class="desc"><p>Text, using the default font and font size.</p>
+<p>This is a raw drawing function. Use <a title="concur.widgets.text" href="widgets.html#concur.widgets.text"><code>text()</code></a> instead if you want a text widget.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def text(x, y, color, string, tf=None):
-    &#34;&#34;&#34; Text, using the default font and font size. &#34;&#34;&#34;
+    &#34;&#34;&#34; Text, using the default font and font size.
+
+    This is a raw drawing function. Use `concur.widgets.text` instead if you want a text widget.
+    &#34;&#34;&#34;
     while(True):
         if tf is not None:
             x, y = np.matmul(tf.i2s, [x, y, 1])
@@ -218,8 +267,9 @@ def text(x, y, color, string, tf=None):
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="concur.draw.circle" href="#concur.draw.circle">circle</a></code></li>
+<li><code><a title="concur.draw.image" href="#concur.draw.image">image</a></code></li>
 <li><code><a title="concur.draw.line" href="#concur.draw.line">line</a></code></li>
 <li><code><a title="concur.draw.polyline" href="#concur.draw.polyline">polyline</a></code></li>
 <li><code><a title="concur.draw.rect" href="#concur.draw.rect">rect</a></code></li>

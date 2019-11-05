@@ -72,6 +72,7 @@ def window(title: str,
            flags: int = 0) -&gt; Widget:
     &#34;&#34;&#34; Create a window with a given `widget` inside. &#34;&#34;&#34;
     while True:
+        # TODO: is it necessary to push an ID here?
         imgui.push_id(title)
         if position is not None:
             imgui.set_next_window_position(*position)
@@ -91,6 +92,7 @@ def window(title: str,
 def child(name, widget, width, height, border=False, flags=0):
     &#34;&#34;&#34; Create a sized box with a `widget` inside a window. &#34;&#34;&#34;
     while True:
+        # TODO: is it necessary to push an ID here?
         imgui.push_id(name)
         imgui.begin_child(name, width, height, border, flags)
         try:
@@ -184,7 +186,7 @@ def slider_float(label, value, min_value, max_value, *args, **kwargs):
 
 def transform(x, y, widget, tf=None):
     # TODO: move somewhere else
-    &#34;&#34;&#34; Use `concur.extra_widgets.image.TF` and a specified position `x, y` to transform a widget.
+    &#34;&#34;&#34; Use `concur.extra_widgets.pan_zoom.TF` and a specified position `x, y` to transform a widget.
 
     Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
     is at `[x, y]`.
@@ -252,6 +254,7 @@ def transform(x, y, widget, tf=None):
 <pre><code class="python">def child(name, widget, width, height, border=False, flags=0):
     &#34;&#34;&#34; Create a sized box with a `widget` inside a window. &#34;&#34;&#34;
     while True:
+        # TODO: is it necessary to push an ID here?
         imgui.push_id(name)
         imgui.begin_child(name, width, height, border, flags)
         try:
@@ -474,7 +477,7 @@ def transform(x, y, widget, tf=None):
 <span>def <span class="ident">transform</span></span>(<span>x, y, widget, tf=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Use <a title="concur.extra_widgets.image.TF" href="extra_widgets/image.html#concur.extra_widgets.image.TF"><code>TF</code></a> and a specified position <code>x, y</code> to transform a widget.</p>
+<section class="desc"><p>Use <a title="concur.extra_widgets.pan_zoom.TF" href="extra_widgets/pan_zoom.html#concur.extra_widgets.pan_zoom.TF"><code>TF</code></a> and a specified position <code>x, y</code> to transform a widget.</p>
 <p>Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
 is at <code>[x, y]</code>.</p></section>
 <details class="source">
@@ -483,7 +486,7 @@ is at <code>[x, y]</code>.</p></section>
 </summary>
 <pre><code class="python">def transform(x, y, widget, tf=None):
     # TODO: move somewhere else
-    &#34;&#34;&#34; Use `concur.extra_widgets.image.TF` and a specified position `x, y` to transform a widget.
+    &#34;&#34;&#34; Use `concur.extra_widgets.pan_zoom.TF` and a specified position `x, y` to transform a widget.
 
     Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
     is at `[x, y]`.
@@ -518,6 +521,7 @@ is at <code>[x, y]</code>.</p></section>
            flags: int = 0) -&gt; Widget:
     &#34;&#34;&#34; Create a window with a given `widget` inside. &#34;&#34;&#34;
     while True:
+        # TODO: is it necessary to push an ID here?
         imgui.push_id(title)
         if position is not None:
             imgui.set_next_window_position(*position)

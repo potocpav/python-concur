@@ -4,3 +4,4 @@
 
 from .time_controls import *
 from .image import *
+from .pan_zoom import *
