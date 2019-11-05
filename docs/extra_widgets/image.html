@@ -114,11 +114,6 @@ def _image_begin(state, width, height):
         is_hovered
 
 
-def _image_end():
-    pass
-    # imgui.pop_clip_rect()
-
-
 class TF(object):
     &#34;&#34;&#34; Transformation object containing information necessary for converting between screen-space and image-space.
 
@@ -179,7 +174,6 @@ def image(name, state, width=None, height=None, content_gen=None):
         except StopIteration as e:
             return e.value
         finally:
-            _image_end()
             imgui.end_child()
         if changed:
             return name, state
@@ -188,7 +182,7 @@ def image(name, state, width=None, height=None, content_gen=None):
 
 
 class ViewState(object):
-    &#34;&#34;&#34; Image state, contaiining pan and zoom information, and texture data. &#34;&#34;&#34;
+    &#34;&#34;&#34; Image state, containing pan and zoom information, and texture data. &#34;&#34;&#34;
     def __init__(self, image=None, center=(0.5, 0.5), zoom=1):
         &#34;&#34;&#34; Initialize view state.
 
@@ -278,7 +272,6 @@ Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/
         except StopIteration as e:
             return e.value
         finally:
-            _image_end()
             imgui.end_child()
         if changed:
             return name, state
@@ -348,7 +341,7 @@ such as draggable widgets.</dd>
 <span>(</span><span>image=None, center=(0.5, 0.5), zoom=1)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Image state, contaiining pan and zoom information, and texture data. </p>
+<section class="desc"><p>Image state, containing pan and zoom information, and texture data. </p>
 <p>Initialize view state.</p>
 <p><a title="concur.extra_widgets.image.image" href="#concur.extra_widgets.image.image"><code>image()</code></a> must be something convertible to <code>numpy.array</code>: greyscale or RGB, channel is
 in the last dimension.</p></section>
@@ -357,7 +350,7 @@ in the last dimension.</p></section>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ViewState(object):
-    &#34;&#34;&#34; Image state, contaiining pan and zoom information, and texture data. &#34;&#34;&#34;
+    &#34;&#34;&#34; Image state, containing pan and zoom information, and texture data. &#34;&#34;&#34;
     def __init__(self, image=None, center=(0.5, 0.5), zoom=1):
         &#34;&#34;&#34; Initialize view state.
 

@@ -149,7 +149,7 @@ class PanZoom(object):
     def __init__(self, top_left, bottom_right):
         """ Initialize pan & zoom with default values. """
         self.default_center = (top_left[0] + bottom_right[0]) / 2, (top_left[1] + bottom_right[1]) / 2
-        self.default_zoom = (, zoom
+        self.default_zoom = (zoom, zoom)
         self.is_dragging = False
         self.reset_view()
 

@@ -173,13 +173,13 @@ def drag_float(label, value, *args, **kwargs):
     &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
 
-def slider_int(label, min_value, max_value, *args, **kwargs):
+def slider_int(label, value, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Int selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_int, label, min_value, max_value, *args, **kwargs)
+    return interactive_elem(imgui.slider_int, label, value, min_value, max_value, *args, **kwargs)
 
-def slider_float(label, min_value, max_value, *args, **kwargs):
+def slider_float(label, value, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)
+    return interactive_elem(imgui.slider_float, label, value, min_value, max_value, *args, **kwargs)
 
 
 def transform(x, y, widget, tf=None):
@@ -387,7 +387,7 @@ def transform(x, y, widget, tf=None):
 </details>
 </dd>
 <dt id="concur.widgets.slider_float"><code class="name flex">
-<span>def <span class="ident">slider_float</span></span>(<span>label, min_value, max_value, *args, **kwargs)</span>
+<span>def <span class="ident">slider_float</span></span>(<span>label, value, min_value, max_value, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Float selection slider.</p></section>
@@ -395,13 +395,13 @@ def transform(x, y, widget, tf=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def slider_float(label, min_value, max_value, *args, **kwargs):
+<pre><code class="python">def slider_float(label, value, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)</code></pre>
+    return interactive_elem(imgui.slider_float, label, value, min_value, max_value, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.slider_int"><code class="name flex">
-<span>def <span class="ident">slider_int</span></span>(<span>label, min_value, max_value, *args, **kwargs)</span>
+<span>def <span class="ident">slider_int</span></span>(<span>label, value, min_value, max_value, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Int selection slider.</p></section>
@@ -409,9 +409,9 @@ def transform(x, y, widget, tf=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def slider_int(label, min_value, max_value, *args, **kwargs):
+<pre><code class="python">def slider_int(label, value, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Int selection slider. &#34;&#34;&#34;
-    return interactive_elem(imgui.slider_int, label, min_value, max_value, *args, **kwargs)</code></pre>
+    return interactive_elem(imgui.slider_int, label, value, min_value, max_value, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.spacing"><code class="name flex">
