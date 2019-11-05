@@ -11,6 +11,13 @@ from concur.widgets import child
 
 
 def pan_zoom(name, state, width=None, height=None, content_gen=None):
+    """ Create the Pan & Zoom widget.
+
+    This widget is a pannable, zoomable view of a thing given by `content_gen`.
+
+    `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
+    widget. It is up to the widget to do the necessary transformations using the `TF` object.
+    """
     while True:
         if width is None:
             w = imgui.get_content_region_available()[0]
@@ -121,13 +128,13 @@ class PanZoom(object):
     def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
         """
         Arguments:
-            top_left: TODO
-            bottom_right: TODO
-            kee_aspect: TODO
-            fix_axis: TODO
+            top_left:     Coordinates of the top left corner of the displayed content area.
+            bottom_right: oordinates of the bottom right corner of the displayed content area.
+            keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
+            fix_axis:     Do not zoom in a given axis (`'x'`, or `'y'`).
         """
         assert not keep_aspect or not fix_axis, "Can't fix axis and keep_aspect at the same time."
-        
+
         self.reset_view(top_left, bottom_right)
         self.is_dragging = False
 
