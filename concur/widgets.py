@@ -139,13 +139,13 @@ def drag_float(label, value, *args, **kwargs):
     """ Float selection widget without a slider. """
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
 
-def slider_int(label, min_value, max_value, *args, **kwargs):
+def slider_int(label, value, min_value, max_value, *args, **kwargs):
     """ Int selection slider. """
-    return interactive_elem(imgui.slider_int, label, min_value, max_value, *args, **kwargs)
+    return interactive_elem(imgui.slider_int, label, value, min_value, max_value, *args, **kwargs)
 
-def slider_float(label, min_value, max_value, *args, **kwargs):
+def slider_float(label, value, min_value, max_value, *args, **kwargs):
     """ Float selection slider. """
-    return interactive_elem(imgui.slider_float, label, min_value, max_value, *args, **kwargs)
+    return interactive_elem(imgui.slider_float, label, value, min_value, max_value, *args, **kwargs)
 
 
 def transform(x, y, widget, tf=None):
