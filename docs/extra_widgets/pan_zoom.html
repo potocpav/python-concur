@@ -154,19 +154,21 @@ class PanZoom(object):
             fix_axis: TODO
         &#34;&#34;&#34;
         assert not keep_aspect or not fix_axis, &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
-
-        self.default_left = top_left[0]
-        self.default_top = top_left[1]
-        self.default_right = bottom_right[0]
-        self.default_bottom = bottom_right[1]
-        self.reset_view()
+        
+        self.reset_view(top_left, bottom_right)
         self.is_dragging = False
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
 
-    def reset_view(self):
+    def reset_view(self, top_left=None, bottom_right=None):
         &#34;&#34;&#34; Reset view to default values. &#34;&#34;&#34;
+        if top_left is not None:
+            self.default_left = top_left[0]
+            self.default_top = top_left[1]
+        if bottom_right is not None:
+            self.default_right = bottom_right[0]
+            self.default_bottom = bottom_right[1]
         self.top = self.default_top
         self.bottom = self.default_bottom
         self.left = self.default_left
@@ -361,19 +363,21 @@ class TF(object):
             fix_axis: TODO
         &#34;&#34;&#34;
         assert not keep_aspect or not fix_axis, &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
-
-        self.default_left = top_left[0]
-        self.default_top = top_left[1]
-        self.default_right = bottom_right[0]
-        self.default_bottom = bottom_right[1]
-        self.reset_view()
+        
+        self.reset_view(top_left, bottom_right)
         self.is_dragging = False
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
 
-    def reset_view(self):
+    def reset_view(self, top_left=None, bottom_right=None):
         &#34;&#34;&#34; Reset view to default values. &#34;&#34;&#34;
+        if top_left is not None:
+            self.default_left = top_left[0]
+            self.default_top = top_left[1]
+        if bottom_right is not None:
+            self.default_right = bottom_right[0]
+            self.default_bottom = bottom_right[1]
         self.top = self.default_top
         self.bottom = self.default_bottom
         self.left = self.default_left
@@ -382,7 +386,7 @@ class TF(object):
 <h3>Methods</h3>
 <dl>
 <dt id="concur.extra_widgets.pan_zoom.PanZoom.reset_view"><code class="name flex">
-<span>def <span class="ident">reset_view</span></span>(<span>self)</span>
+<span>def <span class="ident">reset_view</span></span>(<span>self, top_left=None, bottom_right=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Reset view to default values.</p></section>
@@ -390,8 +394,14 @@ class TF(object):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def reset_view(self):
+<pre><code class="python">def reset_view(self, top_left=None, bottom_right=None):
     &#34;&#34;&#34; Reset view to default values. &#34;&#34;&#34;
+    if top_left is not None:
+        self.default_left = top_left[0]
+        self.default_top = top_left[1]
+    if bottom_right is not None:
+        self.default_right = bottom_right[0]
+        self.default_bottom = bottom_right[1]
     self.top = self.default_top
     self.bottom = self.default_bottom
     self.left = self.default_left
