@@ -127,19 +127,21 @@ class PanZoom(object):
             fix_axis: TODO
         """
         assert not keep_aspect or not fix_axis, "Can't fix axis and keep_aspect at the same time."
-
-        self.default_left = top_left[0]
-        self.default_top = top_left[1]
-        self.default_right = bottom_right[0]
-        self.default_bottom = bottom_right[1]
-        self.reset_view()
+        
+        self.reset_view(top_left, bottom_right)
         self.is_dragging = False
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
 
-    def reset_view(self):
+    def reset_view(self, top_left=None, bottom_right=None):
         """ Reset view to default values. """
+        if top_left is not None:
+            self.default_left = top_left[0]
+            self.default_top = top_left[1]
+        if bottom_right is not None:
+            self.default_right = bottom_right[0]
+            self.default_bottom = bottom_right[1]
         self.top = self.default_top
         self.bottom = self.default_bottom
         self.left = self.default_left
