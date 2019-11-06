@@ -28,8 +28,24 @@ def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
     while(True):
         if tf is not None:
             [x0, y0], [x1, y1] = np.matmul(tf.i2s, [x0, y0, 1]), np.matmul(tf.i2s, [x1, y1, 1])
+        # Avoid issues with disappearing lines on very large rectangles
+        x0, x1 = np.clip([x0, x1], -8192, 8192)
+        y0, y1 = np.clip([y0, y1], -8192, 8192)
         draw_list = imgui.get_window_draw_list()
         draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, thickness)
+        yield
+
+
+def rect_filled(x0, y0, x1, y1, color, rounding=0, tf=None):
+    """ Straight non-filled rectangle specified by its two corners. """
+    while(True):
+        if tf is not None:
+            [x0, y0], [x1, y1] = np.matmul(tf.i2s, [x0, y0, 1]), np.matmul(tf.i2s, [x1, y1, 1])
+        # Avoid issues with disappearing lines on very large rectangles
+        x0, x1 = np.clip([x0, x1], -8192, 8192)
+        y0, y1 = np.clip([y0, y1], -8192, 8192)
+        draw_list = imgui.get_window_draw_list()
+        draw_list.add_rect_filled(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0)
         yield
 
 
