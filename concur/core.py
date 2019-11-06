@@ -111,6 +111,15 @@ def tag(tag_name: Any, elem: Widget) -> Widget:
             return tag_name, e.value
 
 
+def map(f: Any, elem: Widget) -> Widget:
+    while True:
+        try:
+            next(elem)
+            yield
+        except StopIteration as e:
+            return f(e.value)
+
+
 def stateful(elem: Callable[[Any], Widget], initial_state: Any) -> Widget:
     state = initial_state
     while True:
