@@ -28,16 +28,15 @@ def image(name, state, width=None, height=None, content_gen=None):
     Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
     """
     while True:
-        tag, value = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr(
+        _, st, child_event = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr(
             [ raw_image(state.tex_id, state.tex_w, state.tex_h, tf)
             , optional(content_gen is not None, content_gen, tf)
             ]))
-        # FIXME: correct a possible name clash with the content events
-        if tag == name:
-            state.pan_zoom = value
-            return tag, state
+        if st is not None:
+            state.pan_zoom = st
+            return name, state
         else:
-            return tag, value
+            return child_event
         yield
 
 
