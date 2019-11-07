@@ -13,7 +13,9 @@ from concur.widgets import child
 def pan_zoom(name, state, width=None, height=None, content_gen=None):
     """ Create the Pan & Zoom widget.
 
-    This widget is a pannable, zoomable view of a thing given by `content_gen`.
+    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widget,
+    this widget returns events in a special format: `(name, state, child_event)`. State or child_event may be `None`
+    in case `state` didn't change, or `child_event` didn't fire. `name` is the name supplied to this function
 
     `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
@@ -110,15 +112,16 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
         imgui.begin_child("Pan-zoom container", w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE)
 
+        content_value = None
         try:
             if content_gen is not None:
                 next(content_gen(TF(i2s, s2c, view_i, view_s, is_hovered)))
         except StopIteration as e:
-            return e.value
+            content_value = e.value
         finally:
             imgui.end_child()
-        if changed:
-            return name, state
+        if changed or content_value is not None:
+            return name, state if changed else None, content_value
         else:
             yield
 
