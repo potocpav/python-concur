@@ -125,6 +125,12 @@ def nothing():
     while True: yield
 
 
+def event(ev):
+    &#34;&#34;&#34; Widget that immediately returns `ev`. &#34;&#34;&#34;
+    return ev
+    yield
+
+
 def optional(exists, widget, *args, **kwargs):
     &#34;&#34;&#34; Optionally display a widget. &#34;&#34;&#34;
     return (widget(*args, **kwargs) if exists else nothing())
@@ -137,6 +143,15 @@ def tag(tag_name: Any, elem: Widget) -&gt; Widget:
             yield
         except StopIteration as e:
             return tag_name, e.value
+
+
+def map(f: Any, elem: Widget) -&gt; Widget:
+    while True:
+        try:
+            next(elem)
+            yield
+        except StopIteration as e:
+            return f(e.value)
 
 
 def stateful(elem: Callable[[Any], Widget], initial_state: Any) -&gt; Widget:
@@ -225,6 +240,21 @@ def fork_action(future, rest_gen):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="concur.core.event"><code class="name flex">
+<span>def <span class="ident">event</span></span>(<span>ev)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Widget that immediately returns <code>ev</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def event(ev):
+    &#34;&#34;&#34; Widget that immediately returns `ev`. &#34;&#34;&#34;
+    return ev
+    yield</code></pre>
+</details>
+</dd>
 <dt id="concur.core.forever"><code class="name flex">
 <span>def <span class="ident">forever</span></span>(<span>elem_gen, *args, **kwargs)</span>
 </code></dt>
@@ -331,6 +361,24 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
             return que.get_nowait()
         except queue.Empty:
             yield</code></pre>
+</details>
+</dd>
+<dt id="concur.core.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>f, elem)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map(f: Any, elem: Widget) -&gt; Widget:
+    while True:
+        try:
+            next(elem)
+            yield
+        except StopIteration as e:
+            return f(e.value)</code></pre>
 </details>
 </dd>
 <dt id="concur.core.multi_orr"><code class="name flex">
@@ -557,11 +605,13 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="two-column">
+<li><code><a title="concur.core.event" href="#concur.core.event">event</a></code></li>
 <li><code><a title="concur.core.forever" href="#concur.core.forever">forever</a></code></li>
 <li><code><a title="concur.core.fork_action" href="#concur.core.fork_action">fork_action</a></code></li>
 <li><code><a title="concur.core.interactive_elem" href="#concur.core.interactive_elem">interactive_elem</a></code></li>
 <li><code><a title="concur.core.lift" href="#concur.core.lift">lift</a></code></li>
 <li><code><a title="concur.core.listen" href="#concur.core.listen">listen</a></code></li>
+<li><code><a title="concur.core.map" href="#concur.core.map">map</a></code></li>
 <li><code><a title="concur.core.multi_orr" href="#concur.core.multi_orr">multi_orr</a></code></li>
 <li><code><a title="concur.core.nothing" href="#concur.core.nothing">nothing</a></code></li>
 <li><code><a title="concur.core.optional" href="#concur.core.optional">optional</a></code></li>

@@ -97,6 +97,12 @@ def nothing():
     while True: yield
 
 
+def event(ev):
+    """ Widget that immediately returns `ev`. """
+    return ev
+    yield
+
+
 def optional(exists, widget, *args, **kwargs):
     """ Optionally display a widget. """
     return (widget(*args, **kwargs) if exists else nothing())
