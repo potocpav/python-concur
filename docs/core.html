@@ -34,8 +34,17 @@ All of the functions in this module are re-exported in the root module for conve
 
 import queue
 from typing import Generator, Any, Iterable, List, Callable, Tuple
-from imgui import push_id, pop_id
 from asyncio import Future
+
+try:
+    from imgui import push_id, pop_id
+except ImportError as e:
+    import sys
+    print(&#34;Error importing `imgui`: a forked version is required. &#34;
+          &#34;To resolve this issue, uninstall imgui using `pip uninstall imgui -y` and reinstall Concur. &#34; +
+          &#34;See README.md for details.&#34;,
+          file=sys.stderr)
+    exit(1)
 
 
 Widget = Generator[None, None, Any]

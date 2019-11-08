@@ -105,7 +105,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
             , [0, 1 / zoom_y, top  - origin[1] / zoom_y]
             ])
 
-        i2s = np.array( # Content to Screen
+        c2s = np.array( # Content to Screen
             [ [zoom_x, 0, origin[0] - left * zoom_x]
             , [0, zoom_y, origin[1] - top  * zoom_y]
             ])
@@ -115,7 +115,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         content_value = None
         try:
             if content_gen is not None:
-                next(content_gen(TF(i2s, s2c, view_i, view_s, is_hovered)))
+                next(content_gen(TF(c2s, s2c, view_i, view_s, is_hovered)))
         except StopIteration as e:
             content_value = e.value
         finally:
@@ -167,21 +167,21 @@ class TF(object):
     For example, a point `[px, py]` can be transformed to screen-space by left multiplication:
 
     ```python
-    q = np.matmul(i2s, [px, py, 1])
+    q = np.matmul(c2s, [px, py, 1])
     ```
 
     Mostly, the necessary conversions are performed by overlay widgets.
 
     Attributes:
-        i2s: Image-to-screen transformation matrix.
-        s2i: Screen-to-image transformation matrix.
+        c2s: Content-to-screen transformation matrix.
+        s2c: Screen-to-content transformation matrix.
         view: Screen-space viewport coordinates as a list [left, top, right, bottom].
         hovered: `True` if the image widget is hovered over. Useful for some interactive elements,
             such as draggable widgets.
     """
-    def __init__(self, i2s, s2i, view_i, view_s, hovered):
-        self.i2s = i2s
-        self.s2i = s2i
+    def __init__(self, c2s, s2c, view_i, view_s, hovered):
+        self.c2s = c2s
+        self.s2c = s2c
         self.view_i = view_i
         self.view_s = view_s
         self.hovered = hovered
