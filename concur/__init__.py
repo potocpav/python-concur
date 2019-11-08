@@ -1,7 +1,7 @@
 """
 .. include:: ../README.md
-   :start-after: [**Examples**](examples)
-   :end-before: # Installation
+   :start-after: <!-- Start docs -->
+   :end-before: <!-- End docs -->
 
 .. include:: introduction.md
 
