@@ -160,7 +160,7 @@ def transform(x, y, widget, tf=None):
     while True:
         old_pos = imgui.get_cursor_screen_pos()
         if tf is not None:
-            x, y = np.matmul(tf.i2s, [x, y, 1])
+            x, y = np.matmul(tf.c2s, [x, y, 1])
         imgui.set_cursor_screen_pos((x, y))
         try:
             next(widget)
