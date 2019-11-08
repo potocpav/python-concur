@@ -9,7 +9,9 @@
 
 [**Documentation**](https://potocpav.github.io/python-concur/)
 
-[**Examples**](examples)
+[**Examples**](https://github.com/potocpav/python-concur/tree/master/examples)
+
+<!-- Start docs -->
 
 Concur is a Python UI framework based on synchronous generators.
 
@@ -24,6 +26,8 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 <p align="center">
 <img src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
 </p>
+
+<!-- End docs -->
 
 ## Installation
 
