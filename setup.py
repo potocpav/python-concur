@@ -20,8 +20,10 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'imgui',
+        'imgui @ git+https://github.com/potocpav/pyimgui.git',
         'Pillow',
         'numpy',
+        'glfw',
+        'PyOpenGL',
     ],
 )
