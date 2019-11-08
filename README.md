@@ -27,22 +27,20 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 
 ## Installation
 
-Clone the Concur repo including submodules:
+Concur is not on PyPI, because it depends on a forked version of PyImGui, which is not available in PyPI. To install
+Concur, use
 
 ```sh
-git clone git@github.com:potocpav/python-concur.git --recurse-submodules
+pip install git+https://github.com/potocpav/python-concur.git
+```
+
+For Concur development, clone the repo and install using pip as usual:
+
+```sh
+git clone https://github.com/potocpav/python-concur.git
+pip install -e python-concur
+
+# Run the examples to verify installation
 cd python-concur
-```
-
-Install a forked version of PyImGui from a submodule, then install Concur itself:
-
-```sh
-pip install -e pyimgui[glfw]
-pip install -e .
-```
-
-Run the examples to verify the installation:
-
-```sh
 examples/all.py
 ```
