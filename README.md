@@ -31,7 +31,7 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 
 ## Installation
 
-Concur is not on PyPI, because it depends on a [forked version of PyImGui](https://github.com/potocpav/pyimgui), which is not available on PyPI. If PyImGui is installed (Python package `imgui`), remove it to avoid any issues. To install Concur, use
+If PyImGui is installed (Python package `imgui`), remove it to avoid any issues, as a [forked version](https://github.com/potocpav/pyimgui) is required. Then, to install Concur, use
 
 ```sh
 pip install git+https://github.com/potocpav/python-concur.git
