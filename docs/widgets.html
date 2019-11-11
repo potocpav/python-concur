@@ -167,9 +167,9 @@ def same_line():
     &#34;&#34;&#34;
     return lift(imgui.same_line)
 
-def checkbox(*args, **kwargs):
+def checkbox(label, checked, *args, **kwargs):
     &#34;&#34;&#34; Two-state checkbox. &#34;&#34;&#34;
-    return interactive_elem(imgui.checkbox, *args, **kwargs)
+    return interactive_elem(imgui.checkbox, label, checked, *args, **kwargs)
 
 def drag_float(label, value, *args, **kwargs):
     &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
@@ -229,7 +229,7 @@ def transform(x, y, widget, tf=None):
 </details>
 </dd>
 <dt id="concur.widgets.checkbox"><code class="name flex">
-<span>def <span class="ident">checkbox</span></span>(<span>*args, **kwargs)</span>
+<span>def <span class="ident">checkbox</span></span>(<span>label, checked, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Two-state checkbox.</p></section>
@@ -237,9 +237,9 @@ def transform(x, y, widget, tf=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def checkbox(*args, **kwargs):
+<pre><code class="python">def checkbox(label, checked, *args, **kwargs):
     &#34;&#34;&#34; Two-state checkbox. &#34;&#34;&#34;
-    return interactive_elem(imgui.checkbox, *args, **kwargs)</code></pre>
+    return interactive_elem(imgui.checkbox, label, checked, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.child"><code class="name flex">

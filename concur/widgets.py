@@ -133,9 +133,9 @@ def same_line():
     """
     return lift(imgui.same_line)
 
-def checkbox(*args, **kwargs):
+def checkbox(label, checked, *args, **kwargs):
     """ Two-state checkbox. """
-    return interactive_elem(imgui.checkbox, *args, **kwargs)
+    return interactive_elem(imgui.checkbox, label, checked, *args, **kwargs)
 
 def drag_float(label, value, *args, **kwargs):
     """ Float selection widget without a slider. """
