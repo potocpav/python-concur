@@ -87,6 +87,7 @@ def interactive_elem(elem, name, *args, **kwargs):
 
     Elements which take `name` as the first argument and return
     a pair `(changed, value)` can be wrapped using this function.
+    It is used to wrap some imgui widgets in `concur.widgets`.
     """
     if 'tag' in kwargs:
         tag = kwargs['tag']
@@ -114,25 +115,18 @@ def event(ev):
 
 def optional(exists, widget, *args, **kwargs):
     """ Optionally display a widget. """
-    return (widget(*args, **kwargs) if exists else nothing())
+    return widget(*args, **kwargs) if exists else nothing()
 
 
 def tag(tag_name: Any, elem: Widget) -> Widget:
-    while True:
-        try:
-            next(elem)
-            yield
-        except StopIteration as e:
-            return tag_name, e.value
+    """ Transform any returned value `v` of `elem` into a tuple `tag_name, v`. """
+    return tag_name, (yield from elem)
 
 
 def map(f: Any, elem: Widget) -> Widget:
-    while True:
-        try:
-            next(elem)
-            yield
-        except StopIteration as e:
-            return f(e.value)
+    """ Transform any returned value `v` of `elem` into `f(v)`. """
+    v = yield from elem
+    return f(v)
 
 
 def stateful(elem: Callable[[Any], Widget], initial_state: Any) -> Widget:

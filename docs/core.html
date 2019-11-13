@@ -115,6 +115,7 @@ def interactive_elem(elem, name, *args, **kwargs):
 
     Elements which take `name` as the first argument and return
     a pair `(changed, value)` can be wrapped using this function.
+    It is used to wrap some imgui widgets in `concur.widgets`.
     &#34;&#34;&#34;
     if &#39;tag&#39; in kwargs:
         tag = kwargs[&#39;tag&#39;]
@@ -142,25 +143,18 @@ def event(ev):
 
 def optional(exists, widget, *args, **kwargs):
     &#34;&#34;&#34; Optionally display a widget. &#34;&#34;&#34;
-    return (widget(*args, **kwargs) if exists else nothing())
+    return widget(*args, **kwargs) if exists else nothing()
 
 
 def tag(tag_name: Any, elem: Widget) -&gt; Widget:
-    while True:
-        try:
-            next(elem)
-            yield
-        except StopIteration as e:
-            return tag_name, e.value
+    &#34;&#34;&#34; Transform any returned value `v` of `elem` into a tuple `tag_name, v`. &#34;&#34;&#34;
+    return tag_name, (yield from elem)
 
 
 def map(f: Any, elem: Widget) -&gt; Widget:
-    while True:
-        try:
-            next(elem)
-            yield
-        except StopIteration as e:
-            return f(e.value)
+    &#34;&#34;&#34; Transform any returned value `v` of `elem` into `f(v)`. &#34;&#34;&#34;
+    v = yield from elem
+    return f(v)
 
 
 def stateful(elem: Callable[[Any], Widget], initial_state: Any) -&gt; Widget:
@@ -315,7 +309,8 @@ remaining arguments are passed to said function.</p></section>
 <dd>
 <section class="desc"><p>Function useful for wrapping a wide range of ImGui widgets.</p>
 <p>Elements which take <code>name</code> as the first argument and return
-a pair <code>(changed, value)</code> can be wrapped using this function.</p></section>
+a pair <code>(changed, value)</code> can be wrapped using this function.
+It is used to wrap some imgui widgets in <a title="concur.widgets" href="widgets.html"><code>concur.widgets</code></a>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -325,6 +320,7 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
 
     Elements which take `name` as the first argument and return
     a pair `(changed, value)` can be wrapped using this function.
+    It is used to wrap some imgui widgets in `concur.widgets`.
     &#34;&#34;&#34;
     if &#39;tag&#39; in kwargs:
         tag = kwargs[&#39;tag&#39;]
@@ -376,18 +372,15 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
 <span>def <span class="ident">map</span></span>(<span>f, elem)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Transform any returned value <code>v</code> of <code>elem</code> into <code>f(v)</code>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(f: Any, elem: Widget) -&gt; Widget:
-    while True:
-        try:
-            next(elem)
-            yield
-        except StopIteration as e:
-            return f(e.value)</code></pre>
+    &#34;&#34;&#34; Transform any returned value `v` of `elem` into `f(v)`. &#34;&#34;&#34;
+    v = yield from elem
+    return f(v)</code></pre>
 </details>
 </dd>
 <dt id="concur.core.multi_orr"><code class="name flex">
@@ -441,7 +434,7 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
 </summary>
 <pre><code class="python">def optional(exists, widget, *args, **kwargs):
     &#34;&#34;&#34; Optionally display a widget. &#34;&#34;&#34;
-    return (widget(*args, **kwargs) if exists else nothing())</code></pre>
+    return widget(*args, **kwargs) if exists else nothing()</code></pre>
 </details>
 </dd>
 <dt id="concur.core.orr"><code class="name flex">
@@ -518,18 +511,14 @@ a pair <code>(changed, value)</code> can be wrapped using this function.</p></se
 <span>def <span class="ident">tag</span></span>(<span>tag_name, elem)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Transform any returned value <code>v</code> of <code>elem</code> into a tuple <code>tag_name, v</code>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def tag(tag_name: Any, elem: Widget) -&gt; Widget:
-    while True:
-        try:
-            next(elem)
-            yield
-        except StopIteration as e:
-            return tag_name, e.value</code></pre>
+    &#34;&#34;&#34; Transform any returned value `v` of `elem` into a tuple `tag_name, v`. &#34;&#34;&#34;
+    return tag_name, (yield from elem)</code></pre>
 </details>
 </dd>
 </dl>
