@@ -105,6 +105,11 @@ def forever(elem_gen: Callable[..., Widget], *args, **kwargs) -&gt; Widget:
 
 
 def lift(f: Callable[..., Any], *args, **argv) -&gt; Widget:
+    &#34;&#34;&#34; Lift a function into a never-ending widget.
+
+    Useful for wrapping ImGui calls and passive widgets.
+    It is used to wrap some ImGui calls in `concur.widgets`.
+    &#34;&#34;&#34;
     while True:
         f(*args, **argv)
         yield
@@ -339,12 +344,19 @@ It is used to wrap some imgui widgets in <a title="concur.widgets" href="widgets
 <span>def <span class="ident">lift</span></span>(<span>f, *args, **argv)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Lift a function into a never-ending widget.</p>
+<p>Useful for wrapping ImGui calls and passive widgets.
+It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.html"><code>concur.widgets</code></a>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def lift(f: Callable[..., Any], *args, **argv) -&gt; Widget:
+    &#34;&#34;&#34; Lift a function into a never-ending widget.
+
+    Useful for wrapping ImGui calls and passive widgets.
+    It is used to wrap some ImGui calls in `concur.widgets`.
+    &#34;&#34;&#34;
     while True:
         f(*args, **argv)
         yield</code></pre>
