@@ -98,7 +98,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
 
         view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
-        view_i = [left, top, right, bottom]
+        view_c = [left, top, right, bottom]
 
         s2c = np.array( # Screen to Content
             [ [1 / zoom_x, 0, left - origin[0] / zoom_x]
@@ -115,13 +115,13 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         content_value = None
         try:
             if content_gen is not None:
-                next(content_gen(TF(c2s, s2c, view_i, view_s, is_hovered)))
+                next(content_gen(TF(c2s, s2c, view_c, view_s, is_hovered)))
         except StopIteration as e:
             content_value = e.value
         finally:
             imgui.end_child()
         if changed or content_value is not None:
-            return name, state if changed else None, content_value
+            return name, (state if changed else None, content_value)
         else:
             yield
 
@@ -173,15 +173,16 @@ class TF(object):
     Mostly, the necessary conversions are performed by overlay widgets.
 
     Attributes:
-        c2s: Content-to-screen transformation matrix.
-        s2c: Screen-to-content transformation matrix.
-        view: Screen-space viewport coordinates as a list [left, top, right, bottom].
-        hovered: `True` if the image widget is hovered over. Useful for some interactive elements,
-            such as draggable widgets.
+        c2s:      Content-to-screen transformation matrix.
+        s2c:      Screen-to-content transformation matrix.
+        view_s:   Screen-space viewport coordinates as a list [left, top, right, bottom].
+        view_c:   Image-space viewport coordinates as a list [left, top, right, bottom].
+        hovered:  `True` if the image widget is hovered over. Useful for some interactive elements,
+                  such as draggable widgets.
     """
-    def __init__(self, c2s, s2c, view_i, view_s, hovered):
+    def __init__(self, c2s, s2c, view_c, view_s, hovered):
         self.c2s = c2s
         self.s2c = s2c
-        self.view_i = view_i
+        self.view_c = view_c
         self.view_s = view_s
         self.hovered = hovered
