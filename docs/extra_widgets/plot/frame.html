@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.1" />
-<title>concur.extra_widgets API documentation</title>
-<meta name="description" content="Extra widgets that do not directly correspond to ImGui calls." />
+<title>concur.extra_widgets.plot.frame API documentation</title>
+<meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,49 +17,101 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>concur.extra_widgets</code></h1>
+<h1 class="title">Module <code>concur.extra_widgets.plot.frame</code></h1>
 </header>
 <section id="section-intro">
-<p>Extra widgets that do not directly correspond to ImGui calls.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Extra widgets that do not directly correspond to ImGui calls.
-&#34;&#34;&#34;
+<pre><code class="python">from functools import partial
+import imgui
+import numpy as np
+
+from concur.extra_widgets.pan_zoom import PanZoom, pan_zoom
+import concur.draw as draw
+from concur.core import lift, orr, optional, map
 
 
-import concur.extra_widgets.plot
+Frame = PanZoom
 
-from .time_controls import *
-from .image import *
-from .pan_zoom import *</code></pre>
+
+def _frame(content_gen, tf):
+    margins = [50, 10, -10, -20]
+    min_tick_spacing=50
+    viewport_s = [r + o for r, o in zip(tf.view_s, margins)]
+    viewport_c = np.concatenate([np.matmul(tf.s2c, [*viewport_s[:2], 1])[:2], np.matmul(tf.s2c, [*viewport_s[2:], 1])[:2]])
+    bg = draw.rect_filled(*tf.view_s, (1,1,1,1))
+    if viewport_s[2] &lt;= viewport_s[0] or viewport_s[3] &lt;= viewport_s[1]:
+        return bg
+
+    def ticks(a, b, max_n_ticks):
+        a, b = min(a, b), max(a, b)
+        w = b - a
+        min_sep = w / max_n_ticks
+        candidates = np.array([10 ** np.floor(np.log10(min_sep)) * f for f in [1, 2, 5, 10]])
+        sep = candidates[candidates &gt; min_sep]
+        if len(sep) == 0:
+            return []
+        else:
+            sep = sep[0]
+            return np.arange(np.ceil(a / sep) * sep, b, sep)
+
+    hticks_c = ticks(viewport_c[3], viewport_c[1], (viewport_s[3] - viewport_s[1]) / min_tick_spacing)
+    vticks_c = ticks(viewport_c[2], viewport_c[0], (viewport_s[2] - viewport_s[0]) / min_tick_spacing)
+    hticks_s = np.matmul(tf.c2s, np.stack([np.zeros_like(hticks_c), hticks_c, np.ones_like(hticks_c)]))[1]
+    vticks_s = np.matmul(tf.c2s, np.stack([vticks_c, np.zeros_like(vticks_c), np.ones_like(vticks_c)]))[0]
+
+    def tick_labels(format=(&#34;{:&lt;6.1g}&#34;, &#34;{:&gt;6.1g}&#34;)):
+        if isinstance(format, str):
+            format = (format, format)
+        xtick_labels = [draw.text(ts, viewport_s[3], (0,0,0,1), format[0].format(tc)) for ts, tc in zip(vticks_s, vticks_c)]
+        ytick_labels = [draw.text(viewport_s[0] - 45, ts - 7, (0,0,0,1), format[1].format(tc)) for ts, tc in zip(hticks_s, hticks_c)]
+        return orr(xtick_labels + ytick_labels)
+
+    def grid():
+        hlines = [draw.line(tf.view_s[0], tick, tf.view_s[2], tick, (0,0,0,0.3)) for tick in hticks_s]
+        vlines = [draw.line(tick, tf.view_s[1], tick, tf.view_s[3], (0,0,0,0.3)) for tick in vticks_s]
+        return orr(hlines + vlines)
+
+    return orr(
+        [ bg
+        , draw.rect(*viewport_s, (0,0,0,1))
+        , tick_labels()
+        , lift(imgui.push_clip_rect, *viewport_s, True)
+        , grid()
+        , optional(content_gen is not None, content_gen, tf)
+        , lift(imgui.pop_clip_rect)
+        ])
+
+
+def frame(state, content_gen=None):
+    return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
+        pan_zoom(&#34;Frame&#34;, state, content_gen=partial(_frame, content_gen)))</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="concur.extra_widgets.image" href="image.html">concur.extra_widgets.image</a></code></dt>
-<dd>
-<section class="desc"><p>Scrollable, zoomable image widget with overlay support.</p></section>
-</dd>
-<dt><code class="name"><a title="concur.extra_widgets.pan_zoom" href="pan_zoom.html">concur.extra_widgets.pan_zoom</a></code></dt>
-<dd>
-<section class="desc"><p>Zoomable, pannable widget with arbitrary content.</p></section>
-</dd>
-<dt><code class="name"><a title="concur.extra_widgets.plot" href="plot/index.html">concur.extra_widgets.plot</a></code></dt>
+<dt id="concur.extra_widgets.plot.frame.frame"><code class="name flex">
+<span>def <span class="ident">frame</span></span>(<span>state, content_gen=None)</span>
+</code></dt>
 <dd>
 <section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="concur.extra_widgets.time_controls" href="time_controls.html">concur.extra_widgets.time_controls</a></code></dt>
-<dd>
-<section class="desc"><p>Experimental widget for image sequence or video seeking.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def frame(state, content_gen=None):
+    return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
+        pan_zoom(&#34;Frame&#34;, state, content_gen=partial(_frame, content_gen)))</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -72,15 +124,12 @@ from .pan_zoom import *</code></pre>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="concur" href="../index.html">concur</a></code></li>
+<li><code><a title="concur.extra_widgets.plot" href="index.html">concur.extra_widgets.plot</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
-<ul>
-<li><code><a title="concur.extra_widgets.image" href="image.html">concur.extra_widgets.image</a></code></li>
-<li><code><a title="concur.extra_widgets.pan_zoom" href="pan_zoom.html">concur.extra_widgets.pan_zoom</a></code></li>
-<li><code><a title="concur.extra_widgets.plot" href="plot/index.html">concur.extra_widgets.plot</a></code></li>
-<li><code><a title="concur.extra_widgets.time_controls" href="time_controls.html">concur.extra_widgets.time_controls</a></code></li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="concur.extra_widgets.plot.frame.frame" href="#concur.extra_widgets.plot.frame.frame">frame</a></code></li>
 </ul>
 </li>
 </ul>

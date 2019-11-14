@@ -47,7 +47,7 @@ except ImportError as e:
     exit(1)
 
 
-Widget = Generator[None, None, Any]
+Widget = Any # It isn&#39;t possible to type Widget correctly using mypy. Prove me wrong.
 
 
 def orr(widgets: Iterable[Widget]) -&gt; Widget:
@@ -146,9 +146,9 @@ def event(ev):
     yield
 
 
-def optional(exists, widget, *args, **kwargs):
+def optional(exists: bool, widget_gen: Callable[..., Widget], *args, **kwargs):
     &#34;&#34;&#34; Optionally display a widget. &#34;&#34;&#34;
-    return widget(*args, **kwargs) if exists else nothing()
+    return widget_gen(*args, **kwargs) if exists else nothing()
 
 
 def tag(tag_name: Any, elem: Widget) -&gt; Widget:
@@ -436,7 +436,7 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 </details>
 </dd>
 <dt id="concur.core.optional"><code class="name flex">
-<span>def <span class="ident">optional</span></span>(<span>exists, widget, *args, **kwargs)</span>
+<span>def <span class="ident">optional</span></span>(<span>exists, widget_gen, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Optionally display a widget.</p></section>
@@ -444,9 +444,9 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def optional(exists, widget, *args, **kwargs):
+<pre><code class="python">def optional(exists: bool, widget_gen: Callable[..., Widget], *args, **kwargs):
     &#34;&#34;&#34; Optionally display a widget. &#34;&#34;&#34;
-    return widget(*args, **kwargs) if exists else nothing()</code></pre>
+    return widget_gen(*args, **kwargs) if exists else nothing()</code></pre>
 </details>
 </dd>
 <dt id="concur.core.orr"><code class="name flex">

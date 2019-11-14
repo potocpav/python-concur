@@ -125,7 +125,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
 
         view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
-        view_i = [left, top, right, bottom]
+        view_c = [left, top, right, bottom]
 
         s2c = np.array( # Screen to Content
             [ [1 / zoom_x, 0, left - origin[0] / zoom_x]
@@ -142,13 +142,13 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         content_value = None
         try:
             if content_gen is not None:
-                next(content_gen(TF(c2s, s2c, view_i, view_s, is_hovered)))
+                next(content_gen(TF(c2s, s2c, view_c, view_s, is_hovered)))
         except StopIteration as e:
             content_value = e.value
         finally:
             imgui.end_child()
         if changed or content_value is not None:
-            return name, state if changed else None, content_value
+            return name, (state if changed else None, content_value)
         else:
             yield
 
@@ -200,16 +200,17 @@ class TF(object):
     Mostly, the necessary conversions are performed by overlay widgets.
 
     Attributes:
-        c2s: Content-to-screen transformation matrix.
-        s2c: Screen-to-content transformation matrix.
-        view: Screen-space viewport coordinates as a list [left, top, right, bottom].
-        hovered: `True` if the image widget is hovered over. Useful for some interactive elements,
-            such as draggable widgets.
+        c2s:      Content-to-screen transformation matrix.
+        s2c:      Screen-to-content transformation matrix.
+        view_s:   Screen-space viewport coordinates as a list [left, top, right, bottom].
+        view_c:   Image-space viewport coordinates as a list [left, top, right, bottom].
+        hovered:  `True` if the image widget is hovered over. Useful for some interactive elements,
+                  such as draggable widgets.
     &#34;&#34;&#34;
-    def __init__(self, c2s, s2c, view_i, view_s, hovered):
+    def __init__(self, c2s, s2c, view_c, view_s, hovered):
         self.c2s = c2s
         self.s2c = s2c
-        self.view_i = view_i
+        self.view_c = view_c
         self.view_s = view_s
         self.hovered = hovered</code></pre>
 </details>
@@ -323,7 +324,7 @@ widget. It is up to the widget to do the necessary transformations using the <a 
 
 
         view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
-        view_i = [left, top, right, bottom]
+        view_c = [left, top, right, bottom]
 
         s2c = np.array( # Screen to Content
             [ [1 / zoom_x, 0, left - origin[0] / zoom_x]
@@ -340,13 +341,13 @@ widget. It is up to the widget to do the necessary transformations using the <a 
         content_value = None
         try:
             if content_gen is not None:
-                next(content_gen(TF(c2s, s2c, view_i, view_s, is_hovered)))
+                next(content_gen(TF(c2s, s2c, view_c, view_s, is_hovered)))
         except StopIteration as e:
             content_value = e.value
         finally:
             imgui.end_child()
         if changed or content_value is not None:
-            return name, state if changed else None, content_value
+            return name, (state if changed else None, content_value)
         else:
             yield</code></pre>
 </details>
@@ -441,7 +442,7 @@ widget. It is up to the widget to do the necessary transformations using the <a 
 </dd>
 <dt id="concur.extra_widgets.pan_zoom.TF"><code class="flex name class">
 <span>class <span class="ident">TF</span></span>
-<span>(</span><span>c2s, s2c, view_i, view_s, hovered)</span>
+<span>(</span><span>c2s, s2c, view_c, view_s, hovered)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Transformation object containing information necessary for converting between screen-space and image-space.</p>
@@ -454,11 +455,17 @@ Transformations are expressed as NumPy matrices in homogenous coordinates with t
 <h2 id="attributes">Attributes</h2>
 <dl>
 <dt><strong><code>c2s</code></strong></dt>
-<dd>Content-to-screen transformation matrix.</dd>
+<dd>
+<p>Content-to-screen transformation matrix.</p>
+</dd>
 <dt><strong><code>s2c</code></strong></dt>
-<dd>Screen-to-content transformation matrix.</dd>
-<dt><strong><code>view</code></strong></dt>
+<dd>
+<p>Screen-to-content transformation matrix.</p>
+</dd>
+<dt><strong><code>view_s</code></strong></dt>
 <dd>Screen-space viewport coordinates as a list [left, top, right, bottom].</dd>
+<dt><strong><code>view_c</code></strong></dt>
+<dd>Image-space viewport coordinates as a list [left, top, right, bottom].</dd>
 <dt><strong><code>hovered</code></strong></dt>
 <dd><code>True</code> if the image widget is hovered over. Useful for some interactive elements,
 such as draggable widgets.</dd>
@@ -482,16 +489,17 @@ such as draggable widgets.</dd>
     Mostly, the necessary conversions are performed by overlay widgets.
 
     Attributes:
-        c2s: Content-to-screen transformation matrix.
-        s2c: Screen-to-content transformation matrix.
-        view: Screen-space viewport coordinates as a list [left, top, right, bottom].
-        hovered: `True` if the image widget is hovered over. Useful for some interactive elements,
-            such as draggable widgets.
+        c2s:      Content-to-screen transformation matrix.
+        s2c:      Screen-to-content transformation matrix.
+        view_s:   Screen-space viewport coordinates as a list [left, top, right, bottom].
+        view_c:   Image-space viewport coordinates as a list [left, top, right, bottom].
+        hovered:  `True` if the image widget is hovered over. Useful for some interactive elements,
+                  such as draggable widgets.
     &#34;&#34;&#34;
-    def __init__(self, c2s, s2c, view_i, view_s, hovered):
+    def __init__(self, c2s, s2c, view_c, view_s, hovered):
         self.c2s = c2s
         self.s2c = s2c
-        self.view_i = view_i
+        self.view_c = view_c
         self.view_s = view_s
         self.hovered = hovered</code></pre>
 </details>
