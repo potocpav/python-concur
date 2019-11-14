@@ -19,7 +19,7 @@ except ImportError as e:
     exit(1)
 
 
-Widget = Generator[None, None, Any]
+Widget = Any # It isn't possible to type Widget correctly using mypy. Prove me wrong.
 
 
 def orr(widgets: Iterable[Widget]) -> Widget:
@@ -118,9 +118,9 @@ def event(ev):
     yield
 
 
-def optional(exists, widget, *args, **kwargs):
+def optional(exists: bool, widget_gen: Callable[..., Widget], *args, **kwargs):
     """ Optionally display a widget. """
-    return widget(*args, **kwargs) if exists else nothing()
+    return widget_gen(*args, **kwargs) if exists else nothing()
 
 
 def tag(tag_name: Any, elem: Widget) -> Widget:
