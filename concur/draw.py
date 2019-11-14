@@ -95,7 +95,7 @@ def image(tex_id, w, h, tf):
         l, t, r, b = tf.view_s
         a_s = tf.view_s[:2]
         b_s = tf.view_s[2:]
-        a_i = tf.view_i[0] / w, tf.view_i[1] / h
-        b_i = tf.view_i[2] / w, tf.view_i[3] / h
+        a_i = tf.view_c[0] / w, tf.view_c[1] / h
+        b_i = tf.view_c[2] / w, tf.view_c[3] / h
         draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
         yield
