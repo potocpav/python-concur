@@ -64,7 +64,10 @@ def polyline(points, color, closed=False, thickness=1, tf=None):
     """ Polygonal line or a closed polygon. """
     while(True):
         if tf is not None:
-            points = [list(np.matmul(tf.c2s, [x, y, 1])) for x, y in points]
+            if isinstance(points, np.ndarray):
+                points = np.matmul(tf.c2s, np.column_stack([points, np.ones(len(points))]).T).T
+            else:
+                points = [list(np.matmul(tf.c2s, [x, y, 1])) for x, y in points]
         draw_list = imgui.get_window_draw_list()
         draw_list.add_polyline(points, imgui.get_color_u32_rgba(*color), closed, thickness)
         yield

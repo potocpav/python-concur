@@ -5,8 +5,16 @@ from PIL import Image
 import numpy as np
 
 
-def foo(tf):
-    return c.draw.polyline([(x,np.sin(x) * np.sin(x * 5 * np.cos(x))) for x in np.linspace(0, 10, 1000)], (0,0,0,1), tf=tf)
+x = np.linspace(0, 10, 100000, dtype=np.float32)
+y = np.sin(x) * np.sin(x * 5 * np.cos(x))
+pts = np.stack([x, y]).T
+
+
+def graph(tf):
+    return c.draw.polyline(
+        pts,
+        (0,0,0,1), thickness=1,
+        tf=tf)
 
 
 def app():
@@ -15,7 +23,7 @@ def app():
     while True:
         tag, value = yield from c.orr(
             [ c.text("Drag using right mouse button,\nscroll using mouse wheel.")
-            , c.plot.frame(view, foo)
+            , c.plot.frame(view, graph)
             ])
         if tag == "Frame":
             view = value
