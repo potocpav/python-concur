@@ -31,10 +31,10 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 
 ## Installation
 
-If PyImGui is installed (Python package `imgui`), remove it to avoid any issues, as a [forked version](https://github.com/potocpav/pyimgui) is required. Then, to install Concur, use
+Concur [is available on PyPI](https://pypi.org/project/concur/) and can be installed using pip:
 
 ```sh
-pip install git+https://github.com/potocpav/python-concur.git
+pip install concur
 ```
 
 This Python code should now produce a very simple UI:
@@ -44,7 +44,9 @@ import concur as c
 c.integrations.main("Hello World", c.button("Close"), 500, 500)
 ```
 
-For Concur development, clone the repo and install using pip:
+Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.
+
+For Concur development, clone the repo and install it using pip:
 
 ```sh
 git clone https://github.com/potocpav/python-concur.git
@@ -53,3 +55,5 @@ pip install -e.
 
 examples/all.py # Run the examples to verify installation
 ```
+
+To build documentation, install [pdoc3](https://pdoc3.github.io/pdoc/) (`pip install pdoc3`) and run the script `./mkdocs.sh`.

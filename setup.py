@@ -17,10 +17,16 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+
+        "Topic :: Software Development :: User Interfaces",
+        "Topic :: Scientific/Engineering :: Visualization",
     ],
     python_requires='>=3.6',
     install_requires=[
-        'imgui @ git+https://github.com/potocpav/pyimgui.git',
+        'imgui >= 1.1.0',
         'Pillow',
         'numpy',
         'glfw',
