@@ -89,15 +89,16 @@ def input_text(name, value, buffer_length, tag=None):
             yield
 
 
-def key_pressed(name, key_index, repeat=True):
-    """ Invisible widget that waits for a given key to be pressed.
-
-    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
-    """
-    while True:
-        if imgui.is_key_pressed(key_index, repeat):
-            return name, None
-        yield
+# TODO: contribute is_key_pressed to PyImGui and re-introduce this function
+# def key_pressed(name, key_index, repeat=True):
+#     """ Invisible widget that waits for a given key to be pressed.
+#
+#     Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
+#     """
+#     while True:
+#         if imgui.is_key_pressed(key_index, repeat):
+#             return name, None
+#         yield
 
 
 def text(s):
