@@ -123,15 +123,16 @@ def input_text(name, value, buffer_length, tag=None):
             yield
 
 
-def key_pressed(name, key_index, repeat=True):
-    &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
-
-    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
-    &#34;&#34;&#34;
-    while True:
-        if imgui.is_key_pressed(key_index, repeat):
-            return name, None
-        yield
+# TODO: contribute is_key_pressed to PyImGui and re-introduce this function
+# def key_pressed(name, key_index, repeat=True):
+#     &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
+#
+#     Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
+#     &#34;&#34;&#34;
+#     while True:
+#         if imgui.is_key_pressed(key_index, repeat):
+#             return name, None
+#         yield
 
 
 def text(s):
@@ -289,27 +290,6 @@ def transform(x, y, widget, tf=None):
             return (name if tag is None else tag), new_value
         else:
             yield</code></pre>
-</details>
-</dd>
-<dt id="concur.widgets.key_pressed"><code class="name flex">
-<span>def <span class="ident">key_pressed</span></span>(<span>name, key_index, repeat=True)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Invisible widget that waits for a given key to be pressed.</p>
-<p>Key codes are specified by the integration layer, e.g. <code>glfw.KEY_A</code>.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def key_pressed(name, key_index, repeat=True):
-    &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
-
-    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
-    &#34;&#34;&#34;
-    while True:
-        if imgui.is_key_pressed(key_index, repeat):
-            return name, None
-        yield</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.orr_same_line"><code class="name flex">
@@ -549,7 +529,6 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.child" href="#concur.widgets.child">child</a></code></li>
 <li><code><a title="concur.widgets.drag_float" href="#concur.widgets.drag_float">drag_float</a></code></li>
 <li><code><a title="concur.widgets.input_text" href="#concur.widgets.input_text">input_text</a></code></li>
-<li><code><a title="concur.widgets.key_pressed" href="#concur.widgets.key_pressed">key_pressed</a></code></li>
 <li><code><a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line">orr_same_line</a></code></li>
 <li><code><a title="concur.widgets.radio_button" href="#concur.widgets.radio_button">radio_button</a></code></li>
 <li><code><a title="concur.widgets.same_line" href="#concur.widgets.same_line">same_line</a></code></li>
