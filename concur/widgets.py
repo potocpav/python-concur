@@ -38,8 +38,6 @@ def window(title: str,
            flags: int = 0) -> Widget:
     """ Create a window with a given `widget` inside. """
     while True:
-        # TODO: is it necessary to push an ID here?
-        imgui.push_id(title)
         if position is not None:
             imgui.set_next_window_position(*position)
         if size is not None:
@@ -51,15 +49,12 @@ def window(title: str,
             return e.value
         finally:
             imgui.end()
-            imgui.pop_id()
         yield
 
 
 def child(name, widget, width, height, border=False, flags=0):
     """ Create a sized box with a `widget` inside a window. """
     while True:
-        # TODO: is it necessary to push an ID here?
-        imgui.push_id(name)
         imgui.begin_child(name, width, height, border, flags)
         try:
             next(widget)
@@ -67,7 +62,6 @@ def child(name, widget, width, height, border=False, flags=0):
             return e.value
         finally:
             imgui.end_child()
-            imgui.pop_id()
         yield
 
 

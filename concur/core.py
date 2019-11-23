@@ -7,16 +7,7 @@ All of the functions in this module are re-exported in the root module for conve
 import queue
 from typing import Generator, Any, Iterable, List, Callable, Tuple
 from asyncio import Future
-
-try:
-    from imgui import push_id, pop_id
-except ImportError as e:
-    import sys
-    print("Error importing `imgui`: a forked version is required. "
-          "To resolve this issue, uninstall imgui using `pip uninstall imgui -y` and reinstall Concur. " +
-          "See README.md for details.",
-          file=sys.stderr)
-    exit(1)
+from imgui import push_id, pop_id
 
 
 Widget = Any # It isn't possible to type Widget correctly using mypy. Prove me wrong.
@@ -29,7 +20,7 @@ def orr(widgets: Iterable[Widget]) -> Widget:
     while True:
         for i, elem in enumerate(widgets):
             try:
-                push_id(i)
+                push_id(str(i))
                 next(elem)
             except StopIteration as e:
                 if not stop:
@@ -49,7 +40,7 @@ def multi_orr(widgets: Iterable[Widget]) -> Widget:
     while events == []:
         for i, elem in enumerate(widgets):
             try:
-                push_id(i)
+                push_id(str(i))
                 next(elem)
             except StopIteration as e:
                 events.append(e.value)
