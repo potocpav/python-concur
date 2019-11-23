@@ -89,7 +89,9 @@ def input_text(name, value, buffer_length, tag=None):
             yield
 
 
-# TODO: contribute is_key_pressed to PyImGui and re-introduce this function
+# NOTE: the key_pressed function require a forked version of ImGui:
+# https://github.com/potocpav/pyimgui
+#
 # def key_pressed(name, key_index, repeat=True):
 #     """ Invisible widget that waits for a given key to be pressed.
 #
