@@ -37,13 +37,6 @@ Concur [is available on PyPI](https://pypi.org/project/concur/) and can be insta
 pip install concur
 ```
 
-Optionally, replace imgui with a [forked version](https://github.com/potocpav/pyimgui). It contains several functions that are missing from upstream. Without those, some functinality in Concur may be missing and/or buggy (image pan & zoom). This will hopefully get fixed soon.
-
-```sh
-pip install git+https://github.com/potocpav/pyimgui.git
-```
-
-
 This Python code should now produce a very simple UI:
 
 ```python
@@ -52,6 +45,12 @@ c.integrations.main("Hello World", c.button("Close"), 500, 500)
 ```
 
 Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.
+
+Optionally, replace PyImGui with a [forked version](https://github.com/potocpav/pyimgui). It contains several functions that are missing from upstream. Without those, some more experimental functionality in Concur may be missing and/or buggy (graph plotting).
+
+```sh
+pip install git+https://github.com/potocpav/pyimgui.git
+```
 
 For Concur development, clone the repo and install it using pip:
 

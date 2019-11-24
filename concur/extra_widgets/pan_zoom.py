@@ -51,50 +51,43 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         origin = imgui.get_cursor_screen_pos()
 
         # Interaction
-        state = copy.deepcopy(state)
-        changed = False
+        st = copy.deepcopy(state)
+        dragging_1, dragging_2 = imgui.is_mouse_dragging(1, 1), imgui.is_mouse_dragging(2, 1)
+        is_dragging = dragging_1 or dragging_2
+        drag_delta = imgui.get_mouse_drag_delta(1 if dragging_1 else 2, 1)
+        delta = drag_delta[0] - st.last_drag_delta[0], drag_delta[1] - st.last_drag_delta[1]
+        st.last_drag_delta = drag_delta
+
         io = imgui.get_io()
         is_hovered = origin[0] < io.mouse_pos[0] < w + origin[0] \
                  and origin[1] < io.mouse_pos[1] < h + origin[1]
 
-        # Detect if the image is being dragged by the mouse
-        if (imgui.is_mouse_clicked(1) or imgui.is_mouse_clicked(2)) and is_hovered:
-            changed |= not state.is_dragging
-            state.is_dragging = True
-        if not (imgui.is_mouse_down(1) or imgui.is_mouse_down(2)):
-            changed |= state.is_dragging
-            state.is_dragging = False
-
         # Pan
-        if state.is_dragging and (io.mouse_delta[0] or io.mouse_delta[1]):
-            if state.fix_axis is not 'x':
-                state.left -= io.mouse_delta[0] / zoom_x
-                state.right -= io.mouse_delta[0] / zoom_x
-                changed |= True
-            if state.fix_axis is not 'y':
-                state.top -= io.mouse_delta[1] / zoom_y
-                state.bottom -= io.mouse_delta[1] / zoom_y
-                changed |= True
+        if is_dragging and (delta[0] or delta[1]):
+            if st.fix_axis != 'x':
+                st.left -= delta[0] / zoom_x
+                st.right -= delta[0] / zoom_x
+            if st.fix_axis != 'y':
+                st.top -= delta[1] / zoom_y
+                st.bottom -= delta[1] / zoom_y
 
         # Zoom
         if is_hovered and io.mouse_wheel:
             factor = 1.3 ** io.mouse_wheel
 
-            if state.fix_axis is not 'x':
+            if st.fix_axis != 'x':
                 mx_rel = (io.mouse_pos[0] - origin[0]) / w * 2 - 1
-                mx = mx_rel * (right - left) / (state.right - state.left) / 2 + 0.5
-                wi = state.right - state.left
-                state.left  = state.left    + wi * mx     - wi / factor * mx
-                state.right = state.right   - wi * (1-mx) + wi / factor * (1-mx)
-                changed |= True
+                mx = mx_rel * (right - left) / (st.right - st.left) / 2 + 0.5
+                wi = st.right - st.left
+                st.left  = st.left    + wi * mx     - wi / factor * mx
+                st.right = st.right   - wi * (1-mx) + wi / factor * (1-mx)
 
-            if state.fix_axis is not 'y':
+            if st.fix_axis != 'y':
                 my_rel = (io.mouse_pos[1] - origin[1]) / h * 2 - 1
-                my = my_rel * (bottom - top) / (state.bottom - state.top) / 2 + 0.5
-                hi = state.bottom - state.top
-                state.top  = state.top      + hi * my     - hi / factor * my
-                state.bottom = state.bottom - hi * (1-my) + hi / factor * (1-my)
-                changed |= True
+                my = my_rel * (bottom - top) / (st.bottom - st.top) / 2 + 0.5
+                hi = st.bottom - st.top
+                st.top  = st.top      + hi * my     - hi / factor * my
+                st.bottom = st.bottom - hi * (1-my) + hi / factor * (1-my)
 
 
         view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
@@ -120,8 +113,9 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
             content_value = e.value
         finally:
             imgui.end_child()
+        changed = st != state
         if changed or content_value is not None:
-            return name, (state if changed else None, content_value)
+            return name, (st if changed else None, content_value)
         else:
             yield
 
@@ -139,7 +133,7 @@ class PanZoom(object):
         assert not keep_aspect or not fix_axis, "Can't fix axis and keep_aspect at the same time."
 
         self.reset_view(top_left, bottom_right)
-        self.is_dragging = False
+        self.last_drag_delta = 0, 0
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
@@ -156,6 +150,9 @@ class PanZoom(object):
         self.bottom = self.default_bottom
         self.left = self.default_left
         self.right = self.default_right
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
 
 class TF(object):
