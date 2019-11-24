@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="concur",
-    version="0.1.0",
+    version="0.1.1",
     author="Pavel Potocek",
     author_email="pavelpotocek@gmail.com",
     description="Concur UI Framework for Python",
@@ -21,7 +21,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.9',
 
         "License :: OSI Approved :: MIT License",
-        
+
         "Operating System :: OS Independent",
 
         "Intended Audience :: Developers",
