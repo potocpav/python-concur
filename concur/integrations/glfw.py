@@ -33,7 +33,8 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
         try:
             next(widget)
         except StopIteration:
-            exit(1)
+            imgui.render()
+            break
         except:
             # Cleanup on exception for iPython
             imgui.render()
