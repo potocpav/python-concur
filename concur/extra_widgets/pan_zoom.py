@@ -50,17 +50,19 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
         origin = imgui.get_cursor_screen_pos()
 
+        imgui.begin_child("Pan-zoom container", w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
+
         # Interaction
         st = copy.deepcopy(state)
         dragging_1, dragging_2 = imgui.is_mouse_dragging(1, 1), imgui.is_mouse_dragging(2, 1)
-        is_dragging = dragging_1 or dragging_2
+        is_dragging = (dragging_1 or dragging_2) and st.is_hovered
         drag_delta = imgui.get_mouse_drag_delta(1 if dragging_1 else 2, 1)
         delta = drag_delta[0] - st.last_drag_delta[0], drag_delta[1] - st.last_drag_delta[1]
         st.last_drag_delta = drag_delta
 
         io = imgui.get_io()
-        is_hovered = origin[0] < io.mouse_pos[0] < w + origin[0] \
-                 and origin[1] < io.mouse_pos[1] < h + origin[1]
+        if not is_dragging:
+            st.is_hovered = imgui.is_window_hovered()
 
         # Pan
         if is_dragging and (delta[0] or delta[1]):
@@ -72,7 +74,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
                 st.bottom -= delta[1] / zoom_y
 
         # Zoom
-        if is_hovered and io.mouse_wheel:
+        if st.is_hovered and io.mouse_wheel:
             factor = 1.3 ** io.mouse_wheel
 
             if st.fix_axis != 'x':
@@ -103,12 +105,10 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
             , [0, zoom_y, origin[1] - top  * zoom_y]
             ])
 
-        imgui.begin_child("Pan-zoom container", w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE)
-
         content_value = None
         try:
             if content_gen is not None:
-                next(content_gen(TF(c2s, s2c, view_c, view_s, is_hovered)))
+                next(content_gen(TF(c2s, s2c, view_c, view_s, st.is_hovered)))
         except StopIteration as e:
             content_value = e.value
         finally:
@@ -134,6 +134,7 @@ class PanZoom(object):
 
         self.reset_view(top_left, bottom_right)
         self.last_drag_delta = 0, 0
+        self.is_hovered = False # Include cursor outside, but dragging
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
