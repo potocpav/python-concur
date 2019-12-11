@@ -33,8 +33,9 @@ def image(name, state, width=None, height=None, content_gen=None):
             , optional(content_gen is not None, content_gen, tf)
             ]))
         if st is not None:
-            state.pan_zoom = st
-            return name, state
+            new_state = copy.deepcopy(state)
+            new_state.pan_zoom = st
+            return name, new_state
         else:
             return child_event
         yield
