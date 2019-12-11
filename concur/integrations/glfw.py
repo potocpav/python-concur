@@ -15,6 +15,11 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
     with the GLFW window.
     """
     imgui.create_context()
+
+    # Set config flags
+    print("Flags: ", imgui.get_io().config_flags)
+    imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
+
     window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)
     if pass_window_to_widget:
