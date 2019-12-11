@@ -22,11 +22,15 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
     """
     while True:
         if width is None:
-            width = imgui.get_content_region_available()[0]
+            w = imgui.get_content_region_available()[0]
+        else:
+            w = width
         if height is None:
-            height = imgui.get_content_region_available()[1]
-        w = max(1, width)
-        h = max(1, height)
+            h = imgui.get_content_region_available()[1]
+        else:
+            h = height
+        w = max(1, w)
+        h = max(1, h)
 
         zoom_x = w / (state.right  - state.left)
         zoom_y = h / (state.bottom - state.top)
