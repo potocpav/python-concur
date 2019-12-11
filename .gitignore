@@ -3,3 +3,5 @@ concur.egg-info
 .mypy_cache
 
 docs/_build
+build
+dist
