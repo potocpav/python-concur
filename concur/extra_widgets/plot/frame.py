@@ -64,6 +64,6 @@ def _frame(content_gen, tf):
         ])
 
 
-def frame(state, content_gen=None):
+def frame(name, state, content_gen=None):
     return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
-        pan_zoom("Frame", state, content_gen=partial(_frame, content_gen)))
+        pan_zoom(name, state, content_gen=partial(_frame, content_gen)))
