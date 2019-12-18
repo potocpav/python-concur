@@ -60,25 +60,14 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         st = copy.deepcopy(state)
         io = imgui.get_io()
         is_mouse_down = io.mouse_down[1] or io.mouse_down[2]
-        if is_mouse_down and not st.was_mouse_down:
+        if is_mouse_down and not st.was_mouse_down and imgui.is_window_hovered():
             st.was_mouse_down = True
             st.is_hovered = imgui.is_window_hovered()
         if not is_mouse_down:
             st.was_mouse_down = False
             st.is_hovered = False
 
-
-        # dragging_1, dragging_2 = imgui.is_mouse_dragging(1, 1), imgui.is_mouse_dragging(2, 1)
-        # is_dragging = (dragging_1 or dragging_2) and st.is_hovered
-        # drag_delta = imgui.get_mouse_drag_delta(1 if dragging_1 else 2, 1)
-        # print(imgui.get_mouse_drag_delta())
-        # delta = drag_delta[0] - st.last_drag_delta[0], drag_delta[1] - st.last_drag_delta[1]
-        # st.last_drag_delta = drag_delta
         delta = io.mouse_delta
-
-        # print(list(io.mouse_down))
-        # if not is_dragging:
-        #     st.is_hovered = imgui.is_window_hovered()
 
         # Pan
         if st.is_hovered and (delta[0] or delta[1]):
