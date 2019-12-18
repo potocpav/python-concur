@@ -54,7 +54,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
         origin = imgui.get_cursor_screen_pos()
 
-        imgui.begin_child(name + " Pan-zoom", w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
+        imgui.begin_child("Pan-zoom", w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
 
         # Interaction
         st = copy.deepcopy(state)
