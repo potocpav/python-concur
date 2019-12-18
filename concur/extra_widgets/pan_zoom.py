@@ -58,18 +58,30 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
         # Interaction
         st = copy.deepcopy(state)
-        dragging_1, dragging_2 = imgui.is_mouse_dragging(1, 1), imgui.is_mouse_dragging(2, 1)
-        is_dragging = (dragging_1 or dragging_2) and st.is_hovered
-        drag_delta = imgui.get_mouse_drag_delta(1 if dragging_1 else 2, 1)
-        delta = drag_delta[0] - st.last_drag_delta[0], drag_delta[1] - st.last_drag_delta[1]
-        st.last_drag_delta = drag_delta
-
         io = imgui.get_io()
-        if not is_dragging:
+        is_mouse_down = io.mouse_down[1] or io.mouse_down[2]
+        if is_mouse_down and not st.was_mouse_down:
+            st.was_mouse_down = True
             st.is_hovered = imgui.is_window_hovered()
+        if not is_mouse_down:
+            st.was_mouse_down = False
+            st.is_hovered = False
+
+
+        # dragging_1, dragging_2 = imgui.is_mouse_dragging(1, 1), imgui.is_mouse_dragging(2, 1)
+        # is_dragging = (dragging_1 or dragging_2) and st.is_hovered
+        # drag_delta = imgui.get_mouse_drag_delta(1 if dragging_1 else 2, 1)
+        # print(imgui.get_mouse_drag_delta())
+        # delta = drag_delta[0] - st.last_drag_delta[0], drag_delta[1] - st.last_drag_delta[1]
+        # st.last_drag_delta = drag_delta
+        delta = io.mouse_delta
+
+        # print(list(io.mouse_down))
+        # if not is_dragging:
+        #     st.is_hovered = imgui.is_window_hovered()
 
         # Pan
-        if is_dragging and (delta[0] or delta[1]):
+        if st.is_hovered and (delta[0] or delta[1]):
             if st.fix_axis != 'x':
                 st.left -= delta[0] / zoom_x
                 st.right -= delta[0] / zoom_x
@@ -78,7 +90,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
                 st.bottom -= delta[1] / zoom_y
 
         # Zoom
-        if st.is_hovered and io.mouse_wheel:
+        if (imgui.is_window_hovered() or st.is_hovered) and io.mouse_wheel:
             factor = 1.3 ** io.mouse_wheel
 
             if st.fix_axis != 'x':
@@ -137,8 +149,10 @@ class PanZoom(object):
         assert not keep_aspect or not fix_axis, "Can't fix axis and keep_aspect at the same time."
 
         self.reset_view(top_left, bottom_right)
-        self.last_drag_delta = 0, 0
-        self.is_hovered = False # Include cursor outside, but dragging
+         # Include cases where cursor is outside the element, but was inside when the drag started.
+         # Exclude cases where cursor is inside the element, but was outside when the drag started.
+        self.is_hovered = False
+        self.was_mouse_down = False
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
