@@ -42,19 +42,17 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         top, bottom = state.top, state.bottom
         if state.keep_aspect:
             aspect = float(state.keep_aspect)
-            assert zoom_x > 0 and zoom_y > 0, "Flipped axes are not supported if `keep_aspect` is not False"
             assert state.keep_aspect > 0, "Negative aspect ratio is not supported."
-            # TODO: handle margins correctly
-            if zoom_x > zoom_y * aspect:
-                zoom_x = zoom_y * aspect
-                center_x = (state.left + state.right) / 2
-                left  = center_x - w / zoom_x / 2
-                right = center_x + w / zoom_x / 2
-            if zoom_y > zoom_x / aspect:
-                zoom_y = zoom_x / aspect
-                center_y = (state.top + state.bottom) / 2
-                top    = center_y - h / zoom_y / 2
-                bottom = center_y + h / zoom_y / 2
+            if abs(zoom_x) > abs(zoom_y) * aspect:
+                zoom_x = np.sign(zoom_x) * abs(zoom_y) * aspect
+                center_x = (left + right) / 2
+                left  = center_x - frame_w / zoom_x / 2
+                right = center_x + frame_w / zoom_x / 2
+            if abs(zoom_y) > abs(zoom_x) / aspect:
+                zoom_y = np.sign(zoom_y) * abs(zoom_x) / aspect
+                center_y = (top + bottom) / 2
+                top    = center_y - frame_h / zoom_y / 2
+                bottom = center_y + frame_h / zoom_y / 2
 
         origin = imgui.get_cursor_screen_pos()
 
@@ -139,6 +137,7 @@ class PanZoom(object):
             top_left:     Coordinates of the top left corner of the displayed content area.
             bottom_right: oordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
+                          if keep_aspect==True, it is equivalent to keep_aspect==1.
             fix_axis:     Do not zoom in a given axis (`'x'`, `'y'`, or `None`).
             margins:      Margins (left, top, right, bottom) of the view area in pixels.
                           If the view area should be inset by 5 px on each side, then use
