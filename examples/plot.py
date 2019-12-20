@@ -19,11 +19,11 @@ def graph(tf):
 
 def app():
     image = Image.open("examples/lenna.png")
-    view = c.plot.Frame((-1, 1.5), (10.5, -1.5), keep_aspect=False)
+    view = c.plot.Frame((0, 2), (10, -2), keep_aspect=False, fix_axis=None)
     while True:
         tag, value = yield from c.orr(
             [ c.text("Drag using right mouse button,\nscroll using mouse wheel.")
-            , c.plot.frame(view, graph)
+            , c.plot.frame("Frame", view, graph)
             ])
         if tag == "Frame":
             view = value

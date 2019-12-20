@@ -12,11 +12,16 @@ from concur.core import lift, orr, optional, map
 # NOTE: the plotting functions require a forked version of ImGui:
 # https://github.com/potocpav/pyimgui
 
-Frame = PanZoom
+margins = [50, 10, -10, -20]
+
+
+class Frame(PanZoom):
+    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
+        super().__init__(top_left, bottom_right, keep_aspect=keep_aspect, fix_axis=fix_axis, margins=margins)
 
 
 def _frame(content_gen, tf):
-    margins = [50, 10, -10, -20]
+
     min_tick_spacing=50
     viewport_s = [r + o for r, o in zip(tf.view_s, margins)]
     viewport_c = np.concatenate([np.matmul(tf.s2c, [*viewport_s[:2], 1])[:2], np.matmul(tf.s2c, [*viewport_s[2:], 1])[:2]])
@@ -34,7 +39,7 @@ def _frame(content_gen, tf):
             return []
         else:
             sep = sep[0]
-            return np.arange(np.ceil(a / sep) * sep, b, sep)
+            return np.arange(np.ceil(a / sep) * sep, b + 1e-10, sep)
 
     hticks_c = ticks(viewport_c[3], viewport_c[1], (viewport_s[3] - viewport_s[1]) / min_tick_spacing)
     vticks_c = ticks(viewport_c[2], viewport_c[0], (viewport_s[2] - viewport_s[0]) / min_tick_spacing)

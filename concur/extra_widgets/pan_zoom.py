@@ -21,6 +21,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
     """
     while True:
+        # Dynamically rescale width and height if they weren't specified
         if width is None:
             w = imgui.get_content_region_available()[0]
         else:
@@ -29,11 +30,13 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
             h = imgui.get_content_region_available()[1]
         else:
             h = height
+        frame_w = max(1, w - state.margins[0] + state.margins[2])
+        frame_h = max(1, h - state.margins[1] + state.margins[3])
         w = max(1, w)
         h = max(1, h)
 
-        zoom_x = w / (state.right  - state.left)
-        zoom_y = h / (state.bottom - state.top)
+        zoom_x = frame_w / (state.right  - state.left)
+        zoom_y = frame_h / (state.bottom - state.top)
 
         left, right = state.left, state.right
         top, bottom = state.top, state.bottom
@@ -41,6 +44,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
             aspect = float(state.keep_aspect)
             assert zoom_x > 0 and zoom_y > 0, "Flipped axes are not supported if `keep_aspect` is not False"
             assert state.keep_aspect > 0, "Negative aspect ratio is not supported."
+            # TODO: handle margins correctly
             if zoom_x > zoom_y * aspect:
                 zoom_x = zoom_y * aspect
                 center_x = (state.left + state.right) / 2
@@ -99,15 +103,17 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
         view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
         view_c = [left, top, right, bottom]
+        left_s = left - st.margins[0] / zoom_x
+        top_s =   top - st.margins[1] / zoom_y
 
         s2c = np.array( # Screen to Content
-            [ [1 / zoom_x, 0, left - origin[0] / zoom_x]
-            , [0, 1 / zoom_y, top  - origin[1] / zoom_y]
+            [ [1 / zoom_x, 0, left_s - origin[0] / zoom_x]
+            , [0, 1 / zoom_y, top_s  - origin[1] / zoom_y]
             ])
 
         c2s = np.array( # Content to Screen
-            [ [zoom_x, 0, origin[0] - left * zoom_x]
-            , [0, zoom_y, origin[1] - top  * zoom_y]
+            [ [zoom_x, 0, origin[0] - left_s * zoom_x]
+            , [0, zoom_y, origin[1] - top_s  * zoom_y]
             ])
 
         content_value = None
@@ -127,13 +133,16 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
 class PanZoom(object):
     """ Pan & zoom state. """
-    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
+    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None, margins=[0, 0, 0, 0]):
         """
         Arguments:
             top_left:     Coordinates of the top left corner of the displayed content area.
             bottom_right: oordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
-            fix_axis:     Do not zoom in a given axis (`'x'`, or `'y'`).
+            fix_axis:     Do not zoom in a given axis (`'x'`, `'y'`, or `None`).
+            margins:      Margins (left, top, right, bottom) of the view area in pixels.
+                          If the view area should be inset by 5 px on each side, then use
+                          margins=[5,5,-5,-5].
         """
         assert not keep_aspect or not fix_axis, "Can't fix axis and keep_aspect at the same time."
 
@@ -142,6 +151,7 @@ class PanZoom(object):
          # Exclude cases where cursor is inside the element, but was outside when the drag started.
         self.is_hovered = False
         self.was_mouse_down = False
+        self.margins = margins
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
