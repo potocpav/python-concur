@@ -21,6 +21,8 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
     """
     while True:
+        assert not state.keep_aspect or not state.fix_axis, \
+            "Can't fix axis and keep_aspect at the same time."
         # Dynamically rescale width and height if they weren't specified
         if width is None:
             w = imgui.get_content_region_available()[0]
@@ -143,8 +145,6 @@ class PanZoom(object):
                           If the view area should be inset by 5 px on each side, then use
                           margins=[5,5,-5,-5].
         """
-        assert not keep_aspect or not fix_axis, "Can't fix axis and keep_aspect at the same time."
-
         self.reset_view(top_left, bottom_right)
          # Include cases where cursor is outside the element, but was inside when the drag started.
          # Exclude cases where cursor is inside the element, but was outside when the drag started.

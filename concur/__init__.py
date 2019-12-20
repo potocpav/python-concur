@@ -25,3 +25,9 @@ import concur.draw
 from .core import *
 from .widgets import *
 from .extra_widgets import *
+
+import functools
+
+def partial(*args, **argv):
+    "Re-export of `functools.partial` for convenience"
+    return functools.partial(*args, **argv)
