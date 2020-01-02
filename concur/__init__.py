@@ -21,6 +21,7 @@ import concur as c
 import concur.extra_widgets
 import concur.integrations
 import concur.draw
+import concur.testing
 
 from .core import *
 from .widgets import *

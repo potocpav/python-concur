@@ -3,6 +3,7 @@
 
 import concur.integrations.glfw
 import concur.integrations.opengl
+import concur.integrations.puppet
 #
 # __all__ = glfw.__all__ + opengl.__all__
 
