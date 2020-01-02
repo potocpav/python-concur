@@ -63,8 +63,8 @@ def _frame(content_gen, tf):
         , draw.rect(*viewport_s, (0,0,0,1))
         , tick_labels()
         , lift(imgui.push_clip_rect, *viewport_s, True)
-        , grid()
         , optional(content_gen is not None, content_gen, tf)
+        , grid()
         , lift(imgui.pop_clip_rect)
         ])
 
