@@ -4,9 +4,6 @@ import concur as c
 import pytest
 
 
-slow = True
-
-
 def test_button():
     def widget(tester):
         res = yield from c.orr(
@@ -20,7 +17,7 @@ def test_button():
             , c.button("That", tag="Tag")
             ])
         assert res == ("Tag", None)
-    c.testing.test(widget, slow)
+    c.testing.test(widget)
 
 
 def test_checkbox():
@@ -36,4 +33,4 @@ def test_checkbox():
             , c.checkbox("That", False, tag="Tag")
             ])
         assert res == ("Tag", True)
-    c.testing.test(widget, slow)
+    c.testing.test(widget)
