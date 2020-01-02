@@ -1,8 +1,6 @@
-""" Routines for automated testing.
+""" Routines for automated testing. """
 
-Must be used in conjunction with the `concur.integrations.puppet` backend.
-"""
-
+import os
 import imgui
 from concur.integrations.puppet import PuppetRenderer, main
 from concur.draw import polyline
@@ -24,10 +22,12 @@ def show_cursor():
         yield
 
 class Testing(object):
+    """ Must be used in conjunction with the `concur.integrations.puppet` backend. """
     def __init__(self, puppet_renderer, slow):
         assert isinstance(puppet_renderer, PuppetRenderer)
         self.puppet = puppet_renderer
-        self.slow = slow
+        self.slow = 'SLOW_TEST' in os.environ
+        print(self.slow)
 
     def click(self, button=0):
         self.puppet.click(button)
