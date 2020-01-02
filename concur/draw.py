@@ -93,7 +93,10 @@ def image(tex_id, w, h, tf):
 
     This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
     """
+    x0, y0, x1, y1 = 0, 0, w, h
     while True:
+        if tf is not None:
+            [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
         draw_list = imgui.get_window_draw_list()
         l, t, r, b = tf.view_s
         a_s = tf.view_s[:2]
