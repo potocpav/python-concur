@@ -4,7 +4,7 @@ import concur as c
 import pytest
 
 
-slow = False
+slow = True
 
 
 def test_button():
