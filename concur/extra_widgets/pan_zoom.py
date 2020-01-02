@@ -87,24 +87,25 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
             factor = 1.3 ** io.mouse_wheel
 
             if st.fix_axis != 'x':
-                mx_rel = (io.mouse_pos[0] - origin[0]) / w * 2 - 1
+                mx_rel = (io.mouse_pos[0] - origin[0] - state.margins[0]) / frame_w * 2 - 1
                 mx = mx_rel * (right - left) / (st.right - st.left) / 2 + 0.5
                 wi = st.right - st.left
                 st.left  = st.left    + wi * mx     - wi / factor * mx
                 st.right = st.right   - wi * (1-mx) + wi / factor * (1-mx)
 
             if st.fix_axis != 'y':
-                my_rel = (io.mouse_pos[1] - origin[1]) / h * 2 - 1
+                my_rel = (io.mouse_pos[1] - origin[1] - state.margins[1]) / frame_h * 2 - 1
                 my = my_rel * (bottom - top) / (st.bottom - st.top) / 2 + 0.5
                 hi = st.bottom - st.top
                 st.top    = st.top    + hi * my     - hi / factor * my
                 st.bottom = st.bottom - hi * (1-my) + hi / factor * (1-my)
 
-
-        view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
-        view_c = [left, top, right, bottom]
+        # Get screen-space bounds disregarding the margins
         left_s = left - st.margins[0] / zoom_x
         top_s =   top - st.margins[1] / zoom_y
+        right_s = right - st.margins[2] / zoom_x
+        bottom_s = bottom - st.margins[3] / zoom_y
+
 
         s2c = np.array( # Screen to Content
             [ [1 / zoom_x, 0, left_s - origin[0] / zoom_x]
@@ -115,6 +116,9 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
             [ [zoom_x, 0, origin[0] - left_s * zoom_x]
             , [0, zoom_y, origin[1] - top_s  * zoom_y]
             ])
+
+        view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
+        view_c = [left_s, top_s, right_s, bottom_s]
 
         content_value = None
         try:
