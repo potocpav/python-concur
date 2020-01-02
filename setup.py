@@ -36,6 +36,11 @@ setuptools.setup(
         'Pillow',
         'numpy',
         'glfw',
-        'PyOpenGL',
+        # PyOpenGL is pinned to 3.1.0, due to the issue in glGenTextures() intermittently failing after
+        # commit https://github.com/mcfletch/pyopengl/commit/ed0ca79b981663c4697c3b2792eec176dd4f4121
+        # The issue is reproducible by flicker when dragging the image in `examples/image.py`.
+        # Sometimes, image also crashes. This bug is reproducible also in `PyOpenGL==3.1.0`, when
+        # `glGenTextures` is used to generate multiple textures at once.
+        'PyOpenGL == 3.1.0',
     ],
 )

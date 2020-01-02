@@ -97,7 +97,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
                 my_rel = (io.mouse_pos[1] - origin[1]) / h * 2 - 1
                 my = my_rel * (bottom - top) / (st.bottom - st.top) / 2 + 0.5
                 hi = st.bottom - st.top
-                st.top  = st.top      + hi * my     - hi / factor * my
+                st.top    = st.top    + hi * my     - hi / factor * my
                 st.bottom = st.bottom - hi * (1-my) + hi / factor * (1-my)
 
 
