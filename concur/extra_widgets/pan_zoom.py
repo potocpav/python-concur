@@ -20,6 +20,8 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
     `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
     """
+    assert content_gen is not None
+    tf, content = None, None
     while True:
         assert not state.keep_aspect or not state.fix_axis, \
             "Can't fix axis and keep_aspect at the same time."
@@ -122,8 +124,11 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
         content_value = None
         try:
-            if content_gen is not None:
-                next(content_gen(TF(c2s, s2c, view_c, view_s, st.is_hovered)))
+            new_tf = TF(c2s, s2c, view_c, view_s, st.is_hovered)
+            if tf is None or tf != new_tf:
+                tf = new_tf
+                content = content_gen(tf)
+            next(content)
         except StopIteration as e:
             content_value = e.value
         finally:
@@ -204,3 +209,12 @@ class TF(object):
         self.view_c = view_c
         self.view_s = view_s
         self.hovered = hovered
+
+    def __eq__(self, other):
+        return \
+            np.array_equal(self.c2s, other.c2s) and \
+            np.array_equal(self.s2c, other.s2c) and \
+            self.view_c == other.view_c and \
+            self.view_s == other.view_s and \
+            self.hovered == other.hovered and \
+            True

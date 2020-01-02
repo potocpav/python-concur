@@ -154,12 +154,12 @@ def transform(x, y, widget, tf=None):
     Only widget position will be affected (not scaling), and it will be positioned so that its upper left corner
     is at `[x, y]`.
     """
+    old_pos = imgui.get_cursor_screen_pos()
+    if tf is not None:
+        x, y = np.matmul(tf.c2s, [x, y, 1])
     while True:
-        old_pos = imgui.get_cursor_screen_pos()
-        if tf is not None:
-            x, y = np.matmul(tf.c2s, [x, y, 1])
-        imgui.set_cursor_screen_pos((x, y))
         try:
+            imgui.set_cursor_screen_pos((x, y))
             next(widget)
         except StopIteration as e:
             return e.value
