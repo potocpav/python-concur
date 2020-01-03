@@ -28,6 +28,7 @@ def is_viewport_close(im1, im2):
         np.isclose(im1.pan_zoom.bottom, im2.pan_zoom.bottom) and \
         True
 
+
 @c.testing.test_widget
 def test_viewport_scroll_identity(tester):
     def actions(q):
@@ -64,3 +65,49 @@ def test_viewport_movement_identity(tester):
     q = Queue()
     im1, im2 = yield from c.orr([actions(q), image_ui(q)])
     assert is_viewport_close(im1, im2)
+
+
+@c.testing.test_widget
+def test_viewport_movement_outside(tester):
+    def actions(q):
+        yield from tester.move_cursor(100, 100)
+        yield from tester.mouse_dn(1)
+        yield from tester.move_cursor(-100, 100)
+        yield from tester.move_cursor(-100, 0)
+        yield from tester.move_cursor(100, -100)
+        yield from tester.move_cursor(100, 100)
+        yield from tester.mouse_up(1)
+        yield
+        q.put(None)
+        yield from c.nothing()
+
+    q = Queue()
+    im1, im2 = yield from c.orr([actions(q), image_ui(q)])
+    assert is_viewport_close(im1, im2)
+
+
+@c.testing.test_widget
+def test_viewport_scroll_outside(tester):
+    def actions1(q):
+        yield from tester.move_cursor(-1, -1)
+        yield from tester.scroll_up()
+        yield
+        q.put(None)
+        yield from c.nothing()
+
+    def actions2(q):
+        yield from tester.move_cursor(100, 100)
+        yield from tester.mouse_dn(1)
+        yield from tester.move_cursor(-100, 100)
+        yield from tester.scroll_up() # this should register and break the identity
+        yield from tester.move_cursor(100, 100)
+        yield from tester.mouse_up(1)
+        yield
+        q.put(None)
+        yield from c.nothing()
+
+    q = Queue()
+    im1, im2 = yield from c.orr([actions1(q), image_ui(q)])
+    assert is_viewport_close(im1, im2)
+    im1, im3 = yield from c.orr([actions2(q), image_ui(q)])
+    assert not is_viewport_close(im1, im3)
