@@ -29,7 +29,9 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         self._gui_time = None
 
         self._click = [False] * 3
+        self._mouse_buttons = [False] * 3
         self._mouse_pos = -1, -1
+        self._mouse_wheel = 0.0
 
     def _map_keys(self):
         key_map = self.io.key_map
@@ -108,14 +110,14 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         io.display_fb_scale = compute_fb_scale(window_size, fb_size)
         io.delta_time = 1.0/60
 
-        if glfw.get_window_attrib(self.window, glfw.FOCUSED):
-            io.mouse_pos = glfw.get_cursor_pos(self.window)
-        else:
-            io.mouse_pos = -1, -1
-
-        io.mouse_down[0] = glfw.get_mouse_button(self.window, 0)
-        io.mouse_down[1] = glfw.get_mouse_button(self.window, 1)
-        io.mouse_down[2] = glfw.get_mouse_button(self.window, 2)
+        # if glfw.get_window_attrib(self.window, glfw.FOCUSED):
+        #     io.mouse_pos = glfw.get_cursor_pos(self.window)
+        # else:
+        #     io.mouse_pos = -1, -1
+        #
+        # io.mouse_down[0] = glfw.get_mouse_button(self.window, 0)
+        # io.mouse_down[1] = glfw.get_mouse_button(self.window, 1)
+        # io.mouse_down[2] = glfw.get_mouse_button(self.window, 2)
 
         current_time = glfw.get_time()
 
@@ -132,14 +134,31 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
                 self._click[i] = False
             else:
                 io.mouse_down[i] = False
+        for i, b in enumerate(self._mouse_buttons):
+            if b:
+                io.mouse_down[i] = True
 
         io.mouse_pos = self._mouse_pos
+        io.mouse_wheel = self._mouse_wheel
+        self._mouse_wheel = 0.0
 
     def click(self, button=0):
         self._click[button] = True
 
     def set_mouse_pos(self, x, y):
         self._mouse_pos = x, y
+
+    def scroll_up(self):
+        self._mouse_wheel = 1
+
+    def scroll_dn(self):
+        self._mouse_wheel = -1
+
+    def mouse_dn(self, button=0):
+        self._mouse_buttons[button] = True
+
+    def mouse_up(self, button=0):
+        self._mouse_buttons[button] = False
 
 
 def create_window(window_name, width, height, maximized):

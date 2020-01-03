@@ -17,7 +17,7 @@ def graph(tex_id, tex_w, tex_h, tf):
 
 
 def app():
-    view = c.plot.Frame((0, 0), (512, 512), keep_aspect=False)
+    view = c.plot.Frame((0, 0), (512, 512), keep_aspect=True)
     arr = np.array(Image.open("examples/lenna.png"))
     tex = c.texture(arr)
 
