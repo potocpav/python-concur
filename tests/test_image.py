@@ -1,20 +1,53 @@
 import concur as c
 from PIL import Image
 import copy
+from queue import Queue
 
 import imgui
 import numpy as np
 
 
+def image_ui(q):
+    i = 0
+    im1 = c.Image(Image.open("examples/lenna.png"))
+    im2 = copy.deepcopy(im1)
+    while True:
+        i += 1
+        ret = yield from c.orr([c.listen(q), c.image("This", im2)])
+        if ret is None:
+            return im1, im2
+        im2 = ret[1]
+        yield
+
+
+def is_viewport_close(im1, im2):
+    return \
+        np.isclose(im1.pan_zoom.top, im2.pan_zoom.top) and \
+        np.isclose(im1.pan_zoom.left, im2.pan_zoom.left) and \
+        np.isclose(im1.pan_zoom.right, im2.pan_zoom.right) and \
+        np.isclose(im1.pan_zoom.bottom, im2.pan_zoom.bottom) and \
+        True
+
 @c.testing.test_widget
-def test_viewport_movement(tester):
-    def control():
+def test_viewport_scroll_identity(tester):
+    def actions(q):
         yield from tester.move_cursor(100, 200)
         yield from tester.scroll_up()
         yield from tester.pause()
         yield from tester.scroll_dn()
-        # initial state
-        yield from tester.pause()
+        yield
+        q.put(None)
+        yield from c.nothing()
+
+    q = Queue()
+    im1, im2 = yield from c.orr([actions(q), image_ui(q)])
+    assert is_viewport_close(im1, im2)
+
+
+@c.testing.test_widget
+def test_viewport_movement_identity(tester):
+    def actions(q):
+        yield from tester.move_cursor(100, 200)
         yield from tester.mouse_dn(1)
         yield from tester.move_cursor(200, 250)
         yield from tester.move_cursor(200, 200)
@@ -24,24 +57,10 @@ def test_viewport_movement(tester):
         yield from tester.move_cursor(250, 150)
         yield from tester.move_cursor(200, 200)
         yield from tester.mouse_up(2)
-        # initial state
-        # yield from c.nothing()
+        yield
+        q.put(None)
+        yield from c.nothing()
 
-    def ui():
-        im = c.Image(Image.open("examples/lenna.png"))
-        i = 0
-        im_old = copy.deepcopy(im)
-
-        while True:
-            i += 1
-            tag, im = yield from c.image("This", im)
-
-            if i == 2:
-                print(im.pan_zoom.__dict__, im_old.pan_zoom.__dict__)
-                assert np.isclose(im.pan_zoom.top, im_old.pan_zoom.top)
-                assert np.isclose(im.pan_zoom.left, im_old.pan_zoom.left)
-                assert np.isclose(im.pan_zoom.right, im_old.pan_zoom.right)
-                assert np.isclose(im.pan_zoom.bottom, im_old.pan_zoom.bottom)
-            yield
-
-    yield from c.orr([control(), ui()])
+    q = Queue()
+    im1, im2 = yield from c.orr([actions(q), image_ui(q)])
+    assert is_viewport_close(im1, im2)
