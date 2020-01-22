@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.1" />
+<meta name="generator" content="pdoc 0.7.4" />
 <title>concur.integrations.glfw API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -32,55 +32,6 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
-    &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
-
-    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
-    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
-    with the GLFW window.
-    &#34;&#34;&#34;
-    imgui.create_context()
-    window = create_window(name, width, height, maximized)
-    impl = GlfwRenderer(window)
-    if pass_window_to_widget:
-        widget = widget(window)
-
-    ## Using this feels significantly choppier than sleeping manually. TODO: investigate &amp; fix
-    # glfw.swap_interval(-1)
-
-    while not glfw.window_should_close(window):
-        t0 = time.perf_counter()
-        glfw.poll_events()
-        impl.process_inputs()
-
-        imgui.new_frame()
-
-        try:
-            next(widget)
-        except StopIteration:
-            imgui.render()
-            break
-        except:
-            # Cleanup on exception for iPython
-            imgui.render()
-            glfw.terminate()
-            raise
-
-        gl.glClearColor(*bg_color, 1)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-
-        imgui.render()
-        impl.render(imgui.get_draw_data())
-        glfw.swap_buffers(window)
-
-        t1 = time.perf_counter()
-        if t1 - t0 &lt; 1/60:
-            time.sleep(1/60 - (t1 - t0))
-
-    impl.shutdown()
-    glfw.terminate()
-
-
 def create_window(window_name, width, height, maximized):
     &#34;&#34;&#34; Create a GLFW window. &#34;&#34;&#34;
     if not glfw.init():
@@ -107,7 +58,75 @@ def create_window(window_name, width, height, maximized):
         print(&#34;Could not initialize Window&#34;)
         exit(1)
 
-    return window</code></pre>
+    return window
+
+
+def create_window_dock(glfw_window):
+        imgui.set_next_window_position(0, 0)
+        imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
+        imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
+        imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
+        imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
+        main_window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
+        imgui.begin(&#34;Background Window&#34;, True, main_window_flags)
+        imgui.pop_style_var(3)
+        imgui.dock_space(&#34;Window Dock Space&#34;, 0., 0., 0)
+        imgui.end()
+
+
+def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+    &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
+
+    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
+    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
+    with the GLFW window.
+    &#34;&#34;&#34;
+    imgui.create_context()
+
+    # Set config flags
+    imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
+
+    window = create_window(name, width, height, maximized)
+    impl = GlfwRenderer(window)
+    if pass_window_to_widget:
+        widget = widget(window)
+
+    ## Using this feels significantly choppier than sleeping manually. TODO: investigate &amp; fix
+    # glfw.swap_interval(-1)
+
+    while not glfw.window_should_close(window):
+        t0 = time.perf_counter()
+        glfw.poll_events()
+        impl.process_inputs()
+
+        imgui.new_frame()
+
+        create_window_dock(window)
+
+        try:
+            next(widget)
+        except StopIteration:
+            imgui.render()
+            break
+        except:
+            # Cleanup on exception for iPython
+            imgui.render()
+            glfw.terminate()
+            raise
+
+        gl.glClearColor(*bg_color, 1)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+
+        imgui.render()
+        impl.render(imgui.get_draw_data())
+        glfw.swap_buffers(window)
+
+        t1 = time.perf_counter()
+        if t1 - t0 &lt; 1/60:
+            time.sleep(1/60 - (t1 - t0))
+
+    impl.shutdown()
+    glfw.terminate()</code></pre>
 </details>
 </section>
 <section>
@@ -155,6 +174,28 @@ def create_window(window_name, width, height, maximized):
     return window</code></pre>
 </details>
 </dd>
+<dt id="concur.integrations.glfw.create_window_dock"><code class="name flex">
+<span>def <span class="ident">create_window_dock</span></span>(<span>glfw_window)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_window_dock(glfw_window):
+        imgui.set_next_window_position(0, 0)
+        imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
+        imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
+        imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
+        imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
+        main_window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
+        imgui.begin(&#34;Background Window&#34;, True, main_window_flags)
+        imgui.pop_style_var(3)
+        imgui.dock_space(&#34;Window Dock Space&#34;, 0., 0., 0)
+        imgui.end()</code></pre>
+</details>
+</dd>
 <dt id="concur.integrations.glfw.main"><code class="name flex">
 <span>def <span class="ident">main</span></span>(<span>name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False)</span>
 </code></dt>
@@ -175,6 +216,10 @@ with the GLFW window.</p></section>
     with the GLFW window.
     &#34;&#34;&#34;
     imgui.create_context()
+
+    # Set config flags
+    imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
+
     window = create_window(name, width, height, maximized)
     impl = GlfwRenderer(window)
     if pass_window_to_widget:
@@ -189,6 +234,8 @@ with the GLFW window.</p></section>
         impl.process_inputs()
 
         imgui.new_frame()
+
+        create_window_dock(window)
 
         try:
             next(widget)
@@ -235,6 +282,7 @@ with the GLFW window.</p></section>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="concur.integrations.glfw.create_window" href="#concur.integrations.glfw.create_window">create_window</a></code></li>
+<li><code><a title="concur.integrations.glfw.create_window_dock" href="#concur.integrations.glfw.create_window_dock">create_window_dock</a></code></li>
 <li><code><a title="concur.integrations.glfw.main" href="#concur.integrations.glfw.main">main</a></code></li>
 </ul>
 </li>
@@ -242,7 +290,7 @@ with the GLFW window.</p></section>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

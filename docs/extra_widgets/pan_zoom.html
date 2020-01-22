@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.1" />
+<meta name="generator" content="pdoc 0.7.4" />
 <title>concur.extra_widgets.pan_zoom API documentation</title>
 <meta name="description" content="Zoomable, pannable widget with arbitrary content." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -47,52 +47,63 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
     `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
     &#34;&#34;&#34;
+    assert content_gen is not None
+    tf, content = None, None
     while True:
+        assert not state.keep_aspect or not state.fix_axis, \
+            &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
+        # Dynamically rescale width and height if they weren&#39;t specified
         if width is None:
             w = imgui.get_content_region_available()[0]
+        else:
+            w = width
         if height is None:
             h = imgui.get_content_region_available()[1]
+        else:
+            h = height
+        frame_w = max(1, w - state.margins[0] + state.margins[2])
+        frame_h = max(1, h - state.margins[1] + state.margins[3])
         w = max(1, w)
         h = max(1, h)
 
-        zoom_x = w / (state.right  - state.left)
-        zoom_y = h / (state.bottom - state.top)
+        zoom_x = frame_w / (state.right  - state.left)
+        zoom_y = frame_h / (state.bottom - state.top)
 
         left, right = state.left, state.right
         top, bottom = state.top, state.bottom
         if state.keep_aspect:
             aspect = float(state.keep_aspect)
-            assert zoom_x &gt; 0 and zoom_y &gt; 0, &#34;Flipped axes are not supported if `keep_aspect` is not False&#34;
             assert state.keep_aspect &gt; 0, &#34;Negative aspect ratio is not supported.&#34;
-            if zoom_x &gt; zoom_y * aspect:
-                zoom_x = zoom_y * aspect
-                center_x = (state.left + state.right) / 2
-                left  = center_x - w / zoom_x / 2
-                right = center_x + w / zoom_x / 2
-            if zoom_y &gt; zoom_x / aspect:
-                zoom_y = zoom_x / aspect
-                center_y = (state.top + state.bottom) / 2
-                top    = center_y - h / zoom_y / 2
-                bottom = center_y + h / zoom_y / 2
+            if abs(zoom_x) &gt; abs(zoom_y) * aspect:
+                zoom_x = np.sign(zoom_x) * abs(zoom_y) * aspect
+                center_x = (left + right) / 2
+                left  = center_x - frame_w / zoom_x / 2
+                right = center_x + frame_w / zoom_x / 2
+            if abs(zoom_y) &gt; abs(zoom_x) / aspect:
+                zoom_y = np.sign(zoom_y) * abs(zoom_x) / aspect
+                center_y = (top + bottom) / 2
+                top    = center_y - frame_h / zoom_y / 2
+                bottom = center_y + frame_h / zoom_y / 2
 
         origin = imgui.get_cursor_screen_pos()
 
-        imgui.begin_child(&#34;Pan-zoom container&#34;, w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
+        imgui.begin_child(&#34;Pan-zoom&#34;, w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
 
         # Interaction
         st = copy.deepcopy(state)
-        dragging_1, dragging_2 = imgui.is_mouse_dragging(1, 1), imgui.is_mouse_dragging(2, 1)
-        is_dragging = (dragging_1 or dragging_2) and st.is_hovered
-        drag_delta = imgui.get_mouse_drag_delta(1 if dragging_1 else 2, 1)
-        delta = drag_delta[0] - st.last_drag_delta[0], drag_delta[1] - st.last_drag_delta[1]
-        st.last_drag_delta = drag_delta
-
         io = imgui.get_io()
-        if not is_dragging:
+        is_mouse_down = io.mouse_down[1] or io.mouse_down[2]
+        if is_mouse_down and not st.was_mouse_down and imgui.is_window_hovered():
+            st.was_mouse_down = True
             st.is_hovered = imgui.is_window_hovered()
+        if not is_mouse_down:
+            st.was_mouse_down = False
+            st.is_hovered = False
+
+        delta = io.mouse_delta
 
         # Pan
-        if is_dragging and (delta[0] or delta[1]):
+        if st.is_hovered and (delta[0] or delta[1]):
             if st.fix_axis != &#39;x&#39;:
                 st.left -= delta[0] / zoom_x
                 st.right -= delta[0] / zoom_x
@@ -101,41 +112,50 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
                 st.bottom -= delta[1] / zoom_y
 
         # Zoom
-        if st.is_hovered and io.mouse_wheel:
+        if (imgui.is_window_hovered() or st.is_hovered) and io.mouse_wheel:
             factor = 1.3 ** io.mouse_wheel
 
             if st.fix_axis != &#39;x&#39;:
-                mx_rel = (io.mouse_pos[0] - origin[0]) / w * 2 - 1
+                mx_rel = (io.mouse_pos[0] - origin[0] - state.margins[0]) / frame_w * 2 - 1
                 mx = mx_rel * (right - left) / (st.right - st.left) / 2 + 0.5
                 wi = st.right - st.left
                 st.left  = st.left    + wi * mx     - wi / factor * mx
                 st.right = st.right   - wi * (1-mx) + wi / factor * (1-mx)
 
             if st.fix_axis != &#39;y&#39;:
-                my_rel = (io.mouse_pos[1] - origin[1]) / h * 2 - 1
+                my_rel = (io.mouse_pos[1] - origin[1] - state.margins[1]) / frame_h * 2 - 1
                 my = my_rel * (bottom - top) / (st.bottom - st.top) / 2 + 0.5
                 hi = st.bottom - st.top
-                st.top  = st.top      + hi * my     - hi / factor * my
+                st.top    = st.top    + hi * my     - hi / factor * my
                 st.bottom = st.bottom - hi * (1-my) + hi / factor * (1-my)
 
+        # Get screen-space bounds disregarding the margins
+        left_s = left - st.margins[0] / zoom_x
+        top_s =   top - st.margins[1] / zoom_y
+        right_s = right - st.margins[2] / zoom_x
+        bottom_s = bottom - st.margins[3] / zoom_y
 
-        view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
-        view_c = [left, top, right, bottom]
 
         s2c = np.array( # Screen to Content
-            [ [1 / zoom_x, 0, left - origin[0] / zoom_x]
-            , [0, 1 / zoom_y, top  - origin[1] / zoom_y]
+            [ [1 / zoom_x, 0, left_s - origin[0] / zoom_x]
+            , [0, 1 / zoom_y, top_s  - origin[1] / zoom_y]
             ])
 
         c2s = np.array( # Content to Screen
-            [ [zoom_x, 0, origin[0] - left * zoom_x]
-            , [0, zoom_y, origin[1] - top  * zoom_y]
+            [ [zoom_x, 0, origin[0] - left_s * zoom_x]
+            , [0, zoom_y, origin[1] - top_s  * zoom_y]
             ])
+
+        view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
+        view_c = [left_s, top_s, right_s, bottom_s]
 
         content_value = None
         try:
-            if content_gen is not None:
-                next(content_gen(TF(c2s, s2c, view_c, view_s, st.is_hovered)))
+            new_tf = TF(c2s, s2c, view_c, view_s, st.is_hovered)
+            if tf is None or tf != new_tf:
+                tf = new_tf
+                content = content_gen(tf)
+            next(content)
         except StopIteration as e:
             content_value = e.value
         finally:
@@ -149,19 +169,24 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
 class PanZoom(object):
     &#34;&#34;&#34; Pan &amp; zoom state. &#34;&#34;&#34;
-    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
+    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None, margins=[0, 0, 0, 0]):
         &#34;&#34;&#34;
         Arguments:
             top_left:     Coordinates of the top left corner of the displayed content area.
             bottom_right: oordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
-            fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, or `&#39;y&#39;`).
+                          if keep_aspect==True, it is equivalent to keep_aspect==1.
+            fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, `&#39;y&#39;`, or `None`).
+            margins:      Margins (left, top, right, bottom) of the view area in pixels.
+                          If the view area should be inset by 5 px on each side, then use
+                          margins=[5,5,-5,-5].
         &#34;&#34;&#34;
-        assert not keep_aspect or not fix_axis, &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
-
         self.reset_view(top_left, bottom_right)
-        self.last_drag_delta = 0, 0
-        self.is_hovered = False # Include cursor outside, but dragging
+         # Include cases where cursor is outside the element, but was inside when the drag started.
+         # Exclude cases where cursor is inside the element, but was outside when the drag started.
+        self.is_hovered = False
+        self.was_mouse_down = False
+        self.margins = margins
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
@@ -210,7 +235,16 @@ class TF(object):
         self.s2c = s2c
         self.view_c = view_c
         self.view_s = view_s
-        self.hovered = hovered</code></pre>
+        self.hovered = hovered
+
+    def __eq__(self, other):
+        return \
+            np.array_equal(self.c2s, other.c2s) and \
+            np.array_equal(self.s2c, other.s2c) and \
+            self.view_c == other.view_c and \
+            self.view_s == other.view_s and \
+            self.hovered == other.hovered and \
+            True</code></pre>
 </details>
 </section>
 <section>
@@ -244,52 +278,63 @@ widget. It is up to the widget to do the necessary transformations using the <a 
     `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
     &#34;&#34;&#34;
+    assert content_gen is not None
+    tf, content = None, None
     while True:
+        assert not state.keep_aspect or not state.fix_axis, \
+            &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
+        # Dynamically rescale width and height if they weren&#39;t specified
         if width is None:
             w = imgui.get_content_region_available()[0]
+        else:
+            w = width
         if height is None:
             h = imgui.get_content_region_available()[1]
+        else:
+            h = height
+        frame_w = max(1, w - state.margins[0] + state.margins[2])
+        frame_h = max(1, h - state.margins[1] + state.margins[3])
         w = max(1, w)
         h = max(1, h)
 
-        zoom_x = w / (state.right  - state.left)
-        zoom_y = h / (state.bottom - state.top)
+        zoom_x = frame_w / (state.right  - state.left)
+        zoom_y = frame_h / (state.bottom - state.top)
 
         left, right = state.left, state.right
         top, bottom = state.top, state.bottom
         if state.keep_aspect:
             aspect = float(state.keep_aspect)
-            assert zoom_x &gt; 0 and zoom_y &gt; 0, &#34;Flipped axes are not supported if `keep_aspect` is not False&#34;
             assert state.keep_aspect &gt; 0, &#34;Negative aspect ratio is not supported.&#34;
-            if zoom_x &gt; zoom_y * aspect:
-                zoom_x = zoom_y * aspect
-                center_x = (state.left + state.right) / 2
-                left  = center_x - w / zoom_x / 2
-                right = center_x + w / zoom_x / 2
-            if zoom_y &gt; zoom_x / aspect:
-                zoom_y = zoom_x / aspect
-                center_y = (state.top + state.bottom) / 2
-                top    = center_y - h / zoom_y / 2
-                bottom = center_y + h / zoom_y / 2
+            if abs(zoom_x) &gt; abs(zoom_y) * aspect:
+                zoom_x = np.sign(zoom_x) * abs(zoom_y) * aspect
+                center_x = (left + right) / 2
+                left  = center_x - frame_w / zoom_x / 2
+                right = center_x + frame_w / zoom_x / 2
+            if abs(zoom_y) &gt; abs(zoom_x) / aspect:
+                zoom_y = np.sign(zoom_y) * abs(zoom_x) / aspect
+                center_y = (top + bottom) / 2
+                top    = center_y - frame_h / zoom_y / 2
+                bottom = center_y + frame_h / zoom_y / 2
 
         origin = imgui.get_cursor_screen_pos()
 
-        imgui.begin_child(&#34;Pan-zoom container&#34;, w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
+        imgui.begin_child(&#34;Pan-zoom&#34;, w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
 
         # Interaction
         st = copy.deepcopy(state)
-        dragging_1, dragging_2 = imgui.is_mouse_dragging(1, 1), imgui.is_mouse_dragging(2, 1)
-        is_dragging = (dragging_1 or dragging_2) and st.is_hovered
-        drag_delta = imgui.get_mouse_drag_delta(1 if dragging_1 else 2, 1)
-        delta = drag_delta[0] - st.last_drag_delta[0], drag_delta[1] - st.last_drag_delta[1]
-        st.last_drag_delta = drag_delta
-
         io = imgui.get_io()
-        if not is_dragging:
+        is_mouse_down = io.mouse_down[1] or io.mouse_down[2]
+        if is_mouse_down and not st.was_mouse_down and imgui.is_window_hovered():
+            st.was_mouse_down = True
             st.is_hovered = imgui.is_window_hovered()
+        if not is_mouse_down:
+            st.was_mouse_down = False
+            st.is_hovered = False
+
+        delta = io.mouse_delta
 
         # Pan
-        if is_dragging and (delta[0] or delta[1]):
+        if st.is_hovered and (delta[0] or delta[1]):
             if st.fix_axis != &#39;x&#39;:
                 st.left -= delta[0] / zoom_x
                 st.right -= delta[0] / zoom_x
@@ -298,41 +343,50 @@ widget. It is up to the widget to do the necessary transformations using the <a 
                 st.bottom -= delta[1] / zoom_y
 
         # Zoom
-        if st.is_hovered and io.mouse_wheel:
+        if (imgui.is_window_hovered() or st.is_hovered) and io.mouse_wheel:
             factor = 1.3 ** io.mouse_wheel
 
             if st.fix_axis != &#39;x&#39;:
-                mx_rel = (io.mouse_pos[0] - origin[0]) / w * 2 - 1
+                mx_rel = (io.mouse_pos[0] - origin[0] - state.margins[0]) / frame_w * 2 - 1
                 mx = mx_rel * (right - left) / (st.right - st.left) / 2 + 0.5
                 wi = st.right - st.left
                 st.left  = st.left    + wi * mx     - wi / factor * mx
                 st.right = st.right   - wi * (1-mx) + wi / factor * (1-mx)
 
             if st.fix_axis != &#39;y&#39;:
-                my_rel = (io.mouse_pos[1] - origin[1]) / h * 2 - 1
+                my_rel = (io.mouse_pos[1] - origin[1] - state.margins[1]) / frame_h * 2 - 1
                 my = my_rel * (bottom - top) / (st.bottom - st.top) / 2 + 0.5
                 hi = st.bottom - st.top
-                st.top  = st.top      + hi * my     - hi / factor * my
+                st.top    = st.top    + hi * my     - hi / factor * my
                 st.bottom = st.bottom - hi * (1-my) + hi / factor * (1-my)
 
+        # Get screen-space bounds disregarding the margins
+        left_s = left - st.margins[0] / zoom_x
+        top_s =   top - st.margins[1] / zoom_y
+        right_s = right - st.margins[2] / zoom_x
+        bottom_s = bottom - st.margins[3] / zoom_y
 
-        view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
-        view_c = [left, top, right, bottom]
 
         s2c = np.array( # Screen to Content
-            [ [1 / zoom_x, 0, left - origin[0] / zoom_x]
-            , [0, 1 / zoom_y, top  - origin[1] / zoom_y]
+            [ [1 / zoom_x, 0, left_s - origin[0] / zoom_x]
+            , [0, 1 / zoom_y, top_s  - origin[1] / zoom_y]
             ])
 
         c2s = np.array( # Content to Screen
-            [ [zoom_x, 0, origin[0] - left * zoom_x]
-            , [0, zoom_y, origin[1] - top  * zoom_y]
+            [ [zoom_x, 0, origin[0] - left_s * zoom_x]
+            , [0, zoom_y, origin[1] - top_s  * zoom_y]
             ])
+
+        view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
+        view_c = [left_s, top_s, right_s, bottom_s]
 
         content_value = None
         try:
-            if content_gen is not None:
-                next(content_gen(TF(c2s, s2c, view_c, view_s, st.is_hovered)))
+            new_tf = TF(c2s, s2c, view_c, view_s, st.is_hovered)
+            if tf is None or tf != new_tf:
+                tf = new_tf
+                content = content_gen(tf)
+            next(content)
         except StopIteration as e:
             content_value = e.value
         finally:
@@ -351,7 +405,7 @@ widget. It is up to the widget to do the necessary transformations using the <a 
 <dl>
 <dt id="concur.extra_widgets.pan_zoom.PanZoom"><code class="flex name class">
 <span>class <span class="ident">PanZoom</span></span>
-<span>(</span><span>top_left, bottom_right, keep_aspect=True, fix_axis=None)</span>
+<span>(</span><span>top_left, bottom_right, keep_aspect=True, fix_axis=None, margins=[0, 0, 0, 0])</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Pan &amp; zoom state. </p>
@@ -364,10 +418,17 @@ widget. It is up to the widget to do the necessary transformations using the <a 
 <dt><strong><code>bottom_right</code></strong></dt>
 <dd>oordinates of the bottom right corner of the displayed content area.</dd>
 <dt><strong><code>keep_aspect</code></strong></dt>
-<dd>Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.</dd>
+<dd>Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
+if keep_aspect==True, it is equivalent to keep_aspect==1.</dd>
 <dt><strong><code>fix_axis</code></strong></dt>
 <dd>
-<p>Do not zoom in a given axis (<code>'x'</code>, or <code>'y'</code>).</p>
+<p>Do not zoom in a given axis (<code>'x'</code>, <code>'y'</code>, or <code>None</code>).</p>
+</dd>
+<dt><strong><code>margins</code></strong></dt>
+<dd>
+<p>Margins (left, top, right, bottom) of the view area in pixels.
+If the view area should be inset by 5 px on each side, then use
+margins=[5,5,-5,-5].</p>
 </dd>
 </dl></section>
 <details class="source">
@@ -376,19 +437,24 @@ widget. It is up to the widget to do the necessary transformations using the <a 
 </summary>
 <pre><code class="python">class PanZoom(object):
     &#34;&#34;&#34; Pan &amp; zoom state. &#34;&#34;&#34;
-    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
+    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None, margins=[0, 0, 0, 0]):
         &#34;&#34;&#34;
         Arguments:
             top_left:     Coordinates of the top left corner of the displayed content area.
             bottom_right: oordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
-            fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, or `&#39;y&#39;`).
+                          if keep_aspect==True, it is equivalent to keep_aspect==1.
+            fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, `&#39;y&#39;`, or `None`).
+            margins:      Margins (left, top, right, bottom) of the view area in pixels.
+                          If the view area should be inset by 5 px on each side, then use
+                          margins=[5,5,-5,-5].
         &#34;&#34;&#34;
-        assert not keep_aspect or not fix_axis, &#34;Can&#39;t fix axis and keep_aspect at the same time.&#34;
-
         self.reset_view(top_left, bottom_right)
-        self.last_drag_delta = 0, 0
-        self.is_hovered = False # Include cursor outside, but dragging
+         # Include cases where cursor is outside the element, but was inside when the drag started.
+         # Exclude cases where cursor is inside the element, but was outside when the drag started.
+        self.is_hovered = False
+        self.was_mouse_down = False
+        self.margins = margins
 
         self.keep_aspect = keep_aspect
         self.fix_axis = fix_axis
@@ -409,6 +475,10 @@ widget. It is up to the widget to do the necessary transformations using the <a 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__</code></pre>
 </details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="concur.extra_widgets.plot.frame.Frame" href="plot/frame.html#concur.extra_widgets.plot.frame.Frame">Frame</a></li>
+</ul>
 <h3>Methods</h3>
 <dl>
 <dt id="concur.extra_widgets.pan_zoom.PanZoom.reset_view"><code class="name flex">
@@ -497,7 +567,16 @@ such as draggable widgets.</dd>
         self.s2c = s2c
         self.view_c = view_c
         self.view_s = view_s
-        self.hovered = hovered</code></pre>
+        self.hovered = hovered
+
+    def __eq__(self, other):
+        return \
+            np.array_equal(self.c2s, other.c2s) and \
+            np.array_equal(self.s2c, other.s2c) and \
+            self.view_c == other.view_c and \
+            self.view_s == other.view_s and \
+            self.hovered == other.hovered and \
+            True</code></pre>
 </details>
 </dd>
 </dl>
@@ -536,7 +615,7 @@ such as draggable widgets.</dd>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

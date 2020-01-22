@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.1" />
+<meta name="generator" content="pdoc 0.7.4" />
 <title>concur API documentation</title>
 <meta name="description" content="Concur is a Python UI framework based on synchronous generators …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -66,7 +66,7 @@ if tag == &quot;Second&quot;:
     print(&quot;second!&quot;)
 </code></pre>
 <p>Note that containers (such as a window) are widgets too, with the same semantics. They take as an argument a list of other widgets that will be drawn inside.</p>
-<p>Once the whole user interface is represented as as single widget, it can be displayed using the <code>concur.integrations.glfw.main</code> function.</p>
+<p>Once the whole user interface is represented as as single widget, it can be displayed using the <a title="concur.integrations.glfw.main" href="integrations/glfw.html#concur.integrations.glfw.main"><code>main()</code></a> function.</p>
 <p>That's it for now. Play around with it. You will discover that these handful of concepts go a <em>long</em> way, and can be used to create even large UIs in a straightforward and clear manner. As a starting point, you can use the <a href="https://github.com/potocpav/python-concur/tree/master/examples">examples</a>.</p>
 <h1 id="troubleshooting">Troubleshooting</h1>
 <p>Here's a list of known issues and their solutions:</p>
@@ -78,8 +78,8 @@ if tag == &quot;Second&quot;:
 <p><strong>Asynchronous computations</strong></p>
 <p>In other versions of Concur, all widgets are triggered asynchronously. This may not be practical in Python, due to a limitation of async generators: they can't <code>return</code>, they only <code>yield</code>. Synchronous generators are used instead, which means that all widget code is run in the main thread. Asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the <code>block</code> function. See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/timers.py">timers example</a> for details.</p>
 <h1 id="api">API</h1>
-<p>All the functions and classes from <code>concur.core</code>, <code>concur.widgets</code>, and <code>concur.extra_widgets</code> are re-exported in the
-<code>concur</code> module. The most convenient way to access them is by importing <code>concur</code> qualified:</p>
+<p>All the functions and classes from <a title="concur.core" href="core.html"><code>concur.core</code></a>, <a title="concur.widgets" href="widgets.html"><code>concur.widgets</code></a>, and <a title="concur.extra_widgets" href="extra_widgets/index.html"><code>concur.extra_widgets</code></a> are re-exported in the
+<a title="concur" href="#concur"><code>concur</code></a> module. The most convenient way to access them is by importing <a title="concur" href="#concur"><code>concur</code></a> qualified:</p>
 <pre><code class="python">import concur as c
 </code></pre>
 <details class="source">
@@ -109,10 +109,17 @@ import concur as c
 import concur.extra_widgets
 import concur.integrations
 import concur.draw
+import concur.testing
 
 from .core import *
 from .widgets import *
-from .extra_widgets import *</code></pre>
+from .extra_widgets import *
+
+import functools
+
+def partial(*args, **argv):
+    &#34;Re-export of `functools.partial` for convenience&#34;
+    return functools.partial(*args, **argv)</code></pre>
 </details>
 </section>
 <section>
@@ -134,6 +141,10 @@ from .extra_widgets import *</code></pre>
 <dd>
 <section class="desc"><p>Even using PyImGui's integration code, quite a bit of boilerplate is needed just to create a window, or to display an image. This module provides …</p></section>
 </dd>
+<dt><code class="name"><a title="concur.testing" href="testing.html">concur.testing</a></code></dt>
+<dd>
+<section class="desc"><p>Routines for automated testing.</p></section>
+</dd>
 <dt><code class="name"><a title="concur.widgets" href="widgets.html">concur.widgets</a></code></dt>
 <dd>
 <section class="desc"><p>A collection of widgets based off of ImGui …</p></section>
@@ -143,6 +154,23 @@ from .extra_widgets import *</code></pre>
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="concur.partial"><code class="name flex">
+<span>def <span class="ident">partial</span></span>(<span>*args, **argv)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Re-export of <code>functools.partial</code> for convenience</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def partial(*args, **argv):
+    &#34;Re-export of `functools.partial` for convenience&#34;
+    return functools.partial(*args, **argv)</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -163,14 +191,20 @@ from .extra_widgets import *</code></pre>
 <li><code><a title="concur.draw" href="draw.html">concur.draw</a></code></li>
 <li><code><a title="concur.extra_widgets" href="extra_widgets/index.html">concur.extra_widgets</a></code></li>
 <li><code><a title="concur.integrations" href="integrations/index.html">concur.integrations</a></code></li>
+<li><code><a title="concur.testing" href="testing.html">concur.testing</a></code></li>
 <li><code><a title="concur.widgets" href="widgets.html">concur.widgets</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="concur.partial" href="#concur.partial">partial</a></code></li>
 </ul>
 </li>
 </ul>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

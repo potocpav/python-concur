@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.1" />
+<meta name="generator" content="pdoc 0.7.4" />
 <title>concur.extra_widgets.plot.frame API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -36,11 +36,16 @@ from concur.core import lift, orr, optional, map
 # NOTE: the plotting functions require a forked version of ImGui:
 # https://github.com/potocpav/pyimgui
 
-Frame = PanZoom
+margins = [50, 10, -10, -20]
+
+
+class Frame(PanZoom):
+    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
+        super().__init__(top_left, bottom_right, keep_aspect=keep_aspect, fix_axis=fix_axis, margins=margins)
 
 
 def _frame(content_gen, tf):
-    margins = [50, 10, -10, -20]
+
     min_tick_spacing=50
     viewport_s = [r + o for r, o in zip(tf.view_s, margins)]
     viewport_c = np.concatenate([np.matmul(tf.s2c, [*viewport_s[:2], 1])[:2], np.matmul(tf.s2c, [*viewport_s[2:], 1])[:2]])
@@ -58,7 +63,7 @@ def _frame(content_gen, tf):
             return []
         else:
             sep = sep[0]
-            return np.arange(np.ceil(a / sep) * sep, b, sep)
+            return np.arange(np.ceil(a / sep) * sep, b + 1e-10, sep)
 
     hticks_c = ticks(viewport_c[3], viewport_c[1], (viewport_s[3] - viewport_s[1]) / min_tick_spacing)
     vticks_c = ticks(viewport_c[2], viewport_c[0], (viewport_s[2] - viewport_s[0]) / min_tick_spacing)
@@ -82,15 +87,15 @@ def _frame(content_gen, tf):
         , draw.rect(*viewport_s, (0,0,0,1))
         , tick_labels()
         , lift(imgui.push_clip_rect, *viewport_s, True)
-        , grid()
         , optional(content_gen is not None, content_gen, tf)
+        , grid()
         , lift(imgui.pop_clip_rect)
         ])
 
 
-def frame(state, content_gen=None):
+def frame(name, state, content_gen=None):
     return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
-        pan_zoom(&#34;Frame&#34;, state, content_gen=partial(_frame, content_gen)))</code></pre>
+        pan_zoom(name, state, content_gen=partial(_frame, content_gen)))</code></pre>
 </details>
 </section>
 <section>
@@ -101,7 +106,7 @@ def frame(state, content_gen=None):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="concur.extra_widgets.plot.frame.frame"><code class="name flex">
-<span>def <span class="ident">frame</span></span>(<span>state, content_gen=None)</span>
+<span>def <span class="ident">frame</span></span>(<span>name, state, content_gen=None)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -109,14 +114,66 @@ def frame(state, content_gen=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def frame(state, content_gen=None):
+<pre><code class="python">def frame(name, state, content_gen=None):
     return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
-        pan_zoom(&#34;Frame&#34;, state, content_gen=partial(_frame, content_gen)))</code></pre>
+        pan_zoom(name, state, content_gen=partial(_frame, content_gen)))</code></pre>
 </details>
 </dd>
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="concur.extra_widgets.plot.frame.Frame"><code class="flex name class">
+<span>class <span class="ident">Frame</span></span>
+<span>(</span><span>top_left, bottom_right, keep_aspect=True, fix_axis=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Pan &amp; zoom state. </p>
+<h2 id="arguments">Arguments</h2>
+<dl>
+<dt><strong><code>top_left</code></strong></dt>
+<dd>
+<p>Coordinates of the top left corner of the displayed content area.</p>
+</dd>
+<dt><strong><code>bottom_right</code></strong></dt>
+<dd>oordinates of the bottom right corner of the displayed content area.</dd>
+<dt><strong><code>keep_aspect</code></strong></dt>
+<dd>Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
+if keep_aspect==True, it is equivalent to keep_aspect==1.</dd>
+<dt><strong><code>fix_axis</code></strong></dt>
+<dd>
+<p>Do not zoom in a given axis (<code>'x'</code>, <code>'y'</code>, or <code>None</code>).</p>
+</dd>
+<dt><strong><code>margins</code></strong></dt>
+<dd>
+<p>Margins (left, top, right, bottom) of the view area in pixels.
+If the view area should be inset by 5 px on each side, then use
+margins=[5,5,-5,-5].</p>
+</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Frame(PanZoom):
+    def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
+        super().__init__(top_left, bottom_right, keep_aspect=keep_aspect, fix_axis=fix_axis, margins=margins)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="concur.extra_widgets.pan_zoom.PanZoom" href="../pan_zoom.html#concur.extra_widgets.pan_zoom.PanZoom">PanZoom</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="concur.extra_widgets.pan_zoom.PanZoom" href="../pan_zoom.html#concur.extra_widgets.pan_zoom.PanZoom">PanZoom</a></b></code>:
+<ul class="hlist">
+<li><code><a title="concur.extra_widgets.pan_zoom.PanZoom.reset_view" href="../pan_zoom.html#concur.extra_widgets.pan_zoom.PanZoom.reset_view">reset_view</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -135,11 +192,18 @@ def frame(state, content_gen=None):
 <li><code><a title="concur.extra_widgets.plot.frame.frame" href="#concur.extra_widgets.plot.frame.frame">frame</a></code></li>
 </ul>
 </li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="concur.extra_widgets.plot.frame.Frame" href="#concur.extra_widgets.plot.frame.Frame">Frame</a></code></h4>
+</li>
+</ul>
+</li>
 </ul>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

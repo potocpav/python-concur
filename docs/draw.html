@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.1" />
+<meta name="generator" content="pdoc 0.7.4" />
 <title>concur.draw API documentation</title>
 <meta name="description" content="Passive geometric shape widgets to be drawn as `concur.extra_widgets.image.image` overlay, or on their own …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -49,61 +49,61 @@ import imgui
 
 def line(x0, y0, x1, y1, color, thickness=1, tf=None):
     &#34;&#34;&#34; Line connecting two points. &#34;&#34;&#34;
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), thickness)
         yield
 
 
 def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
     &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners. &#34;&#34;&#34;
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    # Avoid issues with disappearing lines on very large rectangles
+    x0, x1 = np.clip([x0, x1], -8192, 8192)
+    y0, y1 = np.clip([y0, y1], -8192, 8192)
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
-        # Avoid issues with disappearing lines on very large rectangles
-        x0, x1 = np.clip([x0, x1], -8192, 8192)
-        y0, y1 = np.clip([y0, y1], -8192, 8192)
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, thickness)
         yield
 
 
 def rect_filled(x0, y0, x1, y1, color, rounding=0, tf=None):
     &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners. &#34;&#34;&#34;
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    # Avoid issues with disappearing lines on very large rectangles
+    x0, x1 = np.clip([x0, x1], -8192, 8192)
+    y0, y1 = np.clip([y0, y1], -8192, 8192)
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
-        # Avoid issues with disappearing lines on very large rectangles
-        x0, x1 = np.clip([x0, x1], -8192, 8192)
-        y0, y1 = np.clip([y0, y1], -8192, 8192)
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_rect_filled(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0)
         yield
 
 
 def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
     &#34;&#34;&#34; Circle specified by its center and radius. &#34;&#34;&#34;
+    if tf is not None:
+        assert np.allclose(tf.c2s[0,0], tf.c2s[1,1])
+        [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            assert np.allclose(tf.c2s[0,0], tf.c2s[1,1])
-            [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
         yield
 
 
 def polyline(points, color, closed=False, thickness=1, tf=None):
     &#34;&#34;&#34; Polygonal line or a closed polygon. &#34;&#34;&#34;
+    if tf is not None:
+        if isinstance(points, np.ndarray):
+            points = np.matmul(tf.c2s, np.column_stack([points, np.ones(len(points))]).T).T
+        else:
+            points = [list(np.matmul(tf.c2s, [x, y, 1])) for x, y in points]
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            if isinstance(points, np.ndarray):
-                points = np.matmul(tf.c2s, np.column_stack([points, np.ones(len(points))]).T).T
-            else:
-                points = [list(np.matmul(tf.c2s, [x, y, 1])) for x, y in points]
-        draw_list = imgui.get_window_draw_list()
-        draw_list.add_polyline(points.tolist(), imgui.get_color_u32_rgba(*color), closed, thickness)
+        draw_list.add_polyline(points, imgui.get_color_u32_rgba(*color), closed, thickness)
         yield
 
 
@@ -112,9 +112,9 @@ def text(x, y, color, string, tf=None):
 
     This is a raw drawing function. Use `concur.widgets.text` instead if you want a text widget.
     &#34;&#34;&#34;
+    if tf is not None:
+        x, y = np.matmul(tf.c2s, [x, y, 1])
     while(True):
-        if tf is not None:
-            x, y = np.matmul(tf.c2s, [x, y, 1])
         # Text was hanging the application if too far away
         if -8192 &lt; x &lt; 8192 and -8192 &lt; y &lt; 8192:
             draw_list = imgui.get_window_draw_list()
@@ -127,13 +127,16 @@ def image(tex_id, w, h, tf):
 
     This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
     &#34;&#34;&#34;
+    x0, y0, x1, y1 = 0, 0, w, h
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    draw_list = imgui.get_window_draw_list()
+    l, t, r, b = tf.view_s
+    a_s = tf.view_s[:2]
+    b_s = tf.view_s[2:]
+    a_i = tf.view_c[0] / w, tf.view_c[1] / h
+    b_i = tf.view_c[2] / w, tf.view_c[3] / h
     while True:
-        draw_list = imgui.get_window_draw_list()
-        l, t, r, b = tf.view_s
-        a_s = tf.view_s[:2]
-        b_s = tf.view_s[2:]
-        a_i = tf.view_c[0] / w, tf.view_c[1] / h
-        b_i = tf.view_c[2] / w, tf.view_c[3] / h
         draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
         yield</code></pre>
 </details>
@@ -156,11 +159,11 @@ def image(tex_id, w, h, tf):
 </summary>
 <pre><code class="python">def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
     &#34;&#34;&#34; Circle specified by its center and radius. &#34;&#34;&#34;
+    if tf is not None:
+        assert np.allclose(tf.c2s[0,0], tf.c2s[1,1])
+        [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            assert np.allclose(tf.c2s[0,0], tf.c2s[1,1])
-            [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
         yield</code></pre>
 </details>
@@ -180,13 +183,16 @@ def image(tex_id, w, h, tf):
 
     This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
     &#34;&#34;&#34;
+    x0, y0, x1, y1 = 0, 0, w, h
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    draw_list = imgui.get_window_draw_list()
+    l, t, r, b = tf.view_s
+    a_s = tf.view_s[:2]
+    b_s = tf.view_s[2:]
+    a_i = tf.view_c[0] / w, tf.view_c[1] / h
+    b_i = tf.view_c[2] / w, tf.view_c[3] / h
     while True:
-        draw_list = imgui.get_window_draw_list()
-        l, t, r, b = tf.view_s
-        a_s = tf.view_s[:2]
-        b_s = tf.view_s[2:]
-        a_i = tf.view_c[0] / w, tf.view_c[1] / h
-        b_i = tf.view_c[2] / w, tf.view_c[3] / h
         draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
         yield</code></pre>
 </details>
@@ -202,10 +208,10 @@ def image(tex_id, w, h, tf):
 </summary>
 <pre><code class="python">def line(x0, y0, x1, y1, color, thickness=1, tf=None):
     &#34;&#34;&#34; Line connecting two points. &#34;&#34;&#34;
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), thickness)
         yield</code></pre>
 </details>
@@ -221,14 +227,14 @@ def image(tex_id, w, h, tf):
 </summary>
 <pre><code class="python">def polyline(points, color, closed=False, thickness=1, tf=None):
     &#34;&#34;&#34; Polygonal line or a closed polygon. &#34;&#34;&#34;
+    if tf is not None:
+        if isinstance(points, np.ndarray):
+            points = np.matmul(tf.c2s, np.column_stack([points, np.ones(len(points))]).T).T
+        else:
+            points = [list(np.matmul(tf.c2s, [x, y, 1])) for x, y in points]
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            if isinstance(points, np.ndarray):
-                points = np.matmul(tf.c2s, np.column_stack([points, np.ones(len(points))]).T).T
-            else:
-                points = [list(np.matmul(tf.c2s, [x, y, 1])) for x, y in points]
-        draw_list = imgui.get_window_draw_list()
-        draw_list.add_polyline(points.tolist(), imgui.get_color_u32_rgba(*color), closed, thickness)
+        draw_list.add_polyline(points, imgui.get_color_u32_rgba(*color), closed, thickness)
         yield</code></pre>
 </details>
 </dd>
@@ -243,13 +249,13 @@ def image(tex_id, w, h, tf):
 </summary>
 <pre><code class="python">def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
     &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners. &#34;&#34;&#34;
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    # Avoid issues with disappearing lines on very large rectangles
+    x0, x1 = np.clip([x0, x1], -8192, 8192)
+    y0, y1 = np.clip([y0, y1], -8192, 8192)
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
-        # Avoid issues with disappearing lines on very large rectangles
-        x0, x1 = np.clip([x0, x1], -8192, 8192)
-        y0, y1 = np.clip([y0, y1], -8192, 8192)
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, thickness)
         yield</code></pre>
 </details>
@@ -265,13 +271,13 @@ def image(tex_id, w, h, tf):
 </summary>
 <pre><code class="python">def rect_filled(x0, y0, x1, y1, color, rounding=0, tf=None):
     &#34;&#34;&#34; Straight non-filled rectangle specified by its two corners. &#34;&#34;&#34;
+    if tf is not None:
+        [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
+    # Avoid issues with disappearing lines on very large rectangles
+    x0, x1 = np.clip([x0, x1], -8192, 8192)
+    y0, y1 = np.clip([y0, y1], -8192, 8192)
+    draw_list = imgui.get_window_draw_list()
     while(True):
-        if tf is not None:
-            [x0, y0], [x1, y1] = np.matmul(tf.c2s, [x0, y0, 1]), np.matmul(tf.c2s, [x1, y1, 1])
-        # Avoid issues with disappearing lines on very large rectangles
-        x0, x1 = np.clip([x0, x1], -8192, 8192)
-        y0, y1 = np.clip([y0, y1], -8192, 8192)
-        draw_list = imgui.get_window_draw_list()
         draw_list.add_rect_filled(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0)
         yield</code></pre>
 </details>
@@ -291,9 +297,9 @@ def image(tex_id, w, h, tf):
 
     This is a raw drawing function. Use `concur.widgets.text` instead if you want a text widget.
     &#34;&#34;&#34;
+    if tf is not None:
+        x, y = np.matmul(tf.c2s, [x, y, 1])
     while(True):
-        if tf is not None:
-            x, y = np.matmul(tf.c2s, [x, y, 1])
         # Text was hanging the application if too far away
         if -8192 &lt; x &lt; 8192 and -8192 &lt; y &lt; 8192:
             draw_list = imgui.get_window_draw_list()
@@ -332,7 +338,7 @@ def image(tex_id, w, h, tf):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>
