@@ -53,7 +53,7 @@ def time_controls(state):
         return &#34;tick&#34;, None
         yield
 
-    tag, value = yield from c.window(&#34;Time Controls&#34;,
+    tag, value = yield from c.window(&#34;Time Controls&#34;, c.orr(
         [ c.slider_int(&#34;Frame ID&#34;, state.frame_id, state.start, state.end, tag=&#34;seek&#34;)
         , c.slider_float(&#34;Local Seek&#34;, 0, -1.5, 1.5, tag=&#34;drag&#34;)
         , c.slider_int(&#34;Stride&#34;, state.stride, 1, 20, tag=&#34;stride&#34;)
@@ -63,8 +63,8 @@ def time_controls(state):
             , c.button(&#34;Pause&#34; if state.playing else &#34;Play&#34;, tag=&#34;PlayPause&#34;)
             ])
         ]
-         + ([] if not state.hotkey else [c.key_pressed(&#34;space&#34;, state.hotkey, True)])
          + ([] if not state.playing else [clock()]))
+        )
 
     last_frame_id = state.frame_id
     if tag == &#34;seek&#34;:
@@ -125,7 +125,7 @@ or <code>None</code> if user didn't seek.</p></section>
         return &#34;tick&#34;, None
         yield
 
-    tag, value = yield from c.window(&#34;Time Controls&#34;,
+    tag, value = yield from c.window(&#34;Time Controls&#34;, c.orr(
         [ c.slider_int(&#34;Frame ID&#34;, state.frame_id, state.start, state.end, tag=&#34;seek&#34;)
         , c.slider_float(&#34;Local Seek&#34;, 0, -1.5, 1.5, tag=&#34;drag&#34;)
         , c.slider_int(&#34;Stride&#34;, state.stride, 1, 20, tag=&#34;stride&#34;)
@@ -135,8 +135,8 @@ or <code>None</code> if user didn't seek.</p></section>
             , c.button(&#34;Pause&#34; if state.playing else &#34;Play&#34;, tag=&#34;PlayPause&#34;)
             ])
         ]
-         + ([] if not state.hotkey else [c.key_pressed(&#34;space&#34;, state.hotkey, True)])
          + ([] if not state.playing else [clock()]))
+        )
 
     last_frame_id = state.frame_id
     if tag == &#34;seek&#34;:

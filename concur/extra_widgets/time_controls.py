@@ -26,7 +26,7 @@ def time_controls(state):
         return "tick", None
         yield
 
-    tag, value = yield from c.window("Time Controls",
+    tag, value = yield from c.window("Time Controls", c.orr(
         [ c.slider_int("Frame ID", state.frame_id, state.start, state.end, tag="seek")
         , c.slider_float("Local Seek", 0, -1.5, 1.5, tag="drag")
         , c.slider_int("Stride", state.stride, 1, 20, tag="stride")
@@ -36,8 +36,8 @@ def time_controls(state):
             , c.button("Pause" if state.playing else "Play", tag="PlayPause")
             ])
         ]
-         + ([] if not state.hotkey else [c.key_pressed("space", state.hotkey, True)])
          + ([] if not state.playing else [clock()]))
+        )
 
     last_frame_id = state.frame_id
     if tag == "seek":
