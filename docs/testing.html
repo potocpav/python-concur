@@ -45,26 +45,15 @@ def test(widget_gen, slow=False):
 def test_widget(f):
     &#34;&#34;&#34; Function decorator for testing functions.
 
-    See `concur.testing.test_widgets` for usage examples.
+    See `concur.testing.test_widget` for usage examples.
     &#34;&#34;&#34;
+    def widget(tester):
+        io = imgui.get_io()
+        io.mouse_draw_cursor = True
+        yield from f(tester)
     def g():
-        return test(lambda tester: orr(
-            [ optional(tester.slow or True, draw_cursor)
-            , f(tester)
-            ]))
+        return test(widget)
     return g
-
-
-def draw_cursor():
-    &#34;&#34;&#34; Polygonal line or a closed polygon. &#34;&#34;&#34;
-    io = imgui.get_io()
-    while(True):
-        draw_list = imgui.get_overlay_draw_list()
-        x, y = io.mouse_pos
-        pts = [(x, y), (x, y+20), (x+1, y+20), (x+6, y+15), (x+13, y+15), (x+14, y+14), (x+1, y)]
-        color = imgui.get_color_u32_rgba(1-io.mouse_down[1],1-io.mouse_down[0],io.mouse_down[2],1)
-        draw_list.add_polyline(pts, color, True, 2)
-        yield
 
 
 class Testing(object):
@@ -134,27 +123,6 @@ class Testing(object):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="concur.testing.draw_cursor"><code class="name flex">
-<span>def <span class="ident">draw_cursor</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Polygonal line or a closed polygon.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def draw_cursor():
-    &#34;&#34;&#34; Polygonal line or a closed polygon. &#34;&#34;&#34;
-    io = imgui.get_io()
-    while(True):
-        draw_list = imgui.get_overlay_draw_list()
-        x, y = io.mouse_pos
-        pts = [(x, y), (x, y+20), (x+1, y+20), (x+6, y+15), (x+13, y+15), (x+14, y+14), (x+1, y)]
-        color = imgui.get_color_u32_rgba(1-io.mouse_down[1],1-io.mouse_down[0],io.mouse_down[2],1)
-        draw_list.add_polyline(pts, color, True, 2)
-        yield</code></pre>
-</details>
-</dd>
 <dt id="concur.testing.test"><code class="name flex">
 <span>def <span class="ident">test</span></span>(<span>widget_gen, slow=False)</span>
 </code></dt>
@@ -176,7 +144,7 @@ class Testing(object):
 </code></dt>
 <dd>
 <section class="desc"><p>Function decorator for testing functions.</p>
-<p>See <code>concur.testing.test_widgets</code> for usage examples.</p></section>
+<p>See <a title="concur.testing.test_widget" href="#concur.testing.test_widget"><code>test_widget()</code></a> for usage examples.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -184,13 +152,14 @@ class Testing(object):
 <pre><code class="python">def test_widget(f):
     &#34;&#34;&#34; Function decorator for testing functions.
 
-    See `concur.testing.test_widgets` for usage examples.
+    See `concur.testing.test_widget` for usage examples.
     &#34;&#34;&#34;
+    def widget(tester):
+        io = imgui.get_io()
+        io.mouse_draw_cursor = True
+        yield from f(tester)
     def g():
-        return test(lambda tester: orr(
-            [ optional(tester.slow or True, draw_cursor)
-            , f(tester)
-            ]))
+        return test(widget)
     return g</code></pre>
 </details>
 </dd>
@@ -420,7 +389,6 @@ class Testing(object):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="concur.testing.draw_cursor" href="#concur.testing.draw_cursor">draw_cursor</a></code></li>
 <li><code><a title="concur.testing.test" href="#concur.testing.test">test</a></code></li>
 <li><code><a title="concur.testing.test_widget" href="#concur.testing.test_widget">test_widget</a></code></li>
 </ul>

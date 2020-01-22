@@ -33,10 +33,10 @@ import concur as c
 
 class TimeControls(object):
     &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget. &#34;&#34;&#34;
-    def __init__(self, start, end, hotkey=None):
+    def __init__(self, start, end, frame_id, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
-        self.frame_id = 0.0
-        self.start = 0
+        self.frame_id = frame_id
+        self.start = start
         self.end = end - 1
         self.playing = False
         self.stride = 10
@@ -174,7 +174,7 @@ or <code>None</code> if user didn't seek.</p></section>
 <dl>
 <dt id="concur.extra_widgets.time_controls.TimeControls"><code class="flex name class">
 <span>class <span class="ident">TimeControls</span></span>
-<span>(</span><span>start, end, hotkey=None)</span>
+<span>(</span><span>start, end, frame_id, hotkey=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>State for the <a title="concur.extra_widgets.time_controls.time_controls" href="#concur.extra_widgets.time_controls.time_controls"><code>time_controls()</code></a> widget. </p>
@@ -185,10 +185,10 @@ or <code>None</code> if user didn't seek.</p></section>
 </summary>
 <pre><code class="python">class TimeControls(object):
     &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget. &#34;&#34;&#34;
-    def __init__(self, start, end, hotkey=None):
+    def __init__(self, start, end, frame_id, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
-        self.frame_id = 0.0
-        self.start = 0
+        self.frame_id = frame_id
+        self.start = start
         self.end = end - 1
         self.playing = False
         self.stride = 10

@@ -18,7 +18,7 @@ def test(widget_gen, slow=False):
 def test_widget(f):
     """ Function decorator for testing functions.
 
-    See `concur.testing.test_widgets` for usage examples.
+    See `concur.testing.test_widget` for usage examples.
     """
     def widget(tester):
         io = imgui.get_io()

@@ -53,11 +53,11 @@ yield
 yield from button(&quot;Another Button&quot;)
 </code></pre>
 <p>This creates one button, and after it is clicked, another button is created. If the code above isn't in a loop or in another widget (see below), there is nothing more to do after clicking the second button and the application is closed.</p>
-<p>Composition in space (that is, rendering multiple widgets at once) is done using the <code>concur.orr</code> combinator. The result of the composition is yet another widget:</p>
+<p>Composition in space (that is, rendering multiple widgets at once) is done using the <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> combinator. The result of the composition is yet another widget:</p>
 <pre><code class="python">pair = concur.orr([button(&quot;First&quot;), button(&quot;Second&quot;)])
 yield from pair # display `pair` as a normal widget
 </code></pre>
-<p>The result of <code>concur.orr</code>
+<p>The result of <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a>
 is returned as soon as any child widget returns, passing the return value along. How can we tell which button was pressed? We can't, they must simply return different values. By convention, primitive widgets return a tuple <code>(identifier, value)</code> to be easily identifiable when inside <code>orr</code>. For example, built-in buttons can be composed like this:</p>
 <pre><code class="python">tag, value = concur.orr([concur.button(&quot;First&quot;), concur.button(&quot;Second&quot;)])
 if tag == &quot;First&quot;:
