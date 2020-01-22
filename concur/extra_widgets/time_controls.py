@@ -6,10 +6,10 @@ import concur as c
 
 class TimeControls(object):
     """ State for the `concur.extra_widgets.time_controls.time_controls` widget. """
-    def __init__(self, start, end, hotkey=None):
+    def __init__(self, start, end, frame_id, hotkey=None):
         """ Initialize. """
-        self.frame_id = 0.0
-        self.start = 0
+        self.frame_id = frame_id
+        self.start = start
         self.end = end - 1
         self.playing = False
         self.stride = 10
