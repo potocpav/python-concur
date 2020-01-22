@@ -20,24 +20,13 @@ def test_widget(f):
 
     See `concur.testing.test_widgets` for usage examples.
     """
+    def widget(tester):
+        io = imgui.get_io()
+        io.mouse_draw_cursor = True
+        yield from f(tester)
     def g():
-        return test(lambda tester: orr(
-            [ optional(tester.slow or True, draw_cursor)
-            , f(tester)
-            ]))
+        return test(widget)
     return g
-
-
-def draw_cursor():
-    """ Polygonal line or a closed polygon. """
-    io = imgui.get_io()
-    while(True):
-        draw_list = imgui.get_overlay_draw_list()
-        x, y = io.mouse_pos
-        pts = [(x, y), (x, y+20), (x+1, y+20), (x+6, y+15), (x+13, y+15), (x+14, y+14), (x+1, y)]
-        color = imgui.get_color_u32_rgba(1-io.mouse_down[1],1-io.mouse_down[0],io.mouse_down[2],1)
-        draw_list.add_polyline(pts, color, True, 2)
-        yield
 
 
 class Testing(object):
