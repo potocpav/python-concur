@@ -7,3 +7,4 @@ import concur.extra_widgets.plot
 from .time_controls import *
 from .image import *
 from .pan_zoom import *
+from .draggable import *
