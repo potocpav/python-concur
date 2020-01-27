@@ -22,6 +22,11 @@ from concur.core import orr, lift, Widget, interactive_elem
 
 def orr_same_line(widgets):
     """ Use instead of `concur.core.orr` to layout child widgets horizontally.
+
+    This function simply inserts the ImGui function `SameLine` between each two of the `widgets`.
+    Each of the `widgets` must therefore contain *just one* ImGui widget. If it contains multiple,
+    some line breaks may sneak in; if it contains none (such as `concur.core.nothing`), there would
+    be too many `SameLine` calls which results in weird layout bugs.
     """
     def intersperse(delimiter, seq):
         """ https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element """
@@ -138,6 +143,10 @@ def drag_float(label, value, *args, **kwargs):
     """ Float selection widget without a slider. """
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
 
+def input_float(label, value, *args, **kwargs):
+    """ Float input widget. """
+    return interactive_elem(imgui.input_float, label, value, *args, **kwargs)
+
 def slider_int(label, value, min_value, max_value, *args, **kwargs):
     """ Int selection slider. """
     return interactive_elem(imgui.slider_int, label, value, min_value, max_value, *args, **kwargs)
@@ -145,6 +154,29 @@ def slider_int(label, value, min_value, max_value, *args, **kwargs):
 def slider_float(label, value, min_value, max_value, *args, **kwargs):
     """ Float selection slider. """
     return interactive_elem(imgui.slider_float, label, value, min_value, max_value, *args, **kwargs)
+
+
+def columns(elems, identifier=None, border=True, widths=[]):
+    """ Table, using the imgui columns API.
+
+    `elems` is a 2D array of widgets
+    `widths` is a optional vector of column widths in pixels. May contain
+    None values.
+    """
+    n_columns = len(elems[0])
+    for e in elems:
+        assert len(e) == n_columns
+    accum = []
+    accum.append(lift(imgui.columns, n_columns, identifier, border))
+    for i, w in enumerate(widths):
+        if w is not None:
+            accum.append(lift(imgui.set_column_width, i, w))
+    for row in elems:
+        for widget in row:
+            accum.append(widget)
+            accum.append(lift(imgui.next_column))
+    accum.append(lift(imgui.columns, 1))
+    return orr(accum)
 
 
 def transform(x, y, widget, tf=None):
