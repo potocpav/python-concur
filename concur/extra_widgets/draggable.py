@@ -5,6 +5,10 @@ import imgui
 
 
 def draggable(name, tag=None):
+    """Draggable button (can't be clicked). Emits (dx, dy) coordinates when dragged.
+
+    To limit this to a button is silly, PRs welcome :)
+    """
     io = imgui.get_io()
     while True:
         imgui.button(name)
