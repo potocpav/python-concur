@@ -17,7 +17,7 @@ def texture(arr):
     else:
         raise ValueError(f"Shape rank has to be 2 or 3, but it is {len(arr.shape)}")
 
-    texid = glGenTextures(1)
+    texid = int(glGenTextures(1)) # Conversion from np.uint32 to int
     glBindTexture(GL_TEXTURE_2D, texid)
     glTexImage2D(GL_TEXTURE_2D, 0, rgb_mode, arr.shape[1], arr.shape[0],
                  0, rgb_mode, GL_UNSIGNED_BYTE, arr)

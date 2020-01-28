@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.4" />
+<meta name="generator" content="pdoc 0.7.2" />
 <title>concur.widgets API documentation</title>
 <meta name="description" content="A collection of widgets based off of ImGui …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -56,6 +56,11 @@ from concur.core import orr, lift, Widget, interactive_elem
 
 def orr_same_line(widgets):
     &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally.
+
+    This function simply inserts the ImGui function `SameLine` between each two of the `widgets`.
+    Each of the `widgets` must therefore contain *just one* ImGui widget. If it contains multiple,
+    some line breaks may sneak in; if it contains none (such as `concur.core.nothing`), there would
+    be too many `SameLine` calls which results in weird layout bugs.
     &#34;&#34;&#34;
     def intersperse(delimiter, seq):
         &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
@@ -172,6 +177,10 @@ def drag_float(label, value, *args, **kwargs):
     &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
 
+def input_float(label, value, *args, **kwargs):
+    &#34;&#34;&#34; Float input widget. &#34;&#34;&#34;
+    return interactive_elem(imgui.input_float, label, value, *args, **kwargs)
+
 def slider_int(label, value, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Int selection slider. &#34;&#34;&#34;
     return interactive_elem(imgui.slider_int, label, value, min_value, max_value, *args, **kwargs)
@@ -179,6 +188,29 @@ def slider_int(label, value, min_value, max_value, *args, **kwargs):
 def slider_float(label, value, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
     return interactive_elem(imgui.slider_float, label, value, min_value, max_value, *args, **kwargs)
+
+
+def columns(elems, identifier=None, border=True, widths=[]):
+    &#34;&#34;&#34; Table, using the imgui columns API.
+
+    `elems` is a 2D array of widgets
+    `widths` is a optional vector of column widths in pixels. May contain
+    None values.
+    &#34;&#34;&#34;
+    n_columns = len(elems[0])
+    for e in elems:
+        assert len(e) == n_columns
+    accum = []
+    accum.append(lift(imgui.columns, n_columns, identifier, border))
+    for i, w in enumerate(widths):
+        if w is not None:
+            accum.append(lift(imgui.set_column_width, i, w))
+    for row in elems:
+        for widget in row:
+            accum.append(widget)
+            accum.append(lift(imgui.next_column))
+    accum.append(lift(imgui.columns, 1))
+    return orr(accum)
 
 
 def transform(x, y, widget, tf=None):
@@ -261,6 +293,41 @@ def transform(x, y, widget, tf=None):
         yield</code></pre>
 </details>
 </dd>
+<dt id="concur.widgets.columns"><code class="name flex">
+<span>def <span class="ident">columns</span></span>(<span>elems, identifier=None, border=True, widths=[])</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Table, using the imgui columns API.</p>
+<p><code>elems</code> is a 2D array of widgets
+<code>widths</code> is a optional vector of column widths in pixels. May contain
+None values.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def columns(elems, identifier=None, border=True, widths=[]):
+    &#34;&#34;&#34; Table, using the imgui columns API.
+
+    `elems` is a 2D array of widgets
+    `widths` is a optional vector of column widths in pixels. May contain
+    None values.
+    &#34;&#34;&#34;
+    n_columns = len(elems[0])
+    for e in elems:
+        assert len(e) == n_columns
+    accum = []
+    accum.append(lift(imgui.columns, n_columns, identifier, border))
+    for i, w in enumerate(widths):
+        if w is not None:
+            accum.append(lift(imgui.set_column_width, i, w))
+    for row in elems:
+        for widget in row:
+            accum.append(widget)
+            accum.append(lift(imgui.next_column))
+    accum.append(lift(imgui.columns, 1))
+    return orr(accum)</code></pre>
+</details>
+</dd>
 <dt id="concur.widgets.drag_float"><code class="name flex">
 <span>def <span class="ident">drag_float</span></span>(<span>label, value, *args, **kwargs)</span>
 </code></dt>
@@ -273,6 +340,20 @@ def transform(x, y, widget, tf=None):
 <pre><code class="python">def drag_float(label, value, *args, **kwargs):
     &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.input_float"><code class="name flex">
+<span>def <span class="ident">input_float</span></span>(<span>label, value, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Float input widget.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def input_float(label, value, *args, **kwargs):
+    &#34;&#34;&#34; Float input widget. &#34;&#34;&#34;
+    return interactive_elem(imgui.input_float, label, value, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.input_text"><code class="name flex">
@@ -298,13 +379,22 @@ def transform(x, y, widget, tf=None):
 <span>def <span class="ident">orr_same_line</span></span>(<span>widgets)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Use instead of <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> to layout child widgets horizontally.</p></section>
+<section class="desc"><p>Use instead of <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> to layout child widgets horizontally.</p>
+<p>This function simply inserts the ImGui function <code>SameLine</code> between each two of the <code>widgets</code>.
+Each of the <code>widgets</code> must therefore contain <em>just one</em> ImGui widget. If it contains multiple,
+some line breaks may sneak in; if it contains none (such as <a title="concur.core.nothing" href="core.html#concur.core.nothing"><code>nothing()</code></a>), there would
+be too many <code>SameLine</code> calls which results in weird layout bugs.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def orr_same_line(widgets):
     &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally.
+
+    This function simply inserts the ImGui function `SameLine` between each two of the `widgets`.
+    Each of the `widgets` must therefore contain *just one* ImGui widget. If it contains multiple,
+    some line breaks may sneak in; if it contains none (such as `concur.core.nothing`), there would
+    be too many `SameLine` calls which results in weird layout bugs.
     &#34;&#34;&#34;
     def intersperse(delimiter, seq):
         &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
@@ -529,7 +619,9 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.button" href="#concur.widgets.button">button</a></code></li>
 <li><code><a title="concur.widgets.checkbox" href="#concur.widgets.checkbox">checkbox</a></code></li>
 <li><code><a title="concur.widgets.child" href="#concur.widgets.child">child</a></code></li>
+<li><code><a title="concur.widgets.columns" href="#concur.widgets.columns">columns</a></code></li>
 <li><code><a title="concur.widgets.drag_float" href="#concur.widgets.drag_float">drag_float</a></code></li>
+<li><code><a title="concur.widgets.input_float" href="#concur.widgets.input_float">input_float</a></code></li>
 <li><code><a title="concur.widgets.input_text" href="#concur.widgets.input_text">input_text</a></code></li>
 <li><code><a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line">orr_same_line</a></code></li>
 <li><code><a title="concur.widgets.radio_button" href="#concur.widgets.radio_button">radio_button</a></code></li>
@@ -549,7 +641,7 @@ is at <code>[x, y]</code>.</p></section>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.2</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

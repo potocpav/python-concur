@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="concur",
-    version="0.3.0",
+    version="0.4.0",
     author="Pavel Potocek",
     author_email="pavelpotocek@gmail.com",
     description="Concur UI Framework for Python",
@@ -36,12 +36,6 @@ setuptools.setup(
         'Pillow',
         'numpy',
         'glfw',
-        # PyOpenGL is pinned to 3.1.0, due to the issue of glGenTextures() intermittently failing after
-        # commit https://github.com/mcfletch/pyopengl/commit/ed0ca79b981663c4697c3b2792eec176dd4f4121
-        # The issue is reproducible when dragging the image in `examples/image.py`, and manifests as
-        # image flicker and intermittent crashes.
-        # This bug is reproducible also in `PyOpenGL==3.1.0`, when `glGenTextures` is used to generate
-        # multiple textures at once.
-        'PyOpenGL == 3.1.0',
+        'PyOpenGL',
     ],
 )
