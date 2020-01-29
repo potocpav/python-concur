@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.2" />
+<meta name="generator" content="pdoc 0.7.4" />
 <title>concur.widgets API documentation</title>
 <meta name="description" content="A collection of widgets based off of ImGui …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -177,6 +177,21 @@ def drag_float(label, value, *args, **kwargs):
     &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
 
+def drag_float2(label, values, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget for selecting two `values`. &#34;&#34;&#34;
+    value0, value1 = values
+    return interactive_elem(imgui.drag_float2, label, value0, value1, *args, **kwargs)
+
+def drag_float3(label, values, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget for selecting three `values`. &#34;&#34;&#34;
+    value0, value1, value2 = values
+    return interactive_elem(imgui.drag_float3, label, value0, value1, value2, *args, **kwargs)
+
+def drag_float4(label, values, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget without a slider for selecting four `values`. &#34;&#34;&#34;
+    value0, value1, value2, value3 = values
+    return interactive_elem(imgui.drag_float4, label, value0, value1, value2, value3, *args, **kwargs)
+
 def input_float(label, value, *args, **kwargs):
     &#34;&#34;&#34; Float input widget. &#34;&#34;&#34;
     return interactive_elem(imgui.input_float, label, value, *args, **kwargs)
@@ -340,6 +355,51 @@ None values.</p></section>
 <pre><code class="python">def drag_float(label, value, *args, **kwargs):
     &#34;&#34;&#34; Float selection widget without a slider. &#34;&#34;&#34;
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.drag_float2"><code class="name flex">
+<span>def <span class="ident">drag_float2</span></span>(<span>label, values, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Float selection widget for selecting two <code>values</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def drag_float2(label, values, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget for selecting two `values`. &#34;&#34;&#34;
+    value0, value1 = values
+    return interactive_elem(imgui.drag_float2, label, value0, value1, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.drag_float3"><code class="name flex">
+<span>def <span class="ident">drag_float3</span></span>(<span>label, values, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Float selection widget for selecting three <code>values</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def drag_float3(label, values, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget for selecting three `values`. &#34;&#34;&#34;
+    value0, value1, value2 = values
+    return interactive_elem(imgui.drag_float3, label, value0, value1, value2, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.drag_float4"><code class="name flex">
+<span>def <span class="ident">drag_float4</span></span>(<span>label, values, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Float selection widget without a slider for selecting four <code>values</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def drag_float4(label, values, *args, **kwargs):
+    &#34;&#34;&#34; Float selection widget without a slider for selecting four `values`. &#34;&#34;&#34;
+    value0, value1, value2, value3 = values
+    return interactive_elem(imgui.drag_float4, label, value0, value1, value2, value3, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.input_float"><code class="name flex">
@@ -621,6 +681,9 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.child" href="#concur.widgets.child">child</a></code></li>
 <li><code><a title="concur.widgets.columns" href="#concur.widgets.columns">columns</a></code></li>
 <li><code><a title="concur.widgets.drag_float" href="#concur.widgets.drag_float">drag_float</a></code></li>
+<li><code><a title="concur.widgets.drag_float2" href="#concur.widgets.drag_float2">drag_float2</a></code></li>
+<li><code><a title="concur.widgets.drag_float3" href="#concur.widgets.drag_float3">drag_float3</a></code></li>
+<li><code><a title="concur.widgets.drag_float4" href="#concur.widgets.drag_float4">drag_float4</a></code></li>
 <li><code><a title="concur.widgets.input_float" href="#concur.widgets.input_float">input_float</a></code></li>
 <li><code><a title="concur.widgets.input_text" href="#concur.widgets.input_text">input_text</a></code></li>
 <li><code><a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line">orr_same_line</a></code></li>
@@ -641,7 +704,7 @@ is at <code>[x, y]</code>.</p></section>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

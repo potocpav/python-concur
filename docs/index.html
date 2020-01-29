@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.2" />
+<meta name="generator" content="pdoc 0.7.4" />
 <title>concur API documentation</title>
 <meta name="description" content="Concur is a Python UI framework based on synchronous generators …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -53,11 +53,11 @@ yield
 yield from button(&quot;Another Button&quot;)
 </code></pre>
 <p>This creates one button, and after it is clicked, another button is created. If the code above isn't in a loop or in another widget (see below), there is nothing more to do after clicking the second button and the application is closed.</p>
-<p>Composition in space (that is, rendering multiple widgets at once) is done using the <code>concur.core.orr</code> combinator. The result of the composition is yet another widget:</p>
+<p>Composition in space (that is, rendering multiple widgets at once) is done using the <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> combinator. The result of the composition is yet another widget:</p>
 <pre><code class="python">pair = concur.orr([button(&quot;First&quot;), button(&quot;Second&quot;)])
 yield from pair # display `pair` as a normal widget
 </code></pre>
-<p>The result of <code>concur.core.orr</code>
+<p>The result of <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a>
 is returned as soon as any child widget returns, passing the return value along. How can we tell which button was pressed? We can't, they must simply return different values. By convention, primitive widgets return a tuple <code>(identifier, value)</code> to be easily identifiable when inside <code>orr</code>. For example, built-in buttons can be composed like this:</p>
 <pre><code class="python">tag, value = concur.orr([concur.button(&quot;First&quot;), concur.button(&quot;Second&quot;)])
 if tag == &quot;First&quot;:
@@ -66,20 +66,21 @@ if tag == &quot;Second&quot;:
     print(&quot;second!&quot;)
 </code></pre>
 <p>Note that containers (such as a window) are widgets too, with the same semantics. They take as an argument a list of other widgets that will be drawn inside.</p>
-<p>Once the whole user interface is represented as as single widget, it can be displayed using the <code>concur.integrations.glfw.main</code> function.</p>
+<p>Once the whole user interface is represented as as single widget, it can be displayed using the <a title="concur.integrations.glfw.main" href="integrations/glfw.html#concur.integrations.glfw.main"><code>main()</code></a> function.</p>
 <p>That's it for now. Play around with it. You will discover that these handful of concepts go a <em>long</em> way, and can be used to create even large UIs in a straightforward and clear manner. As a starting point, you can use the <a href="https://github.com/potocpav/python-concur/tree/master/examples">examples</a>.</p>
 <h1 id="troubleshooting">Troubleshooting</h1>
 <p>Here's a list of known issues and their solutions:</p>
 <p><strong>Widget flicker</strong></p>
-<p>Between any two <code>yield from _</code> statements that can return, there must be a <code>yield</code> statement. Otherwise, elements may get duplicated in a frame after triggering an action. On the other hand, if there are too many <code>yield</code> statemets, elements may momentarily disappear.</p>
-<p>I don't think this bit of syntactic inconvenience can be solved without introducing other quirks.</p>
+<p>Between any two <code>yield from _</code> statements that can return, there must be exactly one <code>yield</code> statement. If there is none, elements may get duplicated in a frame after triggering an action. If there is more than one <code>yield</code> statemet, elements may momentarily disappear.</p>
+<p>Most of the time, it is enough to slap a <code>yield</code> at the end of each loop (<a href="https://github.com/potocpav/python-concur/blob/master/examples/counters.py">example</a>). I don't think this bit of syntactic inconvenience can be solved without introducing other quirks.</p>
 <p><strong>Event congestion</strong></p>
-<p>On each frame, at most one action can get triggered from an <code>orr</code> block. Actions from first sub-widgets are prioritized, and any actions from further sub-widgets will get thrown out. This is a problem when there are rapidly-firing widgets, such as video playback. Swap the congesting <code>orr</code> function for <code>multi_orr</code> which returns a list of all fired events.</p>
+<p>On each frame, at most one action can get triggered from an <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> block. Actions from first sub-widgets are prioritized, and any actions from further sub-widgets will get thrown out. This is a problem when there are rapidly-firing widgets, such as video playback.</p>
+<p>Push the widgets with lower priority down the widget lists, or swap the congesting <code>orr</code> function for <code>multi_orr</code>. <a title="concur.core.multi_orr" href="core.html#concur.core.multi_orr"><code>multi_orr()</code></a> returns a list of all fired events, which trades correctness for some boilerplate. Typically, the top-level widget list is <code>multi_orr</code>, while the lower levels can be <code>orr</code>.</p>
 <p><strong>Asynchronous computations</strong></p>
-<p>In other versions of Concur, all widgets are triggered asynchronously. This may not be practical in Python, due to a limitation of async generators: they can't <code>return</code>, they only <code>yield</code>. Synchronous generators are used instead, which means that all widget code is run in the main thread. Asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the <code>block</code> function. See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/timers.py">timers example</a> for details.</p>
+<p>In <a href="https://github.com/ajnsit/concur-js">other </a><a href="https://github.com/purescript-concur/purescript-concur-react">versions </a><a href="https://github.com/ajnsit/concur">of Concur</a>, all widgets are triggered asynchronously. This may not be practical in Python, due to a limitation of async generators: they can't <code>return</code>, they only <code>yield</code>. Synchronous generators are used instead, which means that all widget code is run in the main thread. Asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the <a title="concur.core.Block" href="core.html#concur.core.Block"><code>Block</code></a> function. See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/timers.py">timers example</a> for details.</p>
 <h1 id="api">API</h1>
-<p>All the functions and classes from <code>concur.core</code>, <code>concur.widgets</code>, and <code>concur.extra_widgets</code> are re-exported in the
-<code>concur</code> module. The most convenient way to access them is by importing <code>concur</code> qualified:</p>
+<p>All the functions and classes from <a title="concur.core" href="core.html"><code>concur.core</code></a>, <a title="concur.widgets" href="widgets.html"><code>concur.widgets</code></a>, and <a title="concur.extra_widgets" href="extra_widgets/index.html"><code>concur.extra_widgets</code></a> are re-exported in the
+<a title="concur" href="#concur"><code>concur</code></a> module. The most convenient way to access them is by importing <a title="concur" href="#concur"><code>concur</code></a> qualified:</p>
 <pre><code class="python">import concur as c
 </code></pre>
 <details class="source">
@@ -204,7 +205,7 @@ def partial(*args, **argv):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>
