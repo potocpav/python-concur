@@ -143,6 +143,21 @@ def drag_float(label, value, *args, **kwargs):
     """ Float selection widget without a slider. """
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
 
+def drag_float2(label, values, *args, **kwargs):
+    """ Float selection widget for selecting two `values`. """
+    value0, value1 = values
+    return interactive_elem(imgui.drag_float2, label, value0, value1, *args, **kwargs)
+
+def drag_float3(label, values, *args, **kwargs):
+    """ Float selection widget for selecting three `values`. """
+    value0, value1, value2 = values
+    return interactive_elem(imgui.drag_float3, label, value0, value1, value2, *args, **kwargs)
+
+def drag_float4(label, values, *args, **kwargs):
+    """ Float selection widget without a slider for selecting four `values`. """
+    value0, value1, value2, value3 = values
+    return interactive_elem(imgui.drag_float4, label, value0, value1, value2, value3, *args, **kwargs)
+
 def input_float(label, value, *args, **kwargs):
     """ Float input widget. """
     return interactive_elem(imgui.input_float, label, value, *args, **kwargs)
