@@ -86,6 +86,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
         except:
             # Cleanup on exception for iPython
             imgui.render()
+            impl.shutdown()
             glfw.terminate()
             raise
 
