@@ -75,7 +75,10 @@ def window(title: str,
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -&gt; Widget:
-    &#34;&#34;&#34; Create a window with a given `widget` inside. &#34;&#34;&#34;
+    &#34;&#34;&#34; Create a window with a given `widget` inside.
+
+    Window title must be unique.
+    &#34;&#34;&#34;
     while True:
         if position is not None:
             imgui.set_next_window_position(*position)
@@ -632,7 +635,8 @@ is at <code>[x, y]</code>.</p></section>
 <span>def <span class="ident">window</span></span>(<span>title, widget, position=None, size=None, flags=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a window with a given <code>widget</code> inside.</p></section>
+<section class="desc"><p>Create a window with a given <code>widget</code> inside.</p>
+<p>Window title must be unique.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -642,7 +646,10 @@ is at <code>[x, y]</code>.</p></section>
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -&gt; Widget:
-    &#34;&#34;&#34; Create a window with a given `widget` inside. &#34;&#34;&#34;
+    &#34;&#34;&#34; Create a window with a given `widget` inside.
+
+    Window title must be unique.
+    &#34;&#34;&#34;
     while True:
         if position is not None:
             imgui.set_next_window_position(*position)

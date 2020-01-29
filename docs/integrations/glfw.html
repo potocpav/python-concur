@@ -32,7 +32,7 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def create_window(window_name, width, height, maximized):
+def create_window(window_name, width, height):
     &#34;&#34;&#34; Create a GLFW window. &#34;&#34;&#34;
     if not glfw.init():
         print(&#34;Could not initialize OpenGL context&#34;)
@@ -42,10 +42,7 @@ def create_window(window_name, width, height, maximized):
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-
     glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
-    if maximized:
-        glfw.window_hint(glfw.MAXIMIZED, gl.GL_TRUE)
 
     # Create a windowed mode window and its OpenGL context
     window = glfw.create_window(
@@ -74,8 +71,10 @@ def create_window_dock(glfw_window):
         imgui.end()
 
 
-def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
     &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
+
+    To create a maximized window, pass width and height larger than the screen.
 
     If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
     and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
@@ -86,7 +85,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height, maximized)
+    window = create_window(name, width, height)
     impl = GlfwRenderer(window)
     if pass_window_to_widget:
         widget = widget(window)
@@ -111,6 +110,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
         except:
             # Cleanup on exception for iPython
             imgui.render()
+            impl.shutdown()
             glfw.terminate()
             raise
 
@@ -137,7 +137,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="concur.integrations.glfw.create_window"><code class="name flex">
-<span>def <span class="ident">create_window</span></span>(<span>window_name, width, height, maximized)</span>
+<span>def <span class="ident">create_window</span></span>(<span>window_name, width, height)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Create a GLFW window.</p></section>
@@ -145,7 +145,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create_window(window_name, width, height, maximized):
+<pre><code class="python">def create_window(window_name, width, height):
     &#34;&#34;&#34; Create a GLFW window. &#34;&#34;&#34;
     if not glfw.init():
         print(&#34;Could not initialize OpenGL context&#34;)
@@ -155,10 +155,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-
     glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
-    if maximized:
-        glfw.window_hint(glfw.MAXIMIZED, gl.GL_TRUE)
 
     # Create a windowed mode window and its OpenGL context
     window = glfw.create_window(
@@ -197,10 +194,11 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
 </details>
 </dd>
 <dt id="concur.integrations.glfw.main"><code class="name flex">
-<span>def <span class="ident">main</span></span>(<span>name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False)</span>
+<span>def <span class="ident">main</span></span>(<span>name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Create a GLFW window, spin up the main loop, and display a given widget inside.</p>
+<p>To create a maximized window, pass width and height larger than the screen.</p>
 <p>If <code>pass_window_to_widget</code> is <code>True</code>, the <code>widget</code> parameter must be a function which takes a GLFW window handle
 and returns a widget. Else, <code>widget</code> is just a widget. This is useful if the widget should, for example, scale
 with the GLFW window.</p></section>
@@ -208,8 +206,10 @@ with the GLFW window.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+<pre><code class="python">def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
     &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
+
+    To create a maximized window, pass width and height larger than the screen.
 
     If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
     and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
@@ -220,7 +220,7 @@ with the GLFW window.</p></section>
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height, maximized)
+    window = create_window(name, width, height)
     impl = GlfwRenderer(window)
     if pass_window_to_widget:
         widget = widget(window)
@@ -245,6 +245,7 @@ with the GLFW window.</p></section>
         except:
             # Cleanup on exception for iPython
             imgui.render()
+            impl.shutdown()
             glfw.terminate()
             raise
 

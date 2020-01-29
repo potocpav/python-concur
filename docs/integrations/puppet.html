@@ -32,22 +32,21 @@ import imgui
 import time
 import OpenGL.GL as gl
 
+# Save as video
+from PIL import Image
+import imageio
+import numpy as np
+
+from concur.integrations.glfw import create_window, create_window_dock
 from imgui.integrations import compute_fb_scale
 from imgui.integrations.opengl import ProgrammablePipelineRenderer
 
 
 class PuppetRenderer(ProgrammablePipelineRenderer):
     &#39;Renderer for automated testing&#39;
-    def __init__(self, window, attach_callbacks=True):
+    def __init__(self, window):
         super(PuppetRenderer, self).__init__()
         self.window = window
-
-        if attach_callbacks:
-            glfw.set_key_callback(self.window, self.keyboard_callback)
-            glfw.set_cursor_pos_callback(self.window, self.mouse_callback)
-            glfw.set_window_size_callback(self.window, self.resize_callback)
-            glfw.set_char_callback(self.window, self.char_callback)
-            glfw.set_scroll_callback(self.window, self.scroll_callback)
 
         self.io.display_size = glfw.get_framebuffer_size(self.window)
 
@@ -82,50 +81,6 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         key_map[imgui.KEY_Y] = glfw.KEY_Y
         key_map[imgui.KEY_Z] = glfw.KEY_Z
 
-    def keyboard_callback(self, window, key, scancode, action, mods):
-        # perf: local for faster access
-        io = self.io
-
-        if action == glfw.PRESS:
-            io.keys_down[key] = True
-        elif action == glfw.RELEASE:
-            io.keys_down[key] = False
-
-        io.key_ctrl = (
-            io.keys_down[glfw.KEY_LEFT_CONTROL] or
-            io.keys_down[glfw.KEY_RIGHT_CONTROL]
-        )
-
-        io.key_alt = (
-            io.keys_down[glfw.KEY_LEFT_ALT] or
-            io.keys_down[glfw.KEY_RIGHT_ALT]
-        )
-
-        io.key_shift = (
-            io.keys_down[glfw.KEY_LEFT_SHIFT] or
-            io.keys_down[glfw.KEY_RIGHT_SHIFT]
-        )
-
-        io.key_super = (
-            io.keys_down[glfw.KEY_LEFT_SUPER] or
-            io.keys_down[glfw.KEY_RIGHT_SUPER]
-        )
-
-    def char_callback(self, window, char):
-        io = imgui.get_io()
-
-        if 0 &lt; char &lt; 0x10000:
-            io.add_input_character(char)
-
-    def resize_callback(self, window, width, height):
-        self.io.display_size = width, height
-
-    def mouse_callback(self, *args, **kwargs):
-        pass
-
-    def scroll_callback(self, window, x_offset, y_offset):
-        self.io.mouse_wheel = y_offset
-
     def process_inputs(self):
         io = imgui.get_io()
 
@@ -135,15 +90,6 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         io.display_size = window_size
         io.display_fb_scale = compute_fb_scale(window_size, fb_size)
         io.delta_time = 1.0/60
-
-        # if glfw.get_window_attrib(self.window, glfw.FOCUSED):
-        #     io.mouse_pos = glfw.get_cursor_pos(self.window)
-        # else:
-        #     io.mouse_pos = -1, -1
-        #
-        # io.mouse_down[0] = glfw.get_mouse_button(self.window, 0)
-        # io.mouse_down[1] = glfw.get_mouse_button(self.window, 1)
-        # io.mouse_down[2] = glfw.get_mouse_button(self.window, 2)
 
         current_time = glfw.get_time()
 
@@ -187,66 +133,50 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         self._mouse_buttons[button] = False
 
 
-def create_window(window_name, width, height, maximized):
-    &#34;&#34;&#34; Create a GLFW window. &#34;&#34;&#34;
-    if not glfw.init():
-        print(&#34;Could not initialize OpenGL context&#34;)
-        exit(1)
+def create_offscreen_fb(width, height):
+    texture = gl.glGenTextures(1)
+    gl.glBindTexture(gl.GL_TEXTURE_2D, texture)
+    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, None)
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
 
-    # OS X supports only forward-compatible core profiles from 3.2
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-
-    glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
-    if maximized:
-        glfw.window_hint(glfw.MAXIMIZED, gl.GL_TRUE)
-
-    # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(
-        int(width), int(height), window_name, None, None
-    )
-    glfw.make_context_current(window)
-
-    if not window:
-        glfw.terminate()
-        print(&#34;Could not initialize Window&#34;)
-        exit(1)
-
-    return window
+    # create new framebuffer
+    offscreen_fb = gl.glGenFramebuffers(1)
+    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+    # attach texture to framebuffer
+    gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, texture, 0)
+    return offscreen_fb
 
 
-def create_window_dock(glfw_window):
-        imgui.set_next_window_position(0, 0)
-        imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
-        imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
-        main_window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
-        imgui.begin(&#34;Background Window&#34;, True, main_window_flags)
-        imgui.pop_style_var(3)
-        imgui.dock_space(&#34;Window Dock Space&#34;, 0., 0., 0)
-        imgui.end()
+def get_fb_data(offscreen_fb, width, height):
+    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+    pixels = gl.glReadPixels(0, 0, width, height, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE)
+    image = Image.frombytes(&#39;RGBA&#39;, (width, height), pixels)
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    return image
 
 
-def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+
+def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
     &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
 
-    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
-    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
-    with the GLFW window.
+    The resulting window is not hooked up to the user input. Instead, input is handled
+    by a PuppetRenderer instance.
+
+    `widget_gen` takes as an argument a PuppetRenderer instance, and returns a widget.
     &#34;&#34;&#34;
     imgui.create_context()
 
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height, maximized)
+    window = create_window(name, width, height)
     impl = PuppetRenderer(window)
     widget = widget_gen(impl)
+    offscreen_fb = create_offscreen_fb(width, height)
 
-    ## Using this feels significantly choppier than sleeping manually. TODO: investigate &amp; fix
-    # glfw.swap_interval(-1)
+    if save_video:
+        writer = imageio.get_writer(save_video, mode=&#39;I&#39;, fps=60)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
@@ -265,13 +195,19 @@ def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0
         except:
             # Cleanup on exception for iPython
             imgui.render()
+            impl.shutdown()
             glfw.terminate()
             raise
 
-        gl.glClearColor(*bg_color, 1)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-
         imgui.render()
+
+        if save_video:
+            gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+            impl.render(imgui.get_draw_data())
+            image = get_fb_data(offscreen_fb, width, height)
+            writer.append_data(np.array(image))
+
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
         impl.render(imgui.get_draw_data())
         glfw.swap_buffers(window)
 
@@ -279,8 +215,25 @@ def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0
         if t1 - t0 &lt; 1/60:
             time.sleep(1/60 - (t1 - t0))
 
+    if save_video:
+        writer.close()
+
+    if return_sshot:
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+        impl.render(imgui.get_draw_data())
+        image = get_fb_data(offscreen_fb, width, height)
+        ret = image
+    else:
+        ret = None
+
+    # # retrieve pixels from framebuffer and write to file
+    # file_path = &#34;test.png&#34;
+    # image = get_fb_data(offscreen_fb, width, height)
+    # image.save(file_path)
+
     impl.shutdown()
-    glfw.terminate()</code></pre>
+    glfw.terminate()
+    return ret</code></pre>
 </details>
 </section>
 <section>
@@ -290,46 +243,8 @@ def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="concur.integrations.puppet.create_window"><code class="name flex">
-<span>def <span class="ident">create_window</span></span>(<span>window_name, width, height, maximized)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Create a GLFW window.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def create_window(window_name, width, height, maximized):
-    &#34;&#34;&#34; Create a GLFW window. &#34;&#34;&#34;
-    if not glfw.init():
-        print(&#34;Could not initialize OpenGL context&#34;)
-        exit(1)
-
-    # OS X supports only forward-compatible core profiles from 3.2
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-
-    glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
-    if maximized:
-        glfw.window_hint(glfw.MAXIMIZED, gl.GL_TRUE)
-
-    # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(
-        int(width), int(height), window_name, None, None
-    )
-    glfw.make_context_current(window)
-
-    if not window:
-        glfw.terminate()
-        print(&#34;Could not initialize Window&#34;)
-        exit(1)
-
-    return window</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.puppet.create_window_dock"><code class="name flex">
-<span>def <span class="ident">create_window_dock</span></span>(<span>glfw_window)</span>
+<dt id="concur.integrations.puppet.create_offscreen_fb"><code class="name flex">
+<span>def <span class="ident">create_offscreen_fb</span></span>(<span>width, height)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -337,49 +252,70 @@ def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create_window_dock(glfw_window):
-        imgui.set_next_window_position(0, 0)
-        imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
-        imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
-        main_window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
-        imgui.begin(&#34;Background Window&#34;, True, main_window_flags)
-        imgui.pop_style_var(3)
-        imgui.dock_space(&#34;Window Dock Space&#34;, 0., 0., 0)
-        imgui.end()</code></pre>
+<pre><code class="python">def create_offscreen_fb(width, height):
+    texture = gl.glGenTextures(1)
+    gl.glBindTexture(gl.GL_TEXTURE_2D, texture)
+    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, None)
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
+
+    # create new framebuffer
+    offscreen_fb = gl.glGenFramebuffers(1)
+    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+    # attach texture to framebuffer
+    gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, texture, 0)
+    return offscreen_fb</code></pre>
 </details>
 </dd>
-<dt id="concur.integrations.puppet.main"><code class="name flex">
-<span>def <span class="ident">main</span></span>(<span>name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False)</span>
+<dt id="concur.integrations.puppet.get_fb_data"><code class="name flex">
+<span>def <span class="ident">get_fb_data</span></span>(<span>offscreen_fb, width, height)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a GLFW window, spin up the main loop, and display a given widget inside.</p>
-<p>If <code>pass_window_to_widget</code> is <code>True</code>, the <code>widget</code> parameter must be a function which takes a GLFW window handle
-and returns a widget. Else, <code>widget</code> is just a widget. This is useful if the widget should, for example, scale
-with the GLFW window.</p></section>
+<section class="desc"></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+<pre><code class="python">def get_fb_data(offscreen_fb, width, height):
+    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+    pixels = gl.glReadPixels(0, 0, width, height, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE)
+    image = Image.frombytes(&#39;RGBA&#39;, (width, height), pixels)
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    return image</code></pre>
+</details>
+</dd>
+<dt id="concur.integrations.puppet.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>name, widget_gen, width, height, save_video=None, return_sshot=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Create a GLFW window, spin up the main loop, and display a given widget inside.</p>
+<p>The resulting window is not hooked up to the user input. Instead, input is handled
+by a PuppetRenderer instance.</p>
+<p><code>widget_gen</code> takes as an argument a PuppetRenderer instance, and returns a widget.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
     &#34;&#34;&#34; Create a GLFW window, spin up the main loop, and display a given widget inside.
 
-    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
-    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
-    with the GLFW window.
+    The resulting window is not hooked up to the user input. Instead, input is handled
+    by a PuppetRenderer instance.
+
+    `widget_gen` takes as an argument a PuppetRenderer instance, and returns a widget.
     &#34;&#34;&#34;
     imgui.create_context()
 
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height, maximized)
+    window = create_window(name, width, height)
     impl = PuppetRenderer(window)
     widget = widget_gen(impl)
+    offscreen_fb = create_offscreen_fb(width, height)
 
-    ## Using this feels significantly choppier than sleeping manually. TODO: investigate &amp; fix
-    # glfw.swap_interval(-1)
+    if save_video:
+        writer = imageio.get_writer(save_video, mode=&#39;I&#39;, fps=60)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
@@ -398,13 +334,19 @@ with the GLFW window.</p></section>
         except:
             # Cleanup on exception for iPython
             imgui.render()
+            impl.shutdown()
             glfw.terminate()
             raise
 
-        gl.glClearColor(*bg_color, 1)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-
         imgui.render()
+
+        if save_video:
+            gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+            impl.render(imgui.get_draw_data())
+            image = get_fb_data(offscreen_fb, width, height)
+            writer.append_data(np.array(image))
+
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
         impl.render(imgui.get_draw_data())
         glfw.swap_buffers(window)
 
@@ -412,8 +354,25 @@ with the GLFW window.</p></section>
         if t1 - t0 &lt; 1/60:
             time.sleep(1/60 - (t1 - t0))
 
+    if save_video:
+        writer.close()
+
+    if return_sshot:
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+        impl.render(imgui.get_draw_data())
+        image = get_fb_data(offscreen_fb, width, height)
+        ret = image
+    else:
+        ret = None
+
+    # # retrieve pixels from framebuffer and write to file
+    # file_path = &#34;test.png&#34;
+    # image = get_fb_data(offscreen_fb, width, height)
+    # image.save(file_path)
+
     impl.shutdown()
-    glfw.terminate()</code></pre>
+    glfw.terminate()
+    return ret</code></pre>
 </details>
 </dd>
 </dl>
@@ -423,7 +382,7 @@ with the GLFW window.</p></section>
 <dl>
 <dt id="concur.integrations.puppet.PuppetRenderer"><code class="flex name class">
 <span>class <span class="ident">PuppetRenderer</span></span>
-<span>(</span><span>window, attach_callbacks=True)</span>
+<span>(</span><span>window)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Renderer for automated testing</p></section>
@@ -433,16 +392,9 @@ with the GLFW window.</p></section>
 </summary>
 <pre><code class="python">class PuppetRenderer(ProgrammablePipelineRenderer):
     &#39;Renderer for automated testing&#39;
-    def __init__(self, window, attach_callbacks=True):
+    def __init__(self, window):
         super(PuppetRenderer, self).__init__()
         self.window = window
-
-        if attach_callbacks:
-            glfw.set_key_callback(self.window, self.keyboard_callback)
-            glfw.set_cursor_pos_callback(self.window, self.mouse_callback)
-            glfw.set_window_size_callback(self.window, self.resize_callback)
-            glfw.set_char_callback(self.window, self.char_callback)
-            glfw.set_scroll_callback(self.window, self.scroll_callback)
 
         self.io.display_size = glfw.get_framebuffer_size(self.window)
 
@@ -477,50 +429,6 @@ with the GLFW window.</p></section>
         key_map[imgui.KEY_Y] = glfw.KEY_Y
         key_map[imgui.KEY_Z] = glfw.KEY_Z
 
-    def keyboard_callback(self, window, key, scancode, action, mods):
-        # perf: local for faster access
-        io = self.io
-
-        if action == glfw.PRESS:
-            io.keys_down[key] = True
-        elif action == glfw.RELEASE:
-            io.keys_down[key] = False
-
-        io.key_ctrl = (
-            io.keys_down[glfw.KEY_LEFT_CONTROL] or
-            io.keys_down[glfw.KEY_RIGHT_CONTROL]
-        )
-
-        io.key_alt = (
-            io.keys_down[glfw.KEY_LEFT_ALT] or
-            io.keys_down[glfw.KEY_RIGHT_ALT]
-        )
-
-        io.key_shift = (
-            io.keys_down[glfw.KEY_LEFT_SHIFT] or
-            io.keys_down[glfw.KEY_RIGHT_SHIFT]
-        )
-
-        io.key_super = (
-            io.keys_down[glfw.KEY_LEFT_SUPER] or
-            io.keys_down[glfw.KEY_RIGHT_SUPER]
-        )
-
-    def char_callback(self, window, char):
-        io = imgui.get_io()
-
-        if 0 &lt; char &lt; 0x10000:
-            io.add_input_character(char)
-
-    def resize_callback(self, window, width, height):
-        self.io.display_size = width, height
-
-    def mouse_callback(self, *args, **kwargs):
-        pass
-
-    def scroll_callback(self, window, x_offset, y_offset):
-        self.io.mouse_wheel = y_offset
-
     def process_inputs(self):
         io = imgui.get_io()
 
@@ -530,15 +438,6 @@ with the GLFW window.</p></section>
         io.display_size = window_size
         io.display_fb_scale = compute_fb_scale(window_size, fb_size)
         io.delta_time = 1.0/60
-
-        # if glfw.get_window_attrib(self.window, glfw.FOCUSED):
-        #     io.mouse_pos = glfw.get_cursor_pos(self.window)
-        # else:
-        #     io.mouse_pos = -1, -1
-        #
-        # io.mouse_down[0] = glfw.get_mouse_button(self.window, 0)
-        # io.mouse_down[1] = glfw.get_mouse_button(self.window, 1)
-        # io.mouse_down[2] = glfw.get_mouse_button(self.window, 2)
 
         current_time = glfw.get_time()
 
@@ -588,22 +487,6 @@ with the GLFW window.</p></section>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="concur.integrations.puppet.PuppetRenderer.char_callback"><code class="name flex">
-<span>def <span class="ident">char_callback</span></span>(<span>self, window, char)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def char_callback(self, window, char):
-    io = imgui.get_io()
-
-    if 0 &lt; char &lt; 0x10000:
-        io.add_input_character(char)</code></pre>
-</details>
-</dd>
 <dt id="concur.integrations.puppet.PuppetRenderer.click"><code class="name flex">
 <span>def <span class="ident">click</span></span>(<span>self, button=0)</span>
 </code></dt>
@@ -615,58 +498,6 @@ with the GLFW window.</p></section>
 </summary>
 <pre><code class="python">def click(self, button=0):
     self._click[button] = True</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.puppet.PuppetRenderer.keyboard_callback"><code class="name flex">
-<span>def <span class="ident">keyboard_callback</span></span>(<span>self, window, key, scancode, action, mods)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def keyboard_callback(self, window, key, scancode, action, mods):
-    # perf: local for faster access
-    io = self.io
-
-    if action == glfw.PRESS:
-        io.keys_down[key] = True
-    elif action == glfw.RELEASE:
-        io.keys_down[key] = False
-
-    io.key_ctrl = (
-        io.keys_down[glfw.KEY_LEFT_CONTROL] or
-        io.keys_down[glfw.KEY_RIGHT_CONTROL]
-    )
-
-    io.key_alt = (
-        io.keys_down[glfw.KEY_LEFT_ALT] or
-        io.keys_down[glfw.KEY_RIGHT_ALT]
-    )
-
-    io.key_shift = (
-        io.keys_down[glfw.KEY_LEFT_SHIFT] or
-        io.keys_down[glfw.KEY_RIGHT_SHIFT]
-    )
-
-    io.key_super = (
-        io.keys_down[glfw.KEY_LEFT_SUPER] or
-        io.keys_down[glfw.KEY_RIGHT_SUPER]
-    )</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.puppet.PuppetRenderer.mouse_callback"><code class="name flex">
-<span>def <span class="ident">mouse_callback</span></span>(<span>self, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mouse_callback(self, *args, **kwargs):
-    pass</code></pre>
 </details>
 </dd>
 <dt id="concur.integrations.puppet.PuppetRenderer.mouse_dn"><code class="name flex">
@@ -714,15 +545,6 @@ with the GLFW window.</p></section>
     io.display_fb_scale = compute_fb_scale(window_size, fb_size)
     io.delta_time = 1.0/60
 
-    # if glfw.get_window_attrib(self.window, glfw.FOCUSED):
-    #     io.mouse_pos = glfw.get_cursor_pos(self.window)
-    # else:
-    #     io.mouse_pos = -1, -1
-    #
-    # io.mouse_down[0] = glfw.get_mouse_button(self.window, 0)
-    # io.mouse_down[1] = glfw.get_mouse_button(self.window, 1)
-    # io.mouse_down[2] = glfw.get_mouse_button(self.window, 2)
-
     current_time = glfw.get_time()
 
     if self._gui_time:
@@ -745,32 +567,6 @@ with the GLFW window.</p></section>
     io.mouse_pos = self._mouse_pos
     io.mouse_wheel = self._mouse_wheel
     self._mouse_wheel = 0.0</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.puppet.PuppetRenderer.resize_callback"><code class="name flex">
-<span>def <span class="ident">resize_callback</span></span>(<span>self, window, width, height)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def resize_callback(self, window, width, height):
-    self.io.display_size = width, height</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.puppet.PuppetRenderer.scroll_callback"><code class="name flex">
-<span>def <span class="ident">scroll_callback</span></span>(<span>self, window, x_offset, y_offset)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def scroll_callback(self, window, x_offset, y_offset):
-    self.io.mouse_wheel = y_offset</code></pre>
 </details>
 </dd>
 <dt id="concur.integrations.puppet.PuppetRenderer.scroll_dn"><code class="name flex">
@@ -830,8 +626,8 @@ with the GLFW window.</p></section>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="concur.integrations.puppet.create_window" href="#concur.integrations.puppet.create_window">create_window</a></code></li>
-<li><code><a title="concur.integrations.puppet.create_window_dock" href="#concur.integrations.puppet.create_window_dock">create_window_dock</a></code></li>
+<li><code><a title="concur.integrations.puppet.create_offscreen_fb" href="#concur.integrations.puppet.create_offscreen_fb">create_offscreen_fb</a></code></li>
+<li><code><a title="concur.integrations.puppet.get_fb_data" href="#concur.integrations.puppet.get_fb_data">get_fb_data</a></code></li>
 <li><code><a title="concur.integrations.puppet.main" href="#concur.integrations.puppet.main">main</a></code></li>
 </ul>
 </li>
@@ -840,15 +636,10 @@ with the GLFW window.</p></section>
 <li>
 <h4><code><a title="concur.integrations.puppet.PuppetRenderer" href="#concur.integrations.puppet.PuppetRenderer">PuppetRenderer</a></code></h4>
 <ul class="two-column">
-<li><code><a title="concur.integrations.puppet.PuppetRenderer.char_callback" href="#concur.integrations.puppet.PuppetRenderer.char_callback">char_callback</a></code></li>
 <li><code><a title="concur.integrations.puppet.PuppetRenderer.click" href="#concur.integrations.puppet.PuppetRenderer.click">click</a></code></li>
-<li><code><a title="concur.integrations.puppet.PuppetRenderer.keyboard_callback" href="#concur.integrations.puppet.PuppetRenderer.keyboard_callback">keyboard_callback</a></code></li>
-<li><code><a title="concur.integrations.puppet.PuppetRenderer.mouse_callback" href="#concur.integrations.puppet.PuppetRenderer.mouse_callback">mouse_callback</a></code></li>
 <li><code><a title="concur.integrations.puppet.PuppetRenderer.mouse_dn" href="#concur.integrations.puppet.PuppetRenderer.mouse_dn">mouse_dn</a></code></li>
 <li><code><a title="concur.integrations.puppet.PuppetRenderer.mouse_up" href="#concur.integrations.puppet.PuppetRenderer.mouse_up">mouse_up</a></code></li>
 <li><code><a title="concur.integrations.puppet.PuppetRenderer.process_inputs" href="#concur.integrations.puppet.PuppetRenderer.process_inputs">process_inputs</a></code></li>
-<li><code><a title="concur.integrations.puppet.PuppetRenderer.resize_callback" href="#concur.integrations.puppet.PuppetRenderer.resize_callback">resize_callback</a></code></li>
-<li><code><a title="concur.integrations.puppet.PuppetRenderer.scroll_callback" href="#concur.integrations.puppet.PuppetRenderer.scroll_callback">scroll_callback</a></code></li>
 <li><code><a title="concur.integrations.puppet.PuppetRenderer.scroll_dn" href="#concur.integrations.puppet.PuppetRenderer.scroll_dn">scroll_dn</a></code></li>
 <li><code><a title="concur.integrations.puppet.PuppetRenderer.scroll_up" href="#concur.integrations.puppet.PuppetRenderer.scroll_up">scroll_up</a></code></li>
 <li><code><a title="concur.integrations.puppet.PuppetRenderer.set_mouse_pos" href="#concur.integrations.puppet.PuppetRenderer.set_mouse_pos">set_mouse_pos</a></code></li>

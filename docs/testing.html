@@ -35,11 +35,11 @@ from concur.draw import polyline
 from concur.core import orr, optional
 
 
-def test(widget_gen, slow=False):
-    main(&#34;Automatic Tester&#34;,
+def test(widget_gen, slow=False, width=512, height=512, *args, **argv):
+    return main(&#34;Automatic Tester&#34;,
         lambda puppet_renderer: widget_gen(Testing(puppet_renderer, slow)),
-        500,
-        500)
+        width, height,
+        *args, **argv)
 
 
 def test_widget(f):
@@ -49,10 +49,10 @@ def test_widget(f):
     &#34;&#34;&#34;
     def widget(tester):
         io = imgui.get_io()
-        io.mouse_draw_cursor = True
+        io.mouse_draw_cursor = False
         yield from f(tester)
-    def g():
-        return test(widget)
+    def g(*args, **argv):
+        return test(widget, *args, **argv)
     return g
 
 
@@ -124,7 +124,7 @@ class Testing(object):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="concur.testing.test"><code class="name flex">
-<span>def <span class="ident">test</span></span>(<span>widget_gen, slow=False)</span>
+<span>def <span class="ident">test</span></span>(<span>widget_gen, slow=False, width=512, height=512, *args, **argv)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -132,11 +132,11 @@ class Testing(object):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def test(widget_gen, slow=False):
-    main(&#34;Automatic Tester&#34;,
+<pre><code class="python">def test(widget_gen, slow=False, width=512, height=512, *args, **argv):
+    return main(&#34;Automatic Tester&#34;,
         lambda puppet_renderer: widget_gen(Testing(puppet_renderer, slow)),
-        500,
-        500)</code></pre>
+        width, height,
+        *args, **argv)</code></pre>
 </details>
 </dd>
 <dt id="concur.testing.test_widget"><code class="name flex">
@@ -156,10 +156,10 @@ class Testing(object):
     &#34;&#34;&#34;
     def widget(tester):
         io = imgui.get_io()
-        io.mouse_draw_cursor = True
+        io.mouse_draw_cursor = False
         yield from f(tester)
-    def g():
-        return test(widget)
+    def g(*args, **argv):
+        return test(widget, *args, **argv)
     return g</code></pre>
 </details>
 </dd>
