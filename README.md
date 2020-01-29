@@ -31,17 +31,16 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 
 ## Installation
 
-Concur [is available on PyPI](https://pypi.org/project/concur/) and can be installed using pip:
+The only dependencies are [GLFW](https://github.com/glfw/glfw) and Python >= 3.6. Concur [is available on PyPI](https://pypi.org/project/concur/) and can be installed using pip:
 
 ```sh
 pip install concur
 ```
 
-This Python code should now produce a very simple UI:
+This command should produce a very simple GUI app:
 
-```python
-import concur as c
-c.integrations.main("Hello World", c.button("Close"), 500, 500)
+```sh
+python -c 'import concur as c; c.integrations.main("Hello", c.button("Close"), 500, 500)'
 ```
 
 Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.
