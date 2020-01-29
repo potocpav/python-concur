@@ -8,10 +8,10 @@ from concur.draw import polyline
 from concur.core import orr, optional
 
 
-def test(widget_gen, slow=False, *args, **argv):
+def test(widget_gen, slow=False, width=512, height=512, *args, **argv):
     return main("Automatic Tester",
         lambda puppet_renderer: widget_gen(Testing(puppet_renderer, slow)),
-        512, 512,
+        width, height,
         *args, **argv)
 
 
