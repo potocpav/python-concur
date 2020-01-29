@@ -8,11 +8,11 @@ from concur.draw import polyline
 from concur.core import orr, optional
 
 
-def test(widget_gen, slow=False):
-    main("Automatic Tester",
+def test(widget_gen, slow=False, *args, **argv):
+    return main("Automatic Tester",
         lambda puppet_renderer: widget_gen(Testing(puppet_renderer, slow)),
-        500,
-        500)
+        512, 512,
+        *args, **argv)
 
 
 def test_widget(f):
@@ -22,10 +22,10 @@ def test_widget(f):
     """
     def widget(tester):
         io = imgui.get_io()
-        io.mouse_draw_cursor = True
+        io.mouse_draw_cursor = False
         yield from f(tester)
-    def g():
-        return test(widget)
+    def g(*args, **argv):
+        return test(widget, *args, **argv)
     return g
 
 

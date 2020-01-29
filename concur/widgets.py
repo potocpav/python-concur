@@ -41,7 +41,10 @@ def window(title: str,
            position: Tuple[int, int] = None,
            size: Tuple[int, int] = None,
            flags: int = 0) -> Widget:
-    """ Create a window with a given `widget` inside. """
+    """ Create a window with a given `widget` inside.
+
+    Window title must be unique.
+    """
     while True:
         if position is not None:
             imgui.set_next_window_position(*position)
