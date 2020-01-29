@@ -6,22 +6,20 @@ import imgui
 import time
 import OpenGL.GL as gl
 
+# Save as video
+from PIL import Image
+import imageio
+
+from concur.integrations.glfw import create_window, create_window_dock
 from imgui.integrations import compute_fb_scale
 from imgui.integrations.opengl import ProgrammablePipelineRenderer
 
 
 class PuppetRenderer(ProgrammablePipelineRenderer):
     'Renderer for automated testing'
-    def __init__(self, window, attach_callbacks=True):
+    def __init__(self, window):
         super(PuppetRenderer, self).__init__()
         self.window = window
-
-        if attach_callbacks:
-            glfw.set_key_callback(self.window, self.keyboard_callback)
-            glfw.set_cursor_pos_callback(self.window, self.mouse_callback)
-            glfw.set_window_size_callback(self.window, self.resize_callback)
-            glfw.set_char_callback(self.window, self.char_callback)
-            glfw.set_scroll_callback(self.window, self.scroll_callback)
 
         self.io.display_size = glfw.get_framebuffer_size(self.window)
 
@@ -56,50 +54,6 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         key_map[imgui.KEY_Y] = glfw.KEY_Y
         key_map[imgui.KEY_Z] = glfw.KEY_Z
 
-    def keyboard_callback(self, window, key, scancode, action, mods):
-        # perf: local for faster access
-        io = self.io
-
-        if action == glfw.PRESS:
-            io.keys_down[key] = True
-        elif action == glfw.RELEASE:
-            io.keys_down[key] = False
-
-        io.key_ctrl = (
-            io.keys_down[glfw.KEY_LEFT_CONTROL] or
-            io.keys_down[glfw.KEY_RIGHT_CONTROL]
-        )
-
-        io.key_alt = (
-            io.keys_down[glfw.KEY_LEFT_ALT] or
-            io.keys_down[glfw.KEY_RIGHT_ALT]
-        )
-
-        io.key_shift = (
-            io.keys_down[glfw.KEY_LEFT_SHIFT] or
-            io.keys_down[glfw.KEY_RIGHT_SHIFT]
-        )
-
-        io.key_super = (
-            io.keys_down[glfw.KEY_LEFT_SUPER] or
-            io.keys_down[glfw.KEY_RIGHT_SUPER]
-        )
-
-    def char_callback(self, window, char):
-        io = imgui.get_io()
-
-        if 0 < char < 0x10000:
-            io.add_input_character(char)
-
-    def resize_callback(self, window, width, height):
-        self.io.display_size = width, height
-
-    def mouse_callback(self, *args, **kwargs):
-        pass
-
-    def scroll_callback(self, window, x_offset, y_offset):
-        self.io.mouse_wheel = y_offset
-
     def process_inputs(self):
         io = imgui.get_io()
 
@@ -109,15 +63,6 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         io.display_size = window_size
         io.display_fb_scale = compute_fb_scale(window_size, fb_size)
         io.delta_time = 1.0/60
-
-        # if glfw.get_window_attrib(self.window, glfw.FOCUSED):
-        #     io.mouse_pos = glfw.get_cursor_pos(self.window)
-        # else:
-        #     io.mouse_pos = -1, -1
-        #
-        # io.mouse_down[0] = glfw.get_mouse_button(self.window, 0)
-        # io.mouse_down[1] = glfw.get_mouse_button(self.window, 1)
-        # io.mouse_down[2] = glfw.get_mouse_button(self.window, 2)
 
         current_time = glfw.get_time()
 
@@ -161,66 +106,52 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         self._mouse_buttons[button] = False
 
 
-def create_window(window_name, width, height, maximized):
-    """ Create a GLFW window. """
-    if not glfw.init():
-        print("Could not initialize OpenGL context")
-        exit(1)
+def create_offscreen_fb(width, height):
+    texture = gl.glGenTextures(1)
+    gl.glBindTexture(gl.GL_TEXTURE_2D, texture)
+    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, None)
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
 
-    # OS X supports only forward-compatible core profiles from 3.2
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-
-    glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
-    if maximized:
-        glfw.window_hint(glfw.MAXIMIZED, gl.GL_TRUE)
-
-    # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(
-        int(width), int(height), window_name, None, None
-    )
-    glfw.make_context_current(window)
-
-    if not window:
-        glfw.terminate()
-        print("Could not initialize Window")
-        exit(1)
-
-    return window
+    # create new framebuffer
+    offscreen_fb = gl.glGenFramebuffers(1)
+    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+    # attach texture to framebuffer
+    gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, texture, 0)
+    return offscreen_fb
 
 
-def create_window_dock(glfw_window):
-        imgui.set_next_window_position(0, 0)
-        imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
-        imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
-        main_window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
-        imgui.begin("Background Window", True, main_window_flags)
-        imgui.pop_style_var(3)
-        imgui.dock_space("Window Dock Space", 0., 0., 0)
-        imgui.end()
+def get_fb_data(offscreen_fb, width, height):
+    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+    pixels = gl.glReadPixels(0, 0, width, height, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE)
+    image = Image.frombytes('RGBA', (width, height), pixels)
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    return image
 
 
-def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+
+def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
-    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
-    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
-    with the GLFW window.
+    The resulting window is not hooked up to the user input. Instead, input is handled
+    by a PuppetRenderer instance.
+
+    `widget_gen` takes as an argument a PuppetRenderer instance, and returns a widget.
     """
     imgui.create_context()
 
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height, maximized)
+    window = create_window(name, width, height)
     impl = PuppetRenderer(window)
     widget = widget_gen(impl)
+    offscreen_fb = create_offscreen_fb(width, height)
 
-    ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
-    # glfw.swap_interval(-1)
+    if save_video:
+        import imageio
+        import numpy as np
+        writer = imageio.get_writer(save_video, mode='I', fps=60)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
@@ -239,13 +170,19 @@ def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0
         except:
             # Cleanup on exception for iPython
             imgui.render()
+            impl.shutdown()
             glfw.terminate()
             raise
 
-        gl.glClearColor(*bg_color, 1)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-
         imgui.render()
+
+        if save_video:
+            gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+            impl.render(imgui.get_draw_data())
+            image = get_fb_data(offscreen_fb, width, height)
+            writer.append_data(np.array(image))
+
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
         impl.render(imgui.get_draw_data())
         glfw.swap_buffers(window)
 
@@ -253,5 +190,22 @@ def main(name, widget_gen, width, height, maximized=False, bg_color=(0.9, 0.9, 0
         if t1 - t0 < 1/60:
             time.sleep(1/60 - (t1 - t0))
 
+    if save_video:
+        writer.close()
+
+    if return_sshot:
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+        impl.render(imgui.get_draw_data())
+        image = get_fb_data(offscreen_fb, width, height)
+        ret = np.array(image)
+    else:
+        ret = None
+
+    # # retrieve pixels from framebuffer and write to file
+    # file_path = "test.png"
+    # image = get_fb_data(offscreen_fb, width, height)
+    # image.save(file_path)
+
     impl.shutdown()
     glfw.terminate()
+    return ret

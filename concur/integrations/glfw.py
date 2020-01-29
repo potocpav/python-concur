@@ -7,7 +7,7 @@ from imgui.integrations.glfw import GlfwRenderer
 import time
 
 
-def create_window(window_name, width, height, maximized):
+def create_window(window_name, width, height):
     """ Create a GLFW window. """
     if not glfw.init():
         print("Could not initialize OpenGL context")
@@ -17,10 +17,7 @@ def create_window(window_name, width, height, maximized):
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-
     glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
-    if maximized:
-        glfw.window_hint(glfw.MAXIMIZED, gl.GL_TRUE)
 
     # Create a windowed mode window and its OpenGL context
     window = glfw.create_window(
@@ -49,8 +46,10 @@ def create_window_dock(glfw_window):
         imgui.end()
 
 
-def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
+
+    To create a maximized window, pass width and height larger than the screen.
 
     If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
     and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
@@ -61,7 +60,7 @@ def main(name, widget, width, height, maximized=False, bg_color=(0.9, 0.9, 0.9),
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height, maximized)
+    window = create_window(name, width, height)
     impl = GlfwRenderer(window)
     if pass_window_to_widget:
         widget = widget(window)
