@@ -26,7 +26,7 @@ def app(tester):
 
 def test_overlay_sync():
     "Test if the synchronization of overlay and image data is OK"
-    im = app(save_video="vid.mkv", return_sshot=True)
+    im = np.array(app(save_video="vid.mkv", return_sshot=True))
     def contains(im, color):
         return np.any(np.all(im[...,:3] == color, axis=2))
     assert contains(im, [222, 111, 111]) == True

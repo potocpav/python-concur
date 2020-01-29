@@ -9,6 +9,7 @@ import OpenGL.GL as gl
 # Save as video
 from PIL import Image
 import imageio
+import numpy as np
 
 from concur.integrations.glfw import create_window, create_window_dock
 from imgui.integrations import compute_fb_scale
@@ -149,8 +150,6 @@ def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
     offscreen_fb = create_offscreen_fb(width, height)
 
     if save_video:
-        import imageio
-        import numpy as np
         writer = imageio.get_writer(save_video, mode='I', fps=60)
 
     while not glfw.window_should_close(window):
@@ -197,7 +196,7 @@ def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
         impl.render(imgui.get_draw_data())
         image = get_fb_data(offscreen_fb, width, height)
-        ret = np.array(image)
+        ret = image
     else:
         ret = None
 
