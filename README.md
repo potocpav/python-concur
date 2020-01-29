@@ -45,12 +45,6 @@ python -c 'import concur as c; c.integrations.main("Hello", c.button("Close"), 5
 
 Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.
 
-Optionally, replace PyImGui with a [forked version](https://github.com/potocpav/pyimgui). It contains several functions that are missing from upstream. Without those, some more experimental functionality in Concur may be missing and/or buggy (graph plotting).
-
-```sh
-pip install git+https://github.com/potocpav/pyimgui.git
-```
-
 For Concur development, clone the repo and install it using pip:
 
 ```sh
