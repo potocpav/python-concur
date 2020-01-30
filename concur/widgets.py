@@ -80,6 +80,17 @@ def button(text, tag=None):
     return tag if tag is not None else text, None
 
 
+def color_button(text, color, tag=None):
+    """ Colored button. Color is specified as a tuple (R,G,B,A), each in range 0..1.
+
+    Returns `(text, value)` on click, or `(tag, value)` if tag is specified.
+    """
+    r, g, b, a = color
+    while not imgui.color_button(text, r, g, b, a):
+        yield
+    return tag if tag is not None else text, None
+
+
 def radio_button(text, active, tag=None):
     """ Radio button. Returns ``(text, value)`` on click. """
     while not imgui.radio_button(text, active):
