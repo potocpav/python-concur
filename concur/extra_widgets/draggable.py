@@ -13,5 +13,5 @@ def draggable(name, tag=None):
     while True:
         imgui.button(name)
         if imgui.is_item_active():
-            return tag if tag is not None else text, io.mouse_delta
+            return tag if tag is not None else name, io.mouse_delta
         yield

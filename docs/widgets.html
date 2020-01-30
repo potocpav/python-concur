@@ -114,6 +114,17 @@ def button(text, tag=None):
     return tag if tag is not None else text, None
 
 
+def color_button(text, color, tag=None):
+    &#34;&#34;&#34; Colored button. Color is specified as a tuple (R,G,B,A), each in range 0..1.
+
+    Returns `(text, value)` on click, or `(tag, value)` if tag is specified.
+    &#34;&#34;&#34;
+    r, g, b, a = color
+    while not imgui.color_button(text, r, g, b, a):
+        yield
+    return tag if tag is not None else text, None
+
+
 def radio_button(text, active, tag=None):
     &#34;&#34;&#34; Radio button. Returns ``(text, value)`` on click. &#34;&#34;&#34;
     while not imgui.radio_button(text, active):
@@ -309,6 +320,27 @@ def transform(x, y, widget, tf=None):
         finally:
             imgui.end_child()
         yield</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.color_button"><code class="name flex">
+<span>def <span class="ident">color_button</span></span>(<span>text, color, tag=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Colored button. Color is specified as a tuple (R,G,B,A), each in range 0..1.</p>
+<p>Returns <code>(text, value)</code> on click, or <code>(tag, value)</code> if tag is specified.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def color_button(text, color, tag=None):
+    &#34;&#34;&#34; Colored button. Color is specified as a tuple (R,G,B,A), each in range 0..1.
+
+    Returns `(text, value)` on click, or `(tag, value)` if tag is specified.
+    &#34;&#34;&#34;
+    r, g, b, a = color
+    while not imgui.color_button(text, r, g, b, a):
+        yield
+    return tag if tag is not None else text, None</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.columns"><code class="name flex">
@@ -686,6 +718,7 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.button" href="#concur.widgets.button">button</a></code></li>
 <li><code><a title="concur.widgets.checkbox" href="#concur.widgets.checkbox">checkbox</a></code></li>
 <li><code><a title="concur.widgets.child" href="#concur.widgets.child">child</a></code></li>
+<li><code><a title="concur.widgets.color_button" href="#concur.widgets.color_button">color_button</a></code></li>
 <li><code><a title="concur.widgets.columns" href="#concur.widgets.columns">columns</a></code></li>
 <li><code><a title="concur.widgets.drag_float" href="#concur.widgets.drag_float">drag_float</a></code></li>
 <li><code><a title="concur.widgets.drag_float2" href="#concur.widgets.drag_float2">drag_float2</a></code></li>

@@ -147,6 +147,12 @@ def tag(tag_name: Any, elem: Widget) -&gt; Widget:
     return tag_name, (yield from elem)
 
 
+def tag_value(tag_name: Any, elem: Widget) -&gt; Widget:
+    &#34;&#34;&#34; Transform any returned value `(t, v)` of `elem` into a tuple `t, (tag_name, v)`. &#34;&#34;&#34;
+    t, v = yield from elem
+    return t, (tag_name, v)
+
+
 def map(f: Any, elem: Widget) -&gt; Widget:
     &#34;&#34;&#34; Transform any returned value `v` of `elem` into `f(v)`. &#34;&#34;&#34;
     v = yield from elem
@@ -524,6 +530,21 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
     return tag_name, (yield from elem)</code></pre>
 </details>
 </dd>
+<dt id="concur.core.tag_value"><code class="name flex">
+<span>def <span class="ident">tag_value</span></span>(<span>tag_name, elem)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Transform any returned value <code>(t, v)</code> of <code>elem</code> into a tuple <code>t, (tag_name, v)</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tag_value(tag_name: Any, elem: Widget) -&gt; Widget:
+    &#34;&#34;&#34; Transform any returned value `(t, v)` of `elem` into a tuple `t, (tag_name, v)`. &#34;&#34;&#34;
+    t, v = yield from elem
+    return t, (tag_name, v)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -620,6 +641,7 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 <li><code><a title="concur.core.remote_widget" href="#concur.core.remote_widget">remote_widget</a></code></li>
 <li><code><a title="concur.core.stateful" href="#concur.core.stateful">stateful</a></code></li>
 <li><code><a title="concur.core.tag" href="#concur.core.tag">tag</a></code></li>
+<li><code><a title="concur.core.tag_value" href="#concur.core.tag_value">tag_value</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

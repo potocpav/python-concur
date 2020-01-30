@@ -119,6 +119,12 @@ def tag(tag_name: Any, elem: Widget) -> Widget:
     return tag_name, (yield from elem)
 
 
+def tag_value(tag_name: Any, elem: Widget) -> Widget:
+    """ Transform any returned value `(t, v)` of `elem` into a tuple `t, (tag_name, v)`. """
+    t, v = yield from elem
+    return t, (tag_name, v)
+
+
 def map(f: Any, elem: Widget) -> Widget:
     """ Transform any returned value `v` of `elem` into `f(v)`. """
     v = yield from elem
