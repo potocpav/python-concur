@@ -63,12 +63,14 @@ class Image(object):
         """
         if self.garbage_tex_id is not None:
             rm_texture(self.garbage_tex_id)
+            self.garbage_tex_id = None
         self.garbage_tex_id = self.tex_id # Hold onto the old texture ID for (at least) one frame
         if image is None:
             self.tex_id = texture(np.zeros((1,1,3)))
             self.tex_w, self.tex_h = 1, 1
         else:
-            image = np.array(image)
+            if not isinstance(image, np.ndarray):
+                image = np.array(image) # support PyTorch tensors and PIL images
             self.tex_id = texture(image)
             self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 
