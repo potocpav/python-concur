@@ -19,8 +19,9 @@ def texture(arr):
 
     texid = int(glGenTextures(1)) # Conversion from np.uint32 to int
     glBindTexture(GL_TEXTURE_2D, texid)
+    # If the array isn't normalized, glTexImage2D may leak reference count
     glTexImage2D(GL_TEXTURE_2D, 0, rgb_mode, arr.shape[1], arr.shape[0],
-                 0, rgb_mode, GL_UNSIGNED_BYTE, arr)
+                 0, rgb_mode, GL_UNSIGNED_BYTE, np.ascontiguousarray(arr, 'u1'))
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
