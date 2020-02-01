@@ -11,9 +11,11 @@
     <title>Concur for Python</title>
     <style>
     .section-header { font-weight: 300; font-size: 2.5em; }
+    /* .hljs { background-color: #fff !important; } */
     </style>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/default.min.css">
   </head>
 
   <body>
@@ -60,13 +62,9 @@
         <!-- <div class="container py-4"> -->
           <div class="d-flex flex-wrap">
             <div class="mx-auto col-md-7 order-md-1">
-              <div class="container my-5 rounded border shadow-sm, pt-3">
-                <pre style='color:#000000;background:#ffffff;'><span style='color:#800000; font-weight:bold; '>import</span> concur <span style='color:#800000; font-weight:bold; '>as</span> c
+                <pre><code class="language-python container my-5 p-3 rounded border shadow-sm">import concur as c
 
-c<span style='color:#808030; '>.</span>integrations<span style='color:#808030; '>.</span>main<span style='color:#808030; '>(</span><span style='color:#0000e6; '>"Hello World"</span><span style='color:#808030; '>,</span> c<span style='color:#808030; '>.</span>button<span style='color:#808030; '>(</span><span style='color:#0000e6; '>"Close"</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#008c00; '>500</span><span style='color:#808030; '>,</span> <span style='color:#008c00; '>500</span><span style='color:#808030; '>)</span>
-</pre>
-    <!--Created using ToHtml.com on 2020-02-01 08:28:36 UTC -->
-                </div>
+c.integrations.main("Hello World", c.text("Hello, world!"), 500, 500)</code></pre>
               </div>
             <div class="mx-auto col-md-5 order-md-2" style="text-align: right">
                 <img class="img-fluid mx-2 my-2" width="400" src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
@@ -94,8 +92,12 @@ c<span style='color:#808030; '>.</span>integrations<span style='color:#808030; '
       </div>
 
     </div>
+    <!-- bootstap js -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- syntax highlighting -->
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
