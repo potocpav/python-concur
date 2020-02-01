@@ -17,11 +17,11 @@
   </head>
 
   <body>
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-      <h5 class="my-0 mr-md-auto font-weight-normal">Concur</h5>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow" style="background-color: #481b79">
+      <h5 class="my-0 mr-md-auto font-weight-normal text-white">Concur</h5>
       <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-dark" href="https://potocpav.github.io/python-concur/">Documentation</a>
-        <a class="p-2 text-dark" href="https://github.com/potocpav/python-concur">GitHub</a>
+        <a class="p-2 text-white" href="https://potocpav.github.io/python-concur/">Documentation</a>
+        <a class="p-2 text-white" href="https://github.com/potocpav/python-concur">GitHub</a>
       </nav>
     </div>
 
@@ -43,6 +43,42 @@
       </div>
     </main>
 
+    <div class="container py-4">
+    <ul class="nav nav-tabs  nav-fill" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="tab1" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Hello, world!</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="tab1">
+        <!-- <div class="container py-4"> -->
+          <div class="d-flex flex-wrap">
+            <div class="mx-auto col-md-7 order-md-1">
+              <div class="container my-5 rounded border shadow-sm, pt-3">
+                <pre style='color:#000000;background:#ffffff;'><span style='color:#800000; font-weight:bold; '>import</span> concur <span style='color:#800000; font-weight:bold; '>as</span> c
+
+c<span style='color:#808030; '>.</span>integrations<span style='color:#808030; '>.</span>main<span style='color:#808030; '>(</span><span style='color:#0000e6; '>"Hello World"</span><span style='color:#808030; '>,</span> c<span style='color:#808030; '>.</span>button<span style='color:#808030; '>(</span><span style='color:#0000e6; '>"Close"</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#008c00; '>500</span><span style='color:#808030; '>,</span> <span style='color:#008c00; '>500</span><span style='color:#808030; '>)</span>
+</pre>
+    <!--Created using ToHtml.com on 2020-02-01 08:28:36 UTC -->
+                </div>
+              </div>
+            <div class="mx-auto col-md-5 order-md-2" style="text-align: right">
+                <img class="img-fluid mx-2 my-2" width="400" src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
+            </div>
+          </div>
+        <!-- </div> -->
+      </div>
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+    </div>
+    </div>
+
     <div class="container bg-light py-4">
       <div class="d-flex flex-wrap">
         <div class="mx-auto col-md-6 order-md-1">
@@ -58,5 +94,8 @@
       </div>
 
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   </body>
 </html>
