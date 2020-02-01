@@ -22,7 +22,7 @@ def test_widget(f):
     """
     def widget(tester):
         io = imgui.get_io()
-        io.mouse_draw_cursor = False
+        io.mouse_draw_cursor = True
         yield from f(tester)
     def g(*args, **argv):
         return test(widget, *args, **argv)
