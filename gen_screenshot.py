@@ -3,7 +3,7 @@ import sys
 import os
 import concur as c
 
-examples_path = os.path.join(sys.path[0], "..", "examples")
+examples_path = os.path.join(sys.path[0], "examples")
 sys.path.append(examples_path)
 import all
 
