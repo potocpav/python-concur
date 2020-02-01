@@ -33,17 +33,23 @@ def create_window(window_name, width, height):
     return window
 
 
+def begin_maximized_window(name, glfw_window):
+    imgui.set_next_window_position(0, 0)
+    imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
+    imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
+    imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
+    window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
+    imgui.begin(name, True, window_flags)
+    imgui.pop_style_var(2)
+
+
 def create_window_dock(glfw_window):
-        imgui.set_next_window_position(0, 0)
-        imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
-        imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
-        imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
-        main_window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
-        imgui.begin("Background Window", True, main_window_flags)
-        imgui.pop_style_var(3)
-        imgui.dock_space("Window Dock Space", 0., 0., 0)
-        imgui.end()
+    imgui.set_next_window_bg_alpha(0)
+    imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
+    begin_maximized_window("Background Window", glfw_window)
+    imgui.pop_style_var(1)
+    imgui.dock_space("Window Dock Space", 0., 0., 1 << 3)
+    imgui.end()
 
 
 def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
@@ -58,7 +64,7 @@ def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_w
     imgui.create_context()
 
     # Set config flags
-    imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
+    imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE # | imgui.CONFIG_VIEWPORTS_ENABLE
 
     window = create_window(name, width, height)
     impl = GlfwRenderer(window)
@@ -76,22 +82,23 @@ def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_w
         imgui.new_frame()
 
         create_window_dock(window)
+        begin_maximized_window("Default##Concur", window)
 
         try:
             next(widget)
         except StopIteration:
+            imgui.end()
             imgui.render()
             break
         except:
             # Cleanup on exception for iPython
+            imgui.end()
             imgui.render()
             impl.shutdown()
             glfw.terminate()
             raise
 
-        gl.glClearColor(*bg_color, 1)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-
+        imgui.end()
         imgui.render()
         impl.render(imgui.get_draw_data())
         glfw.swap_buffers(window)
