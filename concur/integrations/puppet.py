@@ -11,7 +11,7 @@ from PIL import Image
 import imageio
 import numpy as np
 
-from concur.integrations.glfw import create_window, create_window_dock
+from concur.integrations.glfw import create_window, create_window_dock, begin_maximized_window
 from imgui.integrations import compute_fb_scale
 from imgui.integrations.opengl import ProgrammablePipelineRenderer
 
@@ -160,19 +160,23 @@ def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
         imgui.new_frame()
 
         create_window_dock(window)
+        begin_maximized_window("Default##Concur", window)
 
         try:
             next(widget)
         except StopIteration:
+            imgui.end()
             imgui.render()
             break
         except:
             # Cleanup on exception for iPython
+            imgui.end()
             imgui.render()
             impl.shutdown()
             glfw.terminate()
             raise
 
+        imgui.end()
         imgui.render()
 
         if save_video:
