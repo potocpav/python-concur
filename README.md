@@ -7,6 +7,8 @@
    <img src="https://raw.githubusercontent.com/ajnsit/purescript-concur/master/docs/logo.png" height="100">
 </p>
 
+[![Build Status](https://travis-ci.com/potocpav/python-concur.svg?branch=master)](https://travis-ci.com/potocpav/python-concur)
+
 [**Documentation**](https://potocpav.github.io/python-concur/)
 
 [**Examples**](https://github.com/potocpav/python-concur/tree/master/examples)
