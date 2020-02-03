@@ -1,6 +1,8 @@
 
 import numpy as np
+from PIL import Image
 from OpenGL.GL import *
+
 
 def texture(arr):
     """ Create a new OpenGL texture and return its texture ID. """
@@ -44,3 +46,26 @@ def replace_texture(arr, prev_tex_id):
     if prev_tex_id is not None:
         rm_texture(prev_tex_id)
     return texture(arr)
+
+
+def create_offscreen_fb(width, height):
+    texture = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, None)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    # create new framebuffer
+    offscreen_fb = glGenFramebuffers(1)
+    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
+    # attach texture to framebuffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0)
+    return offscreen_fb
+
+
+def get_fb_data(offscreen_fb, width, height):
+    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
+    pixels = glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE)
+    image = Image.frombytes('RGBA', (width, height), pixels)
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    return np.array(image)

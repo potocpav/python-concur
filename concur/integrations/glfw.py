@@ -4,6 +4,7 @@ import OpenGL.GL as gl
 
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
+from concur.integrations.opengl import create_offscreen_fb, get_fb_data
 import time
 
 
@@ -52,14 +53,12 @@ def create_window_dock(glfw_window):
     imgui.end()
 
 
-def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_widget=False):
+def main(name, widget, width, height, save_screencast=None):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     To create a maximized window, pass width and height larger than the screen.
 
-    If `pass_window_to_widget` is `True`, the `widget` parameter must be a function which takes a GLFW window handle
-    and returns a widget. Else, `widget` is just a widget. This is useful if the widget should, for example, scale
-    with the GLFW window.
+    `save_screencast` is for capturing and saving the UI into a specified video file (experimental).
     """
     imgui.create_context()
 
@@ -68,11 +67,13 @@ def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_w
 
     window = create_window(name, width, height)
     impl = GlfwRenderer(window)
-    if pass_window_to_widget:
-        widget = widget(window)
 
     ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
     # glfw.swap_interval(-1)
+    if save_screencast:
+        import imageio
+        offscreen_fb = create_offscreen_fb(width, height)
+        writer = imageio.get_writer(save_screencast, mode='I', fps=60)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
@@ -96,16 +97,29 @@ def main(name, widget, width, height, bg_color=(0.9, 0.9, 0.9), pass_window_to_w
             imgui.render()
             impl.shutdown()
             glfw.terminate()
+            if save_screencast:
+                writer.close()
             raise
 
         imgui.end()
         imgui.render()
+
+        if save_screencast:
+            gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+            impl.render(imgui.get_draw_data())
+            image = get_fb_data(offscreen_fb, width, height)
+            writer.append_data(image)
+            gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
+
         impl.render(imgui.get_draw_data())
         glfw.swap_buffers(window)
 
         t1 = time.perf_counter()
         if t1 - t0 < 1/60:
             time.sleep(1/60 - (t1 - t0))
+
+    if save_screencast:
+        writer.close()
 
     impl.shutdown()
     glfw.terminate()

@@ -52,7 +52,8 @@ def rect_filled(x0, y0, x1, y1, color, rounding=0, tf=None):
 def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
     """ Circle specified by its center and radius. """
     if tf is not None:
-        assert np.allclose(tf.c2s[0,0], tf.c2s[1,1])
+        assert np.allclose(np.abs(tf.c2s[0,0]), np.abs(tf.c2s[1,1])), \
+            "`tf` must be aspect ratio preserving to draw circles. Use `ellipse` instead, if it isn't the case."
         [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
     draw_list = imgui.get_window_draw_list()
     while(True):
@@ -105,3 +106,13 @@ def image(tex_id, w, h, tf):
     while True:
         draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
         yield
+
+
+def ellipse(mean, cov, sd, color, thickness=1, num_segments=16, tf=None):
+    "Ellipse defined by a mean, covariance matrix, and SD"
+    [e1, e2], vs = np.linalg.eig(cov)
+    assert e1 > 0 and e2 > 0, "cov must be positive-semidefinite"
+    v1, v2 = vs.T
+    t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
+    el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
+    return polyline(el + mean, color, True, thickness, tf=tf)

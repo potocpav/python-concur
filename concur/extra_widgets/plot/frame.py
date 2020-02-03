@@ -20,7 +20,7 @@ class Frame(PanZoom):
         super().__init__(top_left, bottom_right, keep_aspect=keep_aspect, fix_axis=fix_axis, margins=margins)
 
 
-def _frame(content_gen, tf):
+def _frame(content_gen, show_grid, tf):
 
     min_tick_spacing=50
     viewport_s = [r + o for r, o in zip(tf.view_s, margins)]
@@ -60,15 +60,15 @@ def _frame(content_gen, tf):
 
     return orr(
         [ bg
-        , draw.rect(*viewport_s, (0,0,0,1))
-        , tick_labels()
         , lift(imgui.push_clip_rect, *viewport_s, True)
         , optional(content_gen is not None, content_gen, tf)
-        , grid()
+        , optional(show_grid, grid)
         , lift(imgui.pop_clip_rect)
+        , draw.rect(*viewport_s, (0,0,0,1))
+        , tick_labels()
         ])
 
 
-def frame(name, state, content_gen=None):
+def frame(name, state, content_gen=None, show_grid=True):
     return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
-        pan_zoom(name, state, content_gen=partial(_frame, content_gen)))
+        pan_zoom(name, state, content_gen=partial(_frame, content_gen, show_grid)))
