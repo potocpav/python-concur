@@ -15,4 +15,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.integrations.main("Hello World", app(), 500, 500)
+    c.main("Hello World", app(), 500, 500)

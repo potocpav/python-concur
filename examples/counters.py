@@ -24,4 +24,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.integrations.main("Counter", app(), 500, 500)
+    c.main("Counter", app(), 500, 500)

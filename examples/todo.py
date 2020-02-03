@@ -36,4 +36,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.integrations.main("Todo List", app(), 500, 500)
+    c.main("Todo List", app(), 500, 500)
