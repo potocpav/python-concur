@@ -12,6 +12,7 @@ import imageio
 import numpy as np
 
 from concur.integrations.glfw import create_window, create_window_dock, begin_maximized_window
+from concur.integrations.opengl import create_offscreen_fb, get_fb_data
 from imgui.integrations import compute_fb_scale
 from imgui.integrations.opengl import ProgrammablePipelineRenderer
 
@@ -107,31 +108,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         self._mouse_buttons[button] = False
 
 
-def create_offscreen_fb(width, height):
-    texture = gl.glGenTextures(1)
-    gl.glBindTexture(gl.GL_TEXTURE_2D, texture)
-    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, None)
-    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST)
-
-    # create new framebuffer
-    offscreen_fb = gl.glGenFramebuffers(1)
-    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
-    # attach texture to framebuffer
-    gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, texture, 0)
-    return offscreen_fb
-
-
-def get_fb_data(offscreen_fb, width, height):
-    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
-    pixels = gl.glReadPixels(0, 0, width, height, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE)
-    image = Image.frombytes('RGBA', (width, height), pixels)
-    image = image.transpose(Image.FLIP_TOP_BOTTOM)
-    return image
-
-
-
-def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
+def main(name, widget_gen, width, height, save_screencast=None, return_sshot=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     The resulting window is not hooked up to the user input. Instead, input is handled
@@ -149,8 +126,8 @@ def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
     widget = widget_gen(impl)
     offscreen_fb = create_offscreen_fb(width, height)
 
-    if save_video:
-        writer = imageio.get_writer(save_video, mode='I', fps=60)
+    if save_screencast:
+        writer = imageio.get_writer(save_screencast, mode='I', fps=60)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
@@ -179,11 +156,11 @@ def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
         imgui.end()
         imgui.render()
 
-        if save_video:
+        if save_screencast:
             gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
             impl.render(imgui.get_draw_data())
             image = get_fb_data(offscreen_fb, width, height)
-            writer.append_data(np.array(image))
+            writer.append_data(image)
 
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
         impl.render(imgui.get_draw_data())
@@ -193,7 +170,7 @@ def main(name, widget_gen, width, height, save_video=None, return_sshot=False):
         if t1 - t0 < 1/60:
             time.sleep(1/60 - (t1 - t0))
 
-    if save_video:
+    if save_screencast:
         writer.close()
 
     if return_sshot:
