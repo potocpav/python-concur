@@ -34,4 +34,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.integrations.main("Image Viewer", app(), 500, 500)
+    c.main("Image Viewer", app(), 500, 500)

@@ -70,4 +70,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.integrations.main("Plot", app(), 800, 500)
+    c.main("Plot", app(), 800, 500)

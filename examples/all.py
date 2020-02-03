@@ -10,4 +10,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.integrations.main("All Examples", app(), 800, 560)
+    c.main("All Examples", app(), 800, 560)

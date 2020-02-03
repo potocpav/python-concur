@@ -42,7 +42,7 @@ pip install concur
 This command should produce a very simple GUI app:
 
 ```sh
-python -c 'import concur as c; c.integrations.main("Hello", c.button("Close"), 500, 500)'
+python -c 'import concur as c; c.main("Hello", c.button("Close"), 500, 500)'
 ```
 
 Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.

@@ -11,4 +11,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.integrations.main("Columns", app(), 500, 500)
+    c.main("Columns", app(), 500, 500)
