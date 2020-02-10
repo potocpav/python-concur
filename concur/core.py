@@ -51,18 +51,20 @@ def multi_orr(widgets: Iterable[Widget]) -> Widget:
     return events
 
 
-def forever(elem_gen: Callable[..., Widget], *args, **kwargs) -> Widget:
-    """ Repeat an element forever.
+def forever(widget_gen: Callable[..., Widget], *args, **kwargs) -> Widget:
+    """ Repeat a widget forever.
 
-    Function generating the element must be passed as the first argument;
+    Function generating the widget must be passed as the first argument;
     remaining arguments are passed to said function.
+
+    This can be used to easily suppress any widget events
     """
-    elem = elem_gen(*args, **kwargs)
+    widget = widget_gen(*args, **kwargs)
     while True:
         try:
-            next(elem)
+            next(widget)
         except StopIteration:
-            elem = elem_gen(*args, **kwargs)
+            widget = widget_gen(*args, **kwargs)
         yield
 
 
