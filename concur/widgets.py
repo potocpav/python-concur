@@ -109,7 +109,7 @@ def radio_button(text, active, tag=None):
     return (tag if tag is not None else text), None
 
 
-def input_text(name, value, buffer_length, tag=None):
+def input_text(name, value, buffer_length=255, tag=None):
     """ Text input. """
     while True:
         changed, new_value = imgui.input_text(name, value, buffer_length)
@@ -119,18 +119,16 @@ def input_text(name, value, buffer_length, tag=None):
             yield
 
 
-# NOTE: the key_pressed function require a forked version of ImGui:
-# https://github.com/potocpav/pyimgui
-#
-# def key_pressed(name, key_index, repeat=True):
-#     """ Invisible widget that waits for a given key to be pressed.
-#
-#     Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
-#     """
-#     while True:
-#         if imgui.is_key_pressed(key_index, repeat):
-#             return name, None
-#         yield
+def key_pressed(name, key_index, repeat=True):
+    """ Invisible widget that waits for a given key to be pressed.
+
+    No widget must be active at the time to prevent triggering hotkeys by editing text fields.
+    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`, or `glfw.KEY_SPACE`.
+    """
+    while True:
+        if not imgui.is_any_item_active() and imgui.is_key_pressed(key_index, repeat):
+            return name, None
+        yield
 
 
 def text(s):
