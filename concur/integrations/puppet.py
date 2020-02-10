@@ -30,7 +30,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
 
         self._click = [False] * 3
         self._mouse_buttons = [False] * 3
-        self._mouse_pos = -1, -1
+        self._mouse_pos = 100, 100
         self._mouse_wheel = 0.0
 
     def _map_keys(self):
