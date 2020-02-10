@@ -9,10 +9,10 @@ def graph(tex_id, tex_w, tex_h, tf):
     y = np.sin(np.log2(np.abs(x)) * 10) * np.cos(np.log2(np.abs(x)) / 2) * 256 + 256
     pts = np.stack([x, y]).T
 
-    return c.orr(
-        [ c.draw.image(tex_id, tex_w, tex_h, tf=tf)
-        , c.draw.polyline(pts, (1,1,0,1), thickness=1, tf=tf)
-        , c.draw.rect(0, 0, 512, 512, (1,1,1,1), tf=tf)
+    return c.orr([
+        c.draw.image(tex_id, tex_w, tex_h, tf=tf),
+        c.draw.polyline(pts, (1,1,0,1), thickness=1, tf=tf),
+        c.draw.rect(0, 0, 512, 512, (1,1,1,1), tf=tf),
         ])
 
 
@@ -22,9 +22,9 @@ def app():
     tex = c.texture(arr)
 
     while True:
-        tag, value = yield from c.orr(
-            [ c.window("Graph", c.plot.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1])))
-            , c.window("Controls", c.button("Reset View"))
+        tag, value = yield from c.orr([
+            c.window("Graph", c.plot.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
+            c.window("Controls", c.button("Reset View")),
             ])
         if tag == "Frame":
             view = value

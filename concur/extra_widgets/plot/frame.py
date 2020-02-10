@@ -58,15 +58,15 @@ def _frame(content_gen, show_grid, tf):
         vlines = [draw.line(tick, tf.view_s[1], tick, tf.view_s[3], (0,0,0,0.3)) for tick in vticks_s]
         return orr(hlines + vlines)
 
-    return orr(
-        [ bg
-        , lift(imgui.push_clip_rect, *viewport_s, True)
-        , optional(content_gen is not None, content_gen, tf)
-        , optional(show_grid, grid)
-        , lift(imgui.pop_clip_rect)
-        , draw.rect(*viewport_s, (0,0,0,1))
-        , tick_labels()
-        ])
+    return orr([
+        bg,
+        lift(imgui.push_clip_rect, *viewport_s, True),
+        optional(content_gen is not None, content_gen, tf),
+        optional(show_grid, grid),
+        lift(imgui.pop_clip_rect),
+        draw.rect(*viewport_s, (0,0,0,1)),
+        tick_labels(),
+    ])
 
 
 def frame(name, state, content_gen=None, show_grid=True):

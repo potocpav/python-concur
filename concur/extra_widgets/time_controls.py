@@ -1,11 +1,15 @@
-""" Experimental widget for image sequence or video seeking. """
+""" Experimental widget for image sequence or video seeking.
+
+NOTE: this widget is deprecated and will be removed in the future."""
 
 
 import concur as c
 
 
 class TimeControls(object):
-    """ State for the `concur.extra_widgets.time_controls.time_controls` widget. """
+    """ State for the `concur.extra_widgets.time_controls.time_controls` widget.
+
+    NOTE: this widget is deprecated and will be removed in the future."""
     def __init__(self, start, end, frame_id, hotkey=None):
         """ Initialize. """
         self.frame_id = frame_id
@@ -26,18 +30,17 @@ def time_controls(state):
         return "tick", None
         yield
 
-    tag, value = yield from c.window("Time Controls", c.orr(
-        [ c.slider_int("Frame ID", state.frame_id, state.start, state.end, tag="seek")
-        , c.slider_float("Local Seek", 0, -1.5, 1.5, tag="drag")
-        , c.slider_int("Stride", state.stride, 1, 20, tag="stride")
-        , c.orr_same_line(
-            [ c.button("Next")
-            , c.button("Prev")
-            , c.button("Pause" if state.playing else "Play", tag="PlayPause")
-            ])
-        ]
-         + ([] if not state.playing else [clock()]))
-        )
+    tag, value = yield from c.window("Time Controls", c.orr([
+        c.slider_int("Frame ID", state.frame_id, state.start, state.end, tag="seek"),
+        c.slider_float("Local Seek", 0, -1.5, 1.5, tag="drag"),
+        c.slider_int("Stride", state.stride, 1, 20, tag="stride"),
+        c.orr_same_line([
+            c.button("Next"),
+            c.button("Prev"),
+            c.button("Pause" if state.playing else "Play", tag="PlayPause"),
+            ]),
+        ] + ([] if not state.playing else [clock()])
+    ))
 
     last_frame_id = state.frame_id
     if tag == "seek":
