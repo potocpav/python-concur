@@ -43,16 +43,17 @@ def window(title: str,
            flags: int = 0) -> Widget:
     """ Create a window with a given `widget` inside.
 
-    Window title must be unique.
+    Window title must be unique. Contents are drawn only if the window is opened.
     """
     while True:
         if position is not None:
             imgui.set_next_window_position(*position)
         if size is not None:
             imgui.set_next_window_size(*size)
-        imgui.begin(title, flags=flags)
+        expanded, opened = imgui.begin(title, flags=flags)
         try:
-            next(widget)
+            if expanded and opened:
+                next(widget)
         except StopIteration as e:
             return e.value
         finally:
