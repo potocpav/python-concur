@@ -25,11 +25,11 @@ A discussion of Concur concepts can also be found in the [Documentation for the 
 
 Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications.
 
+<!-- End docs -->
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
 </p>
-
-<!-- End docs -->
 
 ## Installation
 
