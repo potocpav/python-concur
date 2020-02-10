@@ -21,19 +21,16 @@ from concur.core import orr, lift, Widget, interactive_elem
 
 
 def orr_same_line(widgets):
-    """ Use instead of `concur.core.orr` to layout child widgets horizontally.
-
-    This function simply inserts the ImGui function `SameLine` between each two of the `widgets`.
-    Each of the `widgets` must therefore contain *just one* ImGui widget. If it contains multiple,
-    some line breaks may sneak in; if it contains none (such as `concur.core.nothing`), there would
-    be too many `SameLine` calls which results in weird layout bugs.
-    """
+    """ Use instead of `concur.core.orr` to layout child widgets horizontally instead of vertically. """
     def intersperse(delimiter, seq):
         """ https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element """
         from itertools import chain, repeat
         return list(chain.from_iterable(zip(repeat(delimiter), seq)))[1:]
 
-    return orr(intersperse(same_line(), widgets))
+    def group(widget):
+        return orr([lift(imgui.begin_group), widget, lift(imgui.end_group)])
+
+    return orr(intersperse(same_line(), [group(w) for w in widgets]))
 
 
 def window(title: str,
