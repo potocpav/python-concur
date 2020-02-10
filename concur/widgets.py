@@ -71,6 +71,19 @@ def child(name, widget, width, height, border=False, flags=0):
         yield
 
 
+def collapsing_header(text, widget, open=True):
+    """Display a collapsible section header. It can be open or closed by default (parameter `open`).
+    """
+    while True:
+        expanded, visible = imgui.collapsing_header(text, flags=open and imgui.TREE_NODE_DEFAULT_OPEN)
+        try:
+            if expanded:
+                next(widget)
+        except StopIteration as e:
+            return e.value
+        yield
+
+
 def button(text, tag=None):
     """ Button. Returns `(text, value)` on click, or `(tag, value)` if tag is specified. """
     while not imgui.button(text):
