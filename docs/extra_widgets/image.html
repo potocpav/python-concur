@@ -55,10 +55,10 @@ def image(name, state, width=None, height=None, content_gen=None):
     Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
     &#34;&#34;&#34;
     while True:
-        _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr(
-            [ raw_image(state.tex_id, state.tex_w, state.tex_h, tf)
-            , optional(content_gen is not None, content_gen, tf)
-            ]))
+        _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr([
+            raw_image(state.tex_id, state.tex_w, state.tex_h, tf),
+            optional(content_gen is not None, content_gen, tf),
+        ]))
         if st is not None:
             new_state = copy.deepcopy(state)
             new_state.pan_zoom = st
@@ -90,12 +90,14 @@ class Image(object):
         &#34;&#34;&#34;
         if self.garbage_tex_id is not None:
             rm_texture(self.garbage_tex_id)
+            self.garbage_tex_id = None
         self.garbage_tex_id = self.tex_id # Hold onto the old texture ID for (at least) one frame
         if image is None:
             self.tex_id = texture(np.zeros((1,1,3)))
             self.tex_w, self.tex_h = 1, 1
         else:
-            image = np.array(image)
+            if not isinstance(image, np.ndarray):
+                image = np.array(image) # support PyTorch tensors and PIL images
             self.tex_id = texture(image)
             self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 
@@ -149,10 +151,10 @@ Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/
     Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
     &#34;&#34;&#34;
     while True:
-        _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr(
-            [ raw_image(state.tex_id, state.tex_w, state.tex_h, tf)
-            , optional(content_gen is not None, content_gen, tf)
-            ]))
+        _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr([
+            raw_image(state.tex_id, state.tex_w, state.tex_h, tf),
+            optional(content_gen is not None, content_gen, tf),
+        ]))
         if st is not None:
             new_state = copy.deepcopy(state)
             new_state.pan_zoom = st
@@ -201,12 +203,14 @@ in the last dimension.</p></section>
         &#34;&#34;&#34;
         if self.garbage_tex_id is not None:
             rm_texture(self.garbage_tex_id)
+            self.garbage_tex_id = None
         self.garbage_tex_id = self.tex_id # Hold onto the old texture ID for (at least) one frame
         if image is None:
             self.tex_id = texture(np.zeros((1,1,3)))
             self.tex_w, self.tex_h = 1, 1
         else:
-            image = np.array(image)
+            if not isinstance(image, np.ndarray):
+                image = np.array(image) # support PyTorch tensors and PIL images
             self.tex_id = texture(image)
             self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 
@@ -241,12 +245,14 @@ image is displayed.</p>
     &#34;&#34;&#34;
     if self.garbage_tex_id is not None:
         rm_texture(self.garbage_tex_id)
+        self.garbage_tex_id = None
     self.garbage_tex_id = self.tex_id # Hold onto the old texture ID for (at least) one frame
     if image is None:
         self.tex_id = texture(np.zeros((1,1,3)))
         self.tex_w, self.tex_h = 1, 1
     else:
-        image = np.array(image)
+        if not isinstance(image, np.ndarray):
+            image = np.array(image) # support PyTorch tensors and PIL images
         self.tex_id = texture(image)
         self.tex_w, self.tex_h = image.shape[1], image.shape[0]
 

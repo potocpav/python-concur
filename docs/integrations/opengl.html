@@ -25,7 +25,9 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import numpy as np
+from PIL import Image
 from OpenGL.GL import *
+
 
 def texture(arr):
     &#34;&#34;&#34; Create a new OpenGL texture and return its texture ID. &#34;&#34;&#34;
@@ -44,8 +46,9 @@ def texture(arr):
 
     texid = int(glGenTextures(1)) # Conversion from np.uint32 to int
     glBindTexture(GL_TEXTURE_2D, texid)
+    # If the array isn&#39;t normalized, glTexImage2D may leak reference count
     glTexImage2D(GL_TEXTURE_2D, 0, rgb_mode, arr.shape[1], arr.shape[0],
-                 0, rgb_mode, GL_UNSIGNED_BYTE, arr)
+                 0, rgb_mode, GL_UNSIGNED_BYTE, np.ascontiguousarray(arr, &#39;u1&#39;))
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -67,7 +70,30 @@ def replace_texture(arr, prev_tex_id):
     &#34;&#34;&#34; Delete the previous texture, if not None, and create a new one, returning its texture ID. &#34;&#34;&#34;
     if prev_tex_id is not None:
         rm_texture(prev_tex_id)
-    return texture(arr)</code></pre>
+    return texture(arr)
+
+
+def create_offscreen_fb(width, height):
+    texture = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, None)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    # create new framebuffer
+    offscreen_fb = glGenFramebuffers(1)
+    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
+    # attach texture to framebuffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0)
+    return offscreen_fb
+
+
+def get_fb_data(offscreen_fb, width, height):
+    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
+    pixels = glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE)
+    image = Image.frombytes(&#39;RGBA&#39;, (width, height), pixels)
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    return np.array(image)</code></pre>
 </details>
 </section>
 <section>
@@ -77,6 +103,47 @@ def replace_texture(arr, prev_tex_id):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="concur.integrations.opengl.create_offscreen_fb"><code class="name flex">
+<span>def <span class="ident">create_offscreen_fb</span></span>(<span>width, height)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_offscreen_fb(width, height):
+    texture = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, None)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    # create new framebuffer
+    offscreen_fb = glGenFramebuffers(1)
+    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
+    # attach texture to framebuffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0)
+    return offscreen_fb</code></pre>
+</details>
+</dd>
+<dt id="concur.integrations.opengl.get_fb_data"><code class="name flex">
+<span>def <span class="ident">get_fb_data</span></span>(<span>offscreen_fb, width, height)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_fb_data(offscreen_fb, width, height):
+    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
+    pixels = glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE)
+    image = Image.frombytes(&#39;RGBA&#39;, (width, height), pixels)
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    return np.array(image)</code></pre>
+</details>
+</dd>
 <dt id="concur.integrations.opengl.replace_texture"><code class="name flex">
 <span>def <span class="ident">replace_texture</span></span>(<span>arr, prev_tex_id)</span>
 </code></dt>
@@ -147,8 +214,9 @@ def replace_texture(arr, prev_tex_id):
 
     texid = int(glGenTextures(1)) # Conversion from np.uint32 to int
     glBindTexture(GL_TEXTURE_2D, texid)
+    # If the array isn&#39;t normalized, glTexImage2D may leak reference count
     glTexImage2D(GL_TEXTURE_2D, 0, rgb_mode, arr.shape[1], arr.shape[0],
-                 0, rgb_mode, GL_UNSIGNED_BYTE, arr)
+                 0, rgb_mode, GL_UNSIGNED_BYTE, np.ascontiguousarray(arr, &#39;u1&#39;))
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -173,7 +241,9 @@ def replace_texture(arr, prev_tex_id):
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="concur.integrations.opengl.create_offscreen_fb" href="#concur.integrations.opengl.create_offscreen_fb">create_offscreen_fb</a></code></li>
+<li><code><a title="concur.integrations.opengl.get_fb_data" href="#concur.integrations.opengl.get_fb_data">get_fb_data</a></code></li>
 <li><code><a title="concur.integrations.opengl.replace_texture" href="#concur.integrations.opengl.replace_texture">replace_texture</a></code></li>
 <li><code><a title="concur.integrations.opengl.rm_texture" href="#concur.integrations.opengl.rm_texture">rm_texture</a></code></li>
 <li><code><a title="concur.integrations.opengl.rm_textures" href="#concur.integrations.opengl.rm_textures">rm_textures</a></code></li>

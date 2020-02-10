@@ -9,9 +9,6 @@ import concur.draw as draw
 from concur.core import lift, orr, optional, map
 
 
-# NOTE: the plotting functions require a forked version of ImGui:
-# https://github.com/potocpav/pyimgui
-
 margins = [50, 10, -10, -20]
 
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>concur.extra_widgets.time_controls API documentation</title>
-<meta name="description" content="Experimental widget for image sequence or video seeking." />
+<meta name="description" content="Experimental widget for image sequence or video seeking …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,18 +21,23 @@
 </header>
 <section id="section-intro">
 <p>Experimental widget for image sequence or video seeking.</p>
+<p>NOTE: this widget is deprecated and will be removed in the future.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Experimental widget for image sequence or video seeking. &#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34; Experimental widget for image sequence or video seeking.
+
+NOTE: this widget is deprecated and will be removed in the future.&#34;&#34;&#34;
 
 
 import concur as c
 
 
 class TimeControls(object):
-    &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget. &#34;&#34;&#34;
+    &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget.
+
+    NOTE: this widget is deprecated and will be removed in the future.&#34;&#34;&#34;
     def __init__(self, start, end, frame_id, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
         self.frame_id = frame_id
@@ -53,18 +58,17 @@ def time_controls(state):
         return &#34;tick&#34;, None
         yield
 
-    tag, value = yield from c.window(&#34;Time Controls&#34;, c.orr(
-        [ c.slider_int(&#34;Frame ID&#34;, state.frame_id, state.start, state.end, tag=&#34;seek&#34;)
-        , c.slider_float(&#34;Local Seek&#34;, 0, -1.5, 1.5, tag=&#34;drag&#34;)
-        , c.slider_int(&#34;Stride&#34;, state.stride, 1, 20, tag=&#34;stride&#34;)
-        , c.orr_same_line(
-            [ c.button(&#34;Next&#34;)
-            , c.button(&#34;Prev&#34;)
-            , c.button(&#34;Pause&#34; if state.playing else &#34;Play&#34;, tag=&#34;PlayPause&#34;)
-            ])
-        ]
-         + ([] if not state.playing else [clock()]))
-        )
+    tag, value = yield from c.window(&#34;Time Controls&#34;, c.orr([
+        c.slider_int(&#34;Frame ID&#34;, state.frame_id, state.start, state.end, tag=&#34;seek&#34;),
+        c.slider_float(&#34;Local Seek&#34;, 0, -1.5, 1.5, tag=&#34;drag&#34;),
+        c.slider_int(&#34;Stride&#34;, state.stride, 1, 20, tag=&#34;stride&#34;),
+        c.orr_same_line([
+            c.button(&#34;Next&#34;),
+            c.button(&#34;Prev&#34;),
+            c.button(&#34;Pause&#34; if state.playing else &#34;Play&#34;, tag=&#34;PlayPause&#34;),
+            ]),
+        ] + ([] if not state.playing else [clock()])
+    ))
 
     last_frame_id = state.frame_id
     if tag == &#34;seek&#34;:
@@ -125,18 +129,17 @@ or <code>None</code> if user didn't seek.</p></section>
         return &#34;tick&#34;, None
         yield
 
-    tag, value = yield from c.window(&#34;Time Controls&#34;, c.orr(
-        [ c.slider_int(&#34;Frame ID&#34;, state.frame_id, state.start, state.end, tag=&#34;seek&#34;)
-        , c.slider_float(&#34;Local Seek&#34;, 0, -1.5, 1.5, tag=&#34;drag&#34;)
-        , c.slider_int(&#34;Stride&#34;, state.stride, 1, 20, tag=&#34;stride&#34;)
-        , c.orr_same_line(
-            [ c.button(&#34;Next&#34;)
-            , c.button(&#34;Prev&#34;)
-            , c.button(&#34;Pause&#34; if state.playing else &#34;Play&#34;, tag=&#34;PlayPause&#34;)
-            ])
-        ]
-         + ([] if not state.playing else [clock()]))
-        )
+    tag, value = yield from c.window(&#34;Time Controls&#34;, c.orr([
+        c.slider_int(&#34;Frame ID&#34;, state.frame_id, state.start, state.end, tag=&#34;seek&#34;),
+        c.slider_float(&#34;Local Seek&#34;, 0, -1.5, 1.5, tag=&#34;drag&#34;),
+        c.slider_int(&#34;Stride&#34;, state.stride, 1, 20, tag=&#34;stride&#34;),
+        c.orr_same_line([
+            c.button(&#34;Next&#34;),
+            c.button(&#34;Prev&#34;),
+            c.button(&#34;Pause&#34; if state.playing else &#34;Play&#34;, tag=&#34;PlayPause&#34;),
+            ]),
+        ] + ([] if not state.playing else [clock()])
+    ))
 
     last_frame_id = state.frame_id
     if tag == &#34;seek&#34;:
@@ -177,14 +180,17 @@ or <code>None</code> if user didn't seek.</p></section>
 <span>(</span><span>start, end, frame_id, hotkey=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>State for the <a title="concur.extra_widgets.time_controls.time_controls" href="#concur.extra_widgets.time_controls.time_controls"><code>time_controls()</code></a> widget. </p>
+<section class="desc"><p>State for the <a title="concur.extra_widgets.time_controls.time_controls" href="#concur.extra_widgets.time_controls.time_controls"><code>time_controls()</code></a> widget.</p>
+<p>NOTE: this widget is deprecated and will be removed in the future.</p>
 <p>Initialize.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TimeControls(object):
-    &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget. &#34;&#34;&#34;
+    &#34;&#34;&#34; State for the `concur.extra_widgets.time_controls.time_controls` widget.
+
+    NOTE: this widget is deprecated and will be removed in the future.&#34;&#34;&#34;
     def __init__(self, start, end, frame_id, hotkey=None):
         &#34;&#34;&#34; Initialize. &#34;&#34;&#34;
         self.frame_id = frame_id

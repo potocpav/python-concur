@@ -86,7 +86,8 @@ def rect_filled(x0, y0, x1, y1, color, rounding=0, tf=None):
 def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
     &#34;&#34;&#34; Circle specified by its center and radius. &#34;&#34;&#34;
     if tf is not None:
-        assert np.allclose(tf.c2s[0,0], tf.c2s[1,1])
+        assert np.allclose(np.abs(tf.c2s[0,0]), np.abs(tf.c2s[1,1])), \
+            &#34;`tf` must be aspect ratio preserving to draw circles. Use `ellipse` instead, if it isn&#39;t the case.&#34;
         [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
     draw_list = imgui.get_window_draw_list()
     while(True):
@@ -138,7 +139,17 @@ def image(tex_id, w, h, tf):
     b_i = tf.view_c[2] / w, tf.view_c[3] / h
     while True:
         draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
-        yield</code></pre>
+        yield
+
+
+def ellipse(mean, cov, sd, color, thickness=1, num_segments=16, tf=None):
+    &#34;Ellipse defined by a mean, covariance matrix, and SD&#34;
+    [e1, e2], vs = np.linalg.eig(cov)
+    assert e1 &gt; 0 and e2 &gt; 0, &#34;cov must be positive-semidefinite&#34;
+    v1, v2 = vs.T
+    t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
+    el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
+    return polyline(el + mean, color, True, thickness, tf=tf)</code></pre>
 </details>
 </section>
 <section>
@@ -160,12 +171,32 @@ def image(tex_id, w, h, tf):
 <pre><code class="python">def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
     &#34;&#34;&#34; Circle specified by its center and radius. &#34;&#34;&#34;
     if tf is not None:
-        assert np.allclose(tf.c2s[0,0], tf.c2s[1,1])
+        assert np.allclose(np.abs(tf.c2s[0,0]), np.abs(tf.c2s[1,1])), \
+            &#34;`tf` must be aspect ratio preserving to draw circles. Use `ellipse` instead, if it isn&#39;t the case.&#34;
         [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
     draw_list = imgui.get_window_draw_list()
     while(True):
         draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
         yield</code></pre>
+</details>
+</dd>
+<dt id="concur.draw.ellipse"><code class="name flex">
+<span>def <span class="ident">ellipse</span></span>(<span>mean, cov, sd, color, thickness=1, num_segments=16, tf=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Ellipse defined by a mean, covariance matrix, and SD</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ellipse(mean, cov, sd, color, thickness=1, num_segments=16, tf=None):
+    &#34;Ellipse defined by a mean, covariance matrix, and SD&#34;
+    [e1, e2], vs = np.linalg.eig(cov)
+    assert e1 &gt; 0 and e2 &gt; 0, &#34;cov must be positive-semidefinite&#34;
+    v1, v2 = vs.T
+    t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
+    el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
+    return polyline(el + mean, color, True, thickness, tf=tf)</code></pre>
 </details>
 </dd>
 <dt id="concur.draw.image"><code class="name flex">
@@ -326,6 +357,7 @@ def image(tex_id, w, h, tf):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="two-column">
 <li><code><a title="concur.draw.circle" href="#concur.draw.circle">circle</a></code></li>
+<li><code><a title="concur.draw.ellipse" href="#concur.draw.ellipse">ellipse</a></code></li>
 <li><code><a title="concur.draw.image" href="#concur.draw.image">image</a></code></li>
 <li><code><a title="concur.draw.line" href="#concur.draw.line">line</a></code></li>
 <li><code><a title="concur.draw.polyline" href="#concur.draw.polyline">polyline</a></code></li>

@@ -136,15 +136,13 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         bottom_s = bottom - st.margins[3] / zoom_y
 
 
-        s2c = np.array( # Screen to Content
-            [ [1 / zoom_x, 0, left_s - origin[0] / zoom_x]
-            , [0, 1 / zoom_y, top_s  - origin[1] / zoom_y]
-            ])
+        s2c = np.array([ # Screen to Content
+            [1 / zoom_x, 0, left_s - origin[0] / zoom_x],
+            [0, 1 / zoom_y, top_s  - origin[1] / zoom_y]])
 
-        c2s = np.array( # Content to Screen
-            [ [zoom_x, 0, origin[0] - left_s * zoom_x]
-            , [0, zoom_y, origin[1] - top_s  * zoom_y]
-            ])
+        c2s = np.array([ # Content to Screen
+            [zoom_x, 0, origin[0] - left_s * zoom_x],
+            [0, zoom_y, origin[1] - top_s  * zoom_y]])
 
         view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
         view_c = [left_s, top_s, right_s, bottom_s]
@@ -367,15 +365,13 @@ widget. It is up to the widget to do the necessary transformations using the <a 
         bottom_s = bottom - st.margins[3] / zoom_y
 
 
-        s2c = np.array( # Screen to Content
-            [ [1 / zoom_x, 0, left_s - origin[0] / zoom_x]
-            , [0, 1 / zoom_y, top_s  - origin[1] / zoom_y]
-            ])
+        s2c = np.array([ # Screen to Content
+            [1 / zoom_x, 0, left_s - origin[0] / zoom_x],
+            [0, 1 / zoom_y, top_s  - origin[1] / zoom_y]])
 
-        c2s = np.array( # Content to Screen
-            [ [zoom_x, 0, origin[0] - left_s * zoom_x]
-            , [0, zoom_y, origin[1] - top_s  * zoom_y]
-            ])
+        c2s = np.array([ # Content to Screen
+            [zoom_x, 0, origin[0] - left_s * zoom_x],
+            [0, zoom_y, origin[1] - top_s  * zoom_y]])
 
         view_s = [origin[0], origin[1], origin[0] + w, origin[1] + h]
         view_c = [left_s, top_s, right_s, bottom_s]

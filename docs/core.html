@@ -79,18 +79,20 @@ def multi_orr(widgets: Iterable[Widget]) -&gt; Widget:
     return events
 
 
-def forever(elem_gen: Callable[..., Widget], *args, **kwargs) -&gt; Widget:
-    &#34;&#34;&#34; Repeat an element forever.
+def forever(widget_gen: Callable[..., Widget], *args, **kwargs) -&gt; Widget:
+    &#34;&#34;&#34; Repeat a widget forever.
 
-    Function generating the element must be passed as the first argument;
+    Function generating the widget must be passed as the first argument;
     remaining arguments are passed to said function.
+
+    This can be used to easily suppress any widget events
     &#34;&#34;&#34;
-    elem = elem_gen(*args, **kwargs)
+    widget = widget_gen(*args, **kwargs)
     while True:
         try:
-            next(elem)
+            next(widget)
         except StopIteration:
-            elem = elem_gen(*args, **kwargs)
+            widget = widget_gen(*args, **kwargs)
         yield
 
 
@@ -261,28 +263,31 @@ def fork_action(future, rest_gen):
 </details>
 </dd>
 <dt id="concur.core.forever"><code class="name flex">
-<span>def <span class="ident">forever</span></span>(<span>elem_gen, *args, **kwargs)</span>
+<span>def <span class="ident">forever</span></span>(<span>widget_gen, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Repeat an element forever.</p>
-<p>Function generating the element must be passed as the first argument;
-remaining arguments are passed to said function.</p></section>
+<section class="desc"><p>Repeat a widget forever.</p>
+<p>Function generating the widget must be passed as the first argument;
+remaining arguments are passed to said function.</p>
+<p>This can be used to easily suppress any widget events</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def forever(elem_gen: Callable[..., Widget], *args, **kwargs) -&gt; Widget:
-    &#34;&#34;&#34; Repeat an element forever.
+<pre><code class="python">def forever(widget_gen: Callable[..., Widget], *args, **kwargs) -&gt; Widget:
+    &#34;&#34;&#34; Repeat a widget forever.
 
-    Function generating the element must be passed as the first argument;
+    Function generating the widget must be passed as the first argument;
     remaining arguments are passed to said function.
+
+    This can be used to easily suppress any widget events
     &#34;&#34;&#34;
-    elem = elem_gen(*args, **kwargs)
+    widget = widget_gen(*args, **kwargs)
     while True:
         try:
-            next(elem)
+            next(widget)
         except StopIteration:
-            elem = elem_gen(*args, **kwargs)
+            widget = widget_gen(*args, **kwargs)
         yield</code></pre>
 </details>
 </dd>

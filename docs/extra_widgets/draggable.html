@@ -31,15 +31,23 @@
 import imgui
 
 
-def draggable(name, tag=None):
-    &#34;&#34;&#34;Draggable button (can&#39;t be clicked). Emits (dx, dy) coordinates when dragged.
+def draggable(name, widget, tag=None):
+    &#34;&#34;&#34;Add draggable functionality to a widget. Emits (dx, dy) when dragged.
 
-    To limit this to a button is silly, PRs welcome :)
+    The underlying widget works as usual.
+
+    Returned values are equal to the drag amount from the previous frame.
     &#34;&#34;&#34;
     io = imgui.get_io()
     while True:
-        imgui.button(name)
-        if imgui.is_item_active():
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+        if imgui.is_item_active() and (io.mouse_delta[0] or io.mouse_delta[1]):
             return tag if tag is not None else name, io.mouse_delta
         yield</code></pre>
 </details>
@@ -52,24 +60,33 @@ def draggable(name, tag=None):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="concur.extra_widgets.draggable.draggable"><code class="name flex">
-<span>def <span class="ident">draggable</span></span>(<span>name, tag=None)</span>
+<span>def <span class="ident">draggable</span></span>(<span>name, widget, tag=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Draggable button (can't be clicked). Emits (dx, dy) coordinates when dragged.</p>
-<p>To limit this to a button is silly, PRs welcome :)</p></section>
+<section class="desc"><p>Add draggable functionality to a widget. Emits (dx, dy) when dragged.</p>
+<p>The underlying widget works as usual.</p>
+<p>Returned values are equal to the drag amount from the previous frame.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def draggable(name, tag=None):
-    &#34;&#34;&#34;Draggable button (can&#39;t be clicked). Emits (dx, dy) coordinates when dragged.
+<pre><code class="python">def draggable(name, widget, tag=None):
+    &#34;&#34;&#34;Add draggable functionality to a widget. Emits (dx, dy) when dragged.
 
-    To limit this to a button is silly, PRs welcome :)
+    The underlying widget works as usual.
+
+    Returned values are equal to the drag amount from the previous frame.
     &#34;&#34;&#34;
     io = imgui.get_io()
     while True:
-        imgui.button(name)
-        if imgui.is_item_active():
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+        if imgui.is_item_active() and (io.mouse_delta[0] or io.mouse_delta[1]):
             return tag if tag is not None else name, io.mouse_delta
         yield</code></pre>
 </details>

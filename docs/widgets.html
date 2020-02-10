@@ -55,19 +55,16 @@ from concur.core import orr, lift, Widget, interactive_elem
 
 
 def orr_same_line(widgets):
-    &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally.
-
-    This function simply inserts the ImGui function `SameLine` between each two of the `widgets`.
-    Each of the `widgets` must therefore contain *just one* ImGui widget. If it contains multiple,
-    some line breaks may sneak in; if it contains none (such as `concur.core.nothing`), there would
-    be too many `SameLine` calls which results in weird layout bugs.
-    &#34;&#34;&#34;
+    &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally instead of vertically. &#34;&#34;&#34;
     def intersperse(delimiter, seq):
         &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
         from itertools import chain, repeat
         return list(chain.from_iterable(zip(repeat(delimiter), seq)))[1:]
 
-    return orr(intersperse(same_line(), widgets))
+    def group(widget):
+        return orr([lift(imgui.begin_group), widget, lift(imgui.end_group)])
+
+    return orr(intersperse(same_line(), [group(w) for w in widgets]))
 
 
 def window(title: str,
@@ -77,16 +74,17 @@ def window(title: str,
            flags: int = 0) -&gt; Widget:
     &#34;&#34;&#34; Create a window with a given `widget` inside.
 
-    Window title must be unique.
+    Window title must be unique. Contents are drawn only if the window is opened.
     &#34;&#34;&#34;
     while True:
         if position is not None:
             imgui.set_next_window_position(*position)
         if size is not None:
             imgui.set_next_window_size(*size)
-        imgui.begin(title, flags=flags)
+        expanded, opened = imgui.begin(title, flags=flags)
         try:
-            next(widget)
+            if expanded and opened:
+                next(widget)
         except StopIteration as e:
             return e.value
         finally:
@@ -104,6 +102,19 @@ def child(name, widget, width, height, border=False, flags=0):
             return e.value
         finally:
             imgui.end_child()
+        yield
+
+
+def collapsing_header(text, widget, open=True):
+    &#34;&#34;&#34;Display a collapsible section header. It can be open or closed by default (parameter `open`).
+    &#34;&#34;&#34;
+    while True:
+        expanded, visible = imgui.collapsing_header(text, flags=open and imgui.TREE_NODE_DEFAULT_OPEN)
+        try:
+            if expanded:
+                next(widget)
+        except StopIteration as e:
+            return e.value
         yield
 
 
@@ -132,7 +143,7 @@ def radio_button(text, active, tag=None):
     return (tag if tag is not None else text), None
 
 
-def input_text(name, value, buffer_length, tag=None):
+def input_text(name, value, buffer_length=255, tag=None):
     &#34;&#34;&#34; Text input. &#34;&#34;&#34;
     while True:
         changed, new_value = imgui.input_text(name, value, buffer_length)
@@ -142,18 +153,69 @@ def input_text(name, value, buffer_length, tag=None):
             yield
 
 
-# NOTE: the key_pressed function require a forked version of ImGui:
-# https://github.com/potocpav/pyimgui
-#
-# def key_pressed(name, key_index, repeat=True):
-#     &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
-#
-#     Key codes are specified by the integration layer, e.g. `glfw.KEY_A`.
-#     &#34;&#34;&#34;
-#     while True:
-#         if imgui.is_key_pressed(key_index, repeat):
-#             return name, None
-#         yield
+def key_pressed(name, key_index, repeat=True):
+    &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
+
+    No widget must be active at the time to prevent triggering hotkeys by editing text fields.
+    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`, or `glfw.KEY_SPACE`.
+    &#34;&#34;&#34;
+    while True:
+        if not imgui.is_any_item_active() and imgui.is_key_pressed(key_index, repeat):
+            return name, None
+        yield
+
+
+def text_tooltip(text, widget):
+    &#34;&#34;&#34;Display a text tooltip on hover&#34;&#34;&#34;
+    while True:
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+        if imgui.is_item_hovered():
+            imgui.set_tooltip(text)
+        yield
+
+
+def tooltip(tooltip_widget, widget):
+    &#34;&#34;&#34; Display a widget tooltip on hover. May contain arbitrary elements, such as images. &#34;&#34;&#34;
+    while True:
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+
+        if imgui.is_item_hovered():
+            try:
+                imgui.begin_tooltip()
+                next(tooltip_widget)
+            except StopIteration as e:
+                return e.value
+            finally:
+                imgui.end_tooltip()
+        yield
+
+
+def separator():
+    &#34;&#34;&#34; Horizontal separator. &#34;&#34;&#34;
+    return lift(imgui.separator)
+
+def spacing():
+    &#34;&#34;&#34; Extra vertical space. &#34;&#34;&#34;
+    return lift(imgui.spacing)
+
+def same_line():
+    &#34;&#34;&#34; Call between widgets to layout them horizontally.
+
+    This is Consider using `concur.widgets.orr_same_line` instead as it is more robust.
+    &#34;&#34;&#34;
+    return lift(imgui.same_line)
 
 
 def text(s):
@@ -163,25 +225,6 @@ def text(s):
 def text_colored(s, r, g, b, a=1.):
     &#34;&#34;&#34; Passive colored text display widget. &#34;&#34;&#34;
     return lift(imgui.text_colored, s, r, g, b, a)
-
-def test_window():
-    &#34;&#34;&#34; ImGui test window with a multitude of widgets. &#34;&#34;&#34;
-    return lift(imgui.show_test_window)
-
-def separator():
-    &#34;&#34;&#34; Horizontal separator. &#34;&#34;&#34;
-    return lift(imgui.separator)
-
-def spacing():
-    &#34;&#34;&#34; Extra horizontal space. &#34;&#34;&#34;
-    return lift(imgui.spacing)
-
-def same_line():
-    &#34;&#34;&#34; Call between widgets to layout them horizontally.
-
-    Consider using `concur.widgets.orr_same_line` instead.
-    &#34;&#34;&#34;
-    return lift(imgui.same_line)
 
 def checkbox(label, checked, *args, **kwargs):
     &#34;&#34;&#34; Two-state checkbox. &#34;&#34;&#34;
@@ -217,6 +260,11 @@ def slider_int(label, value, min_value, max_value, *args, **kwargs):
 def slider_float(label, value, min_value, max_value, *args, **kwargs):
     &#34;&#34;&#34; Float selection slider. &#34;&#34;&#34;
     return interactive_elem(imgui.slider_float, label, value, min_value, max_value, *args, **kwargs)
+
+
+def test_window():
+    &#34;&#34;&#34; ImGui test window with a multitude of widgets. &#34;&#34;&#34;
+    return lift(imgui.show_test_window)
 
 
 def columns(elems, identifier=None, border=True, widths=[]):
@@ -319,6 +367,28 @@ def transform(x, y, widget, tf=None):
             return e.value
         finally:
             imgui.end_child()
+        yield</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.collapsing_header"><code class="name flex">
+<span>def <span class="ident">collapsing_header</span></span>(<span>text, widget, open=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Display a collapsible section header. It can be open or closed by default (parameter <code>open</code>).</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collapsing_header(text, widget, open=True):
+    &#34;&#34;&#34;Display a collapsible section header. It can be open or closed by default (parameter `open`).
+    &#34;&#34;&#34;
+    while True:
+        expanded, visible = imgui.collapsing_header(text, flags=open and imgui.TREE_NODE_DEFAULT_OPEN)
+        try:
+            if expanded:
+                next(widget)
+        except StopIteration as e:
+            return e.value
         yield</code></pre>
 </details>
 </dd>
@@ -452,7 +522,7 @@ None values.</p></section>
 </details>
 </dd>
 <dt id="concur.widgets.input_text"><code class="name flex">
-<span>def <span class="ident">input_text</span></span>(<span>name, value, buffer_length, tag=None)</span>
+<span>def <span class="ident">input_text</span></span>(<span>name, value, buffer_length=255, tag=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Text input.</p></section>
@@ -460,7 +530,7 @@ None values.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def input_text(name, value, buffer_length, tag=None):
+<pre><code class="python">def input_text(name, value, buffer_length=255, tag=None):
     &#34;&#34;&#34; Text input. &#34;&#34;&#34;
     while True:
         changed, new_value = imgui.input_text(name, value, buffer_length)
@@ -470,33 +540,49 @@ None values.</p></section>
             yield</code></pre>
 </details>
 </dd>
+<dt id="concur.widgets.key_pressed"><code class="name flex">
+<span>def <span class="ident">key_pressed</span></span>(<span>name, key_index, repeat=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Invisible widget that waits for a given key to be pressed.</p>
+<p>No widget must be active at the time to prevent triggering hotkeys by editing text fields.
+Key codes are specified by the integration layer, e.g. <code>glfw.KEY_A</code>, or <code>glfw.KEY_SPACE</code>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def key_pressed(name, key_index, repeat=True):
+    &#34;&#34;&#34; Invisible widget that waits for a given key to be pressed.
+
+    No widget must be active at the time to prevent triggering hotkeys by editing text fields.
+    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`, or `glfw.KEY_SPACE`.
+    &#34;&#34;&#34;
+    while True:
+        if not imgui.is_any_item_active() and imgui.is_key_pressed(key_index, repeat):
+            return name, None
+        yield</code></pre>
+</details>
+</dd>
 <dt id="concur.widgets.orr_same_line"><code class="name flex">
 <span>def <span class="ident">orr_same_line</span></span>(<span>widgets)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Use instead of <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> to layout child widgets horizontally.</p>
-<p>This function simply inserts the ImGui function <code>SameLine</code> between each two of the <code>widgets</code>.
-Each of the <code>widgets</code> must therefore contain <em>just one</em> ImGui widget. If it contains multiple,
-some line breaks may sneak in; if it contains none (such as <a title="concur.core.nothing" href="core.html#concur.core.nothing"><code>nothing()</code></a>), there would
-be too many <code>SameLine</code> calls which results in weird layout bugs.</p></section>
+<section class="desc"><p>Use instead of <a title="concur.core.orr" href="core.html#concur.core.orr"><code>orr()</code></a> to layout child widgets horizontally instead of vertically.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def orr_same_line(widgets):
-    &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally.
-
-    This function simply inserts the ImGui function `SameLine` between each two of the `widgets`.
-    Each of the `widgets` must therefore contain *just one* ImGui widget. If it contains multiple,
-    some line breaks may sneak in; if it contains none (such as `concur.core.nothing`), there would
-    be too many `SameLine` calls which results in weird layout bugs.
-    &#34;&#34;&#34;
+    &#34;&#34;&#34; Use instead of `concur.core.orr` to layout child widgets horizontally instead of vertically. &#34;&#34;&#34;
     def intersperse(delimiter, seq):
         &#34;&#34;&#34; https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element &#34;&#34;&#34;
         from itertools import chain, repeat
         return list(chain.from_iterable(zip(repeat(delimiter), seq)))[1:]
 
-    return orr(intersperse(same_line(), widgets))</code></pre>
+    def group(widget):
+        return orr([lift(imgui.begin_group), widget, lift(imgui.end_group)])
+
+    return orr(intersperse(same_line(), [group(w) for w in widgets]))</code></pre>
 </details>
 </dd>
 <dt id="concur.widgets.radio_button"><code class="name flex">
@@ -520,7 +606,7 @@ be too many <code>SameLine</code> calls which results in weird layout bugs.</p><
 </code></dt>
 <dd>
 <section class="desc"><p>Call between widgets to layout them horizontally.</p>
-<p>Consider using <a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line"><code>orr_same_line()</code></a> instead.</p></section>
+<p>This is Consider using <a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line"><code>orr_same_line()</code></a> instead as it is more robust.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -528,7 +614,7 @@ be too many <code>SameLine</code> calls which results in weird layout bugs.</p><
 <pre><code class="python">def same_line():
     &#34;&#34;&#34; Call between widgets to layout them horizontally.
 
-    Consider using `concur.widgets.orr_same_line` instead.
+    This is Consider using `concur.widgets.orr_same_line` instead as it is more robust.
     &#34;&#34;&#34;
     return lift(imgui.same_line)</code></pre>
 </details>
@@ -579,13 +665,13 @@ be too many <code>SameLine</code> calls which results in weird layout bugs.</p><
 <span>def <span class="ident">spacing</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Extra horizontal space.</p></section>
+<section class="desc"><p>Extra vertical space.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def spacing():
-    &#34;&#34;&#34; Extra horizontal space. &#34;&#34;&#34;
+    &#34;&#34;&#34; Extra vertical space. &#34;&#34;&#34;
     return lift(imgui.spacing)</code></pre>
 </details>
 </dd>
@@ -631,6 +717,61 @@ be too many <code>SameLine</code> calls which results in weird layout bugs.</p><
     return lift(imgui.text_colored, s, r, g, b, a)</code></pre>
 </details>
 </dd>
+<dt id="concur.widgets.text_tooltip"><code class="name flex">
+<span>def <span class="ident">text_tooltip</span></span>(<span>text, widget)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Display a text tooltip on hover</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def text_tooltip(text, widget):
+    &#34;&#34;&#34;Display a text tooltip on hover&#34;&#34;&#34;
+    while True:
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+        if imgui.is_item_hovered():
+            imgui.set_tooltip(text)
+        yield</code></pre>
+</details>
+</dd>
+<dt id="concur.widgets.tooltip"><code class="name flex">
+<span>def <span class="ident">tooltip</span></span>(<span>tooltip_widget, widget)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Display a widget tooltip on hover. May contain arbitrary elements, such as images.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tooltip(tooltip_widget, widget):
+    &#34;&#34;&#34; Display a widget tooltip on hover. May contain arbitrary elements, such as images. &#34;&#34;&#34;
+    while True:
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+
+        if imgui.is_item_hovered():
+            try:
+                imgui.begin_tooltip()
+                next(tooltip_widget)
+            except StopIteration as e:
+                return e.value
+            finally:
+                imgui.end_tooltip()
+        yield</code></pre>
+</details>
+</dd>
 <dt id="concur.widgets.transform"><code class="name flex">
 <span>def <span class="ident">transform</span></span>(<span>x, y, widget, tf=None)</span>
 </code></dt>
@@ -668,7 +809,7 @@ is at <code>[x, y]</code>.</p></section>
 </code></dt>
 <dd>
 <section class="desc"><p>Create a window with a given <code>widget</code> inside.</p>
-<p>Window title must be unique.</p></section>
+<p>Window title must be unique. Contents are drawn only if the window is opened.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -680,16 +821,17 @@ is at <code>[x, y]</code>.</p></section>
            flags: int = 0) -&gt; Widget:
     &#34;&#34;&#34; Create a window with a given `widget` inside.
 
-    Window title must be unique.
+    Window title must be unique. Contents are drawn only if the window is opened.
     &#34;&#34;&#34;
     while True:
         if position is not None:
             imgui.set_next_window_position(*position)
         if size is not None:
             imgui.set_next_window_size(*size)
-        imgui.begin(title, flags=flags)
+        expanded, opened = imgui.begin(title, flags=flags)
         try:
-            next(widget)
+            if expanded and opened:
+                next(widget)
         except StopIteration as e:
             return e.value
         finally:
@@ -718,6 +860,7 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.button" href="#concur.widgets.button">button</a></code></li>
 <li><code><a title="concur.widgets.checkbox" href="#concur.widgets.checkbox">checkbox</a></code></li>
 <li><code><a title="concur.widgets.child" href="#concur.widgets.child">child</a></code></li>
+<li><code><a title="concur.widgets.collapsing_header" href="#concur.widgets.collapsing_header">collapsing_header</a></code></li>
 <li><code><a title="concur.widgets.color_button" href="#concur.widgets.color_button">color_button</a></code></li>
 <li><code><a title="concur.widgets.columns" href="#concur.widgets.columns">columns</a></code></li>
 <li><code><a title="concur.widgets.drag_float" href="#concur.widgets.drag_float">drag_float</a></code></li>
@@ -726,6 +869,7 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.drag_float4" href="#concur.widgets.drag_float4">drag_float4</a></code></li>
 <li><code><a title="concur.widgets.input_float" href="#concur.widgets.input_float">input_float</a></code></li>
 <li><code><a title="concur.widgets.input_text" href="#concur.widgets.input_text">input_text</a></code></li>
+<li><code><a title="concur.widgets.key_pressed" href="#concur.widgets.key_pressed">key_pressed</a></code></li>
 <li><code><a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line">orr_same_line</a></code></li>
 <li><code><a title="concur.widgets.radio_button" href="#concur.widgets.radio_button">radio_button</a></code></li>
 <li><code><a title="concur.widgets.same_line" href="#concur.widgets.same_line">same_line</a></code></li>
@@ -736,6 +880,8 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.test_window" href="#concur.widgets.test_window">test_window</a></code></li>
 <li><code><a title="concur.widgets.text" href="#concur.widgets.text">text</a></code></li>
 <li><code><a title="concur.widgets.text_colored" href="#concur.widgets.text_colored">text_colored</a></code></li>
+<li><code><a title="concur.widgets.text_tooltip" href="#concur.widgets.text_tooltip">text_tooltip</a></code></li>
+<li><code><a title="concur.widgets.tooltip" href="#concur.widgets.tooltip">tooltip</a></code></li>
 <li><code><a title="concur.widgets.transform" href="#concur.widgets.transform">transform</a></code></li>
 <li><code><a title="concur.widgets.window" href="#concur.widgets.window">window</a></code></li>
 </ul>
