@@ -17,23 +17,18 @@
 
 Concur is a Python UI framework based on synchronous generators.
 
-It is a port of [Concur for Haskell](https://github.com/ajnsit/concur) and [Concur for Purescript](https://github.com/ajnsit/purescript-concur).
+It is a port of [Concur for Purescript](https://github.com/ajnsit/purescript-concur), implemented on top of the [Dear ImGui](https://github.com/ocornut/imgui) C++ UI library.
 
-Concur can be thought of as a layer on top of [PyImGui](https://github.com/swistakm/pyimgui), which is a set of bindings to the [Dear ImGui](https://github.com/ocornut/imgui) UI library. It helps you to get rid of unprincipled code with mutable state, and lets you build structured and composable abstractions.
+For introduction to core concepts, see the [documentation](file:///home/pavel/build/python-concur/docs/index.html#introduction). A more comprehensive introduction can be found in the [Documentation for the Haskell/Purescript versions](https://github.com/ajnsit/concur-documentation/blob/master/README.md). This obviously uses Haskell/Purescript syntax and semantics, but many of the concepts will apply to the Python version.
 
-A discussion of Concur concepts can also be found in the [Documentation for the Haskell/Purescript versions](https://github.com/ajnsit/concur-documentation/blob/master/README.md). This obviously uses Haskell/Purescript syntax and semantics, but many of the concepts will apply to the Python version.
-
-Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications.
+Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications. ImGui functions can be used directly for any functionality that is not wrapped by Concur. See the [PyImGui docs](https://pyimgui.readthedocs.io/en/latest/) for additional widgets, or [ImGui itself](https://github.com/ocornut/imgui).
 
 <!-- End docs -->
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
-</p>
 
 ## Installation
 
-The only dependencies are [GLFW](https://github.com/glfw/glfw) and Python >= 3.6. Concur [is available on PyPI](https://pypi.org/project/concur/) and can be installed using pip:
+The only dependencies are a C++ compiler, [GLFW](https://github.com/glfw/glfw) and Python >= 3.6. Concur [is available on PyPI](https://pypi.org/project/concur/) and can be installed using pip:
 
 ```sh
 pip install concur
@@ -58,3 +53,8 @@ examples/all.py # Run the examples to verify installation
 ```
 
 To build documentation, install [pdoc3](https://pdoc3.github.io/pdoc/) (`pip install pdoc3`) and run the script `./mkdocs.sh`.
+
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
+</p>
