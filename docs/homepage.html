@@ -46,48 +46,134 @@
     </main>
 
     <div class="container py-4">
-    <ul class="nav nav-tabs  nav-fill" id="myTab" role="tablist">
-      <li class="nav-item">
-        <a class="nav-link active" id="tab1" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Hello, world!</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-      </li>
-    </ul>
-    <div class="tab-content" id="myTabContent">
-      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="tab1">
-        <!-- <div class="container py-4"> -->
+      <ul class="nav nav-tabs  nav-fill" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="tab1h" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Hello, world!</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tab2h" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">Counter</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tab3h" data-toggle="tab" href="#tab3" role="tab" aria-controls="tab3" aria-selected="false">Image</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tab4h" data-toggle="tab" href="#tab4" role="tab" aria-controls="tab4" aria-selected="false">Plotting</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1h">
           <div class="d-flex flex-wrap">
-            <div class="mx-auto col-md-7 order-md-1">
-                <pre><code class="language-python container my-5 p-3 rounded border shadow-sm">import concur as c
+            <div class="mx-auto col-md-7 order-md-1 my-4">
+              <pre><code class="language-python container p-3 rounded border shadow-sm">import concur as c
 
-c.main("Hello World", c.text("Hello, world!"), 500, 500)</code></pre>
+c.main("Hello World", c.text("Hello, world!"), 400, 288)</code></pre>
               </div>
-            <div class="mx-auto col-md-5 order-md-2" style="text-align: right">
-                <img class="img-fluid mx-2 my-2" width="400" src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+              <img class="img-fluid" width="400" src="sshots/hello_world.png">
             </div>
           </div>
-        <!-- </div> -->
+        </div>
+        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2h">
+          <div class="d-flex flex-wrap">
+            <div class="mx-auto col-md-7 order-md-1 my-4">
+              <pre><code class="language-python container p-3 rounded border shadow-sm">import concur as c
+
+def counter():
+    count = 5
+    while True:
+        action, _ = yield from c.orr([
+            c.text(f"Count: {count}"),
+            c.button("Increment"),
+            c.button("Decrement"),
+            ])
+        if action == "Increment":
+            count += 1
+        elif action == "Decrement":
+            count -= 1
+        yield
+
+c.main("Counter", counter(), 400, 288)</code></pre>
+              </div>
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+              <video width=400 height=288 autoplay loop>
+                <source src="sshots/counter.mp4" type="video/mp4">
+              <video>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3h">
+          <div class="d-flex flex-wrap">
+            <div class="mx-auto col-md-7 order-md-1 my-4">
+                <pre><code class="language-python container p-3 rounded border shadow-sm">import concur as c
+
+def app():
+    view = c.Image(Image.open("examples/lenna.png"))
+    while True:
+        _, view = yield from c.image("Image", view)
+        yield
+
+c.main("Image", app(), 400, 288)</code></pre>
+              </div>
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+              <video width=400 height=288 autoplay loop>
+                <source src="sshots/image.mp4" type="video/mp4">
+              <video>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4h">
+          <div class="d-flex flex-wrap">
+            <div class="mx-auto col-md-7 order-md-1 my-4">
+              <pre><code class="language-python container p-3 rounded border shadow-sm">import concur as c
+
+def app():
+    pass # ToDo
+
+c.main("Plot", app(), 400, 288)</code></pre>
+              </div>
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+              <video width=400 height=288 autoplay loop>
+                <source src="sshots/image.mp4" type="video/mp4">
+              <video>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
-    </div>
     </div>
 
-    <div class="container bg-light py-4">
-      <div class="d-flex flex-wrap">
-        <div class="mx-auto col-md-6 order-md-1">
-          <h2 class="section-header">Automated testing</h2>
-          <p class="my-4">Build interactive data analysis and visualization GUI in Python.</p>
-          <p class="my-4">Concur is a library for rapidly developing user interfaces.
-            Responsive interfaces can be written with just a few lines of code.</p>
+    <div class="container py-4">
+
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Automated Testing</h5>
+              <p class="card-text">Create UI tests and automation. Simulate input, generate screenshots.
+                All the examples on this page were programmatically generated.</p>
+              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+            </div>
+          </div>
         </div>
-        <div class="mx-auto col-md-6 order-md-2" style="text-align: right">
-          <img class="img-fluid mx-2 my-2" width="400"
-            src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Functional programming</h5>
+              <p class="card-text">No objects, no observable internal state. Widgets are generators.
+                Elm architecture can be implemented in a few lines of code.</p>
+              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Functional programming</h5>
+              <p class="card-text">No objects, no observable internal state. Widgets are generators.
+                Elm architecture can be implemented in a few lines of code.</p>
+              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+            </div>
+          </div>
         </div>
       </div>
 
