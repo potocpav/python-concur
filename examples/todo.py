@@ -14,10 +14,10 @@ def app():
     edited = ""
 
     while True:
-        action, value = yield from c.orr(
-            [ c.orr_same_line([c.button("All"), c.button("Active"), c.button("Completed")])
-            , c.orr([c.tag(i, item(s, a)) for i, (s, a) in enumerate(todos) if a in disp])
-            , c.orr_same_line([c.button("+"), c.input_text("New Item", edited, 30)])
+        action, value = yield from c.orr([
+            c.orr_same_line([c.button("All"), c.button("Active"), c.button("Completed")]),
+            c.orr([c.tag(i, item(s, a)) for i, (s, a) in enumerate(todos) if a in disp]),
+            c.orr_same_line([c.button("+"), c.input_text("New Item", edited, 30)]),
             ])
         # print(action, value)
         if action == "New Item":

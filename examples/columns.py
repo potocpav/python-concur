@@ -4,9 +4,9 @@ import concur as c
 
 
 def app():
-    return c.columns(
-        [ [c.text("Hello,"), c.button("Click me")]
-        , [c.text("columns!"), c.button("Or me")]
+    return c.columns([
+        [c.text("Hello,"), c.button("Click me")],
+        [c.text("columns!"), c.button("Or me")],
         ], "start", True)
 
 

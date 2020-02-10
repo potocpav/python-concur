@@ -23,26 +23,26 @@ def app():
     adaptive_bounds = False
 
     while True:
-        polyline_opts = lambda: c.orr(
-            [ c.slider_float("n_verts", n_verts, 10, 1e5, power=10, format="%.0f")
-            , c.checkbox("Adaptive Bounds", adaptive_bounds)
+        polyline_opts = lambda: c.orr([
+            c.slider_float("n_verts", n_verts, 10, 1e5, power=10, format="%.0f"),
+            c.checkbox("Adaptive Bounds", adaptive_bounds),
             ])
-        tag, value = yield from c.orr(
-            [ c.window("Graph", c.orr(
-                [ c.plot.frame("Frame", view, c.partial(
-                    graph, show_polyline, n_verts,
+        tag, value = yield from c.orr([
+            c.window("Graph", c.orr([
+                c.plot.frame("Frame", view, c.partial(
+                    graph, show_polyline, int(n_verts),
                     (view.left, view.right) if adaptive_bounds else (-1, 1)))
-                ]))
-            , c.window("Controls", c.orr(
-                [ c.radio_button("Keep Aspect", view.keep_aspect)
-                , c.radio_button("Fix X", view.fix_axis == 'x')
-                , c.radio_button("Fix Y", view.fix_axis == 'y')
-                , c.button("Reset View")
-                , c.separator()
+                ])),
+            c.window("Controls", c.orr([
+                c.radio_button("Keep Aspect", view.keep_aspect),
+                c.radio_button("Fix X", view.fix_axis == 'x'),
+                c.radio_button("Fix Y", view.fix_axis == 'y'),
+                c.button("Reset View"),
+                c.separator(),
 
-                , c.checkbox("Show Polyline", show_polyline)
-                , c.optional(show_polyline, polyline_opts)
-                ]))
+                c.checkbox("Show Polyline", show_polyline),
+                c.optional(show_polyline, polyline_opts),
+                ])),
             ])
         if tag == "Frame":
             view = value

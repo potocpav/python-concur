@@ -6,9 +6,9 @@ import numpy as np
 import imgui
 
 def graph(tex_id, tex_w, tex_h, tf):
-    return c.orr(
-        [ c.draw.polyline([(-1, 0), (0, 0), (0, -0.3), (0.3, 0), (1, 0.1), (-1, 0.5), (-1, 0.2)], (0,0,0,0.5), closed=True, thickness=20, tf=tf)
-        # , c.draw.polyline(np.random.rand(100000,2), (0,0,1,1), thickness=4, tf=tf)
+    return c.orr([
+        c.draw.polyline([(-1, 0), (0, 0), (0, -0.3), (0.3, 0), (1, 0.1), (-1, 0.5), (-1, 0.2)], (0,0,0,0.5), closed=True, thickness=20, tf=tf),
+        # c.draw.polyline(np.random.rand(100000,2), (0,0,1,1), thickness=4, tf=tf),
         ])
 
 
@@ -20,9 +20,9 @@ def app():
     style.anti_aliased_lines = False
 
     while True:
-        tag, value = yield from c.orr(
-            [ c.window("Graph", c.plot.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1])))
-            , c.window("Controls", c.checkbox("Antialiasing", style.anti_aliased_lines))
+        tag, value = yield from c.orr([
+            c.window("Graph", c.plot.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
+            c.window("Controls", c.checkbox("Antialiasing", style.anti_aliased_lines)),
             ])
         if tag == "Frame":
             view = value

@@ -10,10 +10,10 @@ def app(tester):
     x, y = 0, 0
     for i in range(2):
         if i: yield
-        res = yield from c.orr(
-            [ c.image("", im, content_gen=lambda tf:
-                c.draw.rect_filled(x-40, y-40, x+40, y+40, np.array([222, 111, 111, 255]) / 255, tf=tf))
-            , c.event(None)
+        res = yield from c.orr([
+            c.image("", im, content_gen=lambda tf:
+                c.draw.rect_filled(x-40, y-40, x+40, y+40, np.array([222, 111, 111, 255]) / 255, tf=tf)),
+            c.event(None),
             ])
         t += 0.02
         x = int(500 + 400 * np.sin(t))
