@@ -131,6 +131,59 @@ def key_pressed(name, key_index, repeat=True):
         yield
 
 
+def text_tooltip(text, widget):
+    """Display a text tooltip on hover"""
+    while True:
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+        if imgui.is_item_hovered():
+            imgui.set_tooltip(text)
+        yield
+
+
+def tooltip(tooltip_widget, widget):
+    """ Display a widget tooltip on hover. May contain arbitrary elements, such as images. """
+    while True:
+        try:
+            imgui.begin_group()
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_group()
+
+        if imgui.is_item_hovered():
+            try:
+                imgui.begin_tooltip()
+                next(tooltip_widget)
+            except StopIteration as e:
+                return e.value
+            finally:
+                imgui.end_tooltip()
+        yield
+
+
+def separator():
+    """ Horizontal separator. """
+    return lift(imgui.separator)
+
+def spacing():
+    """ Extra vertical space. """
+    return lift(imgui.spacing)
+
+def same_line():
+    """ Call between widgets to layout them horizontally.
+
+    This is Consider using `concur.widgets.orr_same_line` instead as it is more robust.
+    """
+    return lift(imgui.same_line)
+
+
 def text(s):
     """ Passive text display widget. """
     return lift(imgui.text, s)
@@ -138,25 +191,6 @@ def text(s):
 def text_colored(s, r, g, b, a=1.):
     """ Passive colored text display widget. """
     return lift(imgui.text_colored, s, r, g, b, a)
-
-def test_window():
-    """ ImGui test window with a multitude of widgets. """
-    return lift(imgui.show_test_window)
-
-def separator():
-    """ Horizontal separator. """
-    return lift(imgui.separator)
-
-def spacing():
-    """ Extra horizontal space. """
-    return lift(imgui.spacing)
-
-def same_line():
-    """ Call between widgets to layout them horizontally.
-
-    Consider using `concur.widgets.orr_same_line` instead.
-    """
-    return lift(imgui.same_line)
 
 def checkbox(label, checked, *args, **kwargs):
     """ Two-state checkbox. """
@@ -192,6 +226,11 @@ def slider_int(label, value, min_value, max_value, *args, **kwargs):
 def slider_float(label, value, min_value, max_value, *args, **kwargs):
     """ Float selection slider. """
     return interactive_elem(imgui.slider_float, label, value, min_value, max_value, *args, **kwargs)
+
+
+def test_window():
+    """ ImGui test window with a multitude of widgets. """
+    return lift(imgui.show_test_window)
 
 
 def columns(elems, identifier=None, border=True, widths=[]):
