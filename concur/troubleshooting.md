@@ -1,12 +1,12 @@
 # Troubleshooting
 
-Here's a list of known issues and their solutions:
+Here's a list of common issues and their solutions:
 
 **Widget flicker**
 
 Between any two `yield from _` statements that can return, there must be exactly one `yield` statement. If there is none, elements may get duplicated in a frame after triggering an action. If there is more than one `yield` statemet, elements may momentarily disappear.
 
-Most of the time, it is enough to slap a `yield` at the end of each loop ([example](https://github.com/potocpav/python-concur/blob/master/examples/counters.py)). I don't think this bit of syntactic inconvenience can be solved without introducing other quirks.
+Most of the time, it is enough to slap a `yield` at the end of each loop ([example](https://github.com/potocpav/python-concur/blob/master/examples/counters.py#L19)). I don't think this bit of syntactic inconvenience can be solved without introducing other quirks.
 
 **Event congestion**
 

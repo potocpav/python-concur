@@ -71,10 +71,10 @@ if tag == &quot;Second&quot;:
 <hr>
 <p><sup>1</sup> The name <code>orr</code> is derived from the fact that the resulting widget returns if any child returns (child1 <strong>or</strong> child2). To signify that a list of children is expected (not a pair), <strong>orr</strong> is used instead of <strong>or</strong>. In Concur for Purescript, there is also the <a href="https://pursuit.purescript.org/packages/purescript-concur-core/0.4.1/docs/Concur.Core.Types#v:andd"><code>andd</code> operator</a> which returns when all children return.</p>
 <h1 id="troubleshooting">Troubleshooting</h1>
-<p>Here's a list of known issues and their solutions:</p>
+<p>Here's a list of common issues and their solutions:</p>
 <p><strong>Widget flicker</strong></p>
 <p>Between any two <code>yield from _</code> statements that can return, there must be exactly one <code>yield</code> statement. If there is none, elements may get duplicated in a frame after triggering an action. If there is more than one <code>yield</code> statemet, elements may momentarily disappear.</p>
-<p>Most of the time, it is enough to slap a <code>yield</code> at the end of each loop (<a href="https://github.com/potocpav/python-concur/blob/master/examples/counters.py">example</a>). I don't think this bit of syntactic inconvenience can be solved without introducing other quirks.</p>
+<p>Most of the time, it is enough to slap a <code>yield</code> at the end of each loop (<a href="https://github.com/potocpav/python-concur/blob/master/examples/counters.py#L19">example</a>). I don't think this bit of syntactic inconvenience can be solved without introducing other quirks.</p>
 <p><strong>Event congestion</strong></p>
 <p>On each frame, at most one action can get triggered from an <code>concur.core.orr</code> block. Actions from first sub-widgets are prioritized, and any actions from further sub-widgets will get thrown out. This is a problem when there are rapidly-firing widgets, such as video playback.</p>
 <p>Push the widgets with lower priority down the widget lists, or swap the congesting <code>orr</code> function for <code>multi_orr</code>. <code>concur.core.multi_orr</code> returns a list of all fired events, which trades correctness for some boilerplate. Typically, the top-level widget list is <code>multi_orr</code>, while the lower levels can be <code>orr</code>.</p>
@@ -122,7 +122,9 @@ from .integrations import main
 import functools
 
 def partial(*args, **argv):
-    &#34;Re-export of `functools.partial` for convenience&#34;
+    &#34;&#34;&#34;Re-export of [`functools.partial`](https://docs.python.org/3.9/library/functools.html#functools.partial)
+    for convenience
+    &#34;&#34;&#34;
     return functools.partial(*args, **argv)</code></pre>
 </details>
 </section>
@@ -164,13 +166,16 @@ def partial(*args, **argv):
 <span>def <span class="ident">partial</span></span>(<span>*args, **argv)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Re-export of <code>functools.partial</code> for convenience</p></section>
+<section class="desc"><p>Re-export of <a href="https://docs.python.org/3.9/library/functools.html#functools.partial"><code>functools.partial</code></a>
+for convenience</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def partial(*args, **argv):
-    &#34;Re-export of `functools.partial` for convenience&#34;
+    &#34;&#34;&#34;Re-export of [`functools.partial`](https://docs.python.org/3.9/library/functools.html#functools.partial)
+    for convenience
+    &#34;&#34;&#34;
     return functools.partial(*args, **argv)</code></pre>
 </details>
 </dd>

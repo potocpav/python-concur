@@ -126,14 +126,23 @@ c.main("Image", app(), 400, 288)</code></pre>
             <div class="mx-auto col-md-7 order-md-1 my-4">
               <pre><code class="language-python container p-3 rounded border shadow-sm">import concur as c
 
-def app():
-    pass # ToDo
+def line(tf):
+    np.random.seed(0)
+    x = np.linspace(-2, 2, 10000)
+    y = np.cumsum(np.random.rand(len(x)) - 0.5) / 100
+    return c.draw.polyline(np.stack([x, y]).T, (0, 0, 1, 1), tf=tf)
 
-c.main("Plot", app(), 400, 288)</code></pre>
+def plot():
+    frame = c.Frame((-1, 1), (1, -1))
+    while True:
+        _, frame = yield from c.frame("Frame", frame, line)
+        yield
+
+c.main("Plot", plot(), 400, 288)</code></pre>
               </div>
             <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
               <video width=400 height=288 autoplay loop>
-                <source src="sshots/image.mp4" type="video/mp4">
+                <source src="sshots/plot.mp4" type="video/mp4">
               <video>
             </div>
           </div>

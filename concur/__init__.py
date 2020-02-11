@@ -31,5 +31,7 @@ from .integrations import main
 import functools
 
 def partial(*args, **argv):
-    "Re-export of `functools.partial` for convenience"
+    """Re-export of [`functools.partial`](https://docs.python.org/3.9/library/functools.html#functools.partial)
+    for convenience
+    """
     return functools.partial(*args, **argv)
