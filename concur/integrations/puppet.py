@@ -123,6 +123,19 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         """Release a specified mouse button."""
         self._mouse_buttons[button] = False
 
+    def key_dn(self, key):
+        imgui.get_io().keys_down[key] = True
+        exit(0)
+
+    def key_up(self, key):
+        imgui.get_io().keys_down[key] = False
+
+    def write_char(self, c):
+        assert 0 < c < 0x10000
+        imgui.get_io().add_input_character(c)
+
+
+
 
 def main(name, widget_gen, width, height, save_screencast=None, return_sshot=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
