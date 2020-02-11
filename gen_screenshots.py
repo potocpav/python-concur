@@ -157,6 +157,28 @@ def plot(tester):
     return c.orr([controlee(), controller()])
 
 
+@c.testing.test_widget
+def animation(tester):
+    from time import monotonic as t
+    def graph(tf):
+        ts = np.linspace(t(), t() + 1/2, 100)
+        pts = np.stack([np.sin(ts * 4), np.cos(ts * 5)]).T
+        return c.draw.polyline(pts, (0,0,1,1), tf=tf)
+
+    view = c.plot.Frame((-1.5, 1.5), (1.5, -1.5))
+    t0 = t()
+    while True:
+        key, value = yield from c.orr([
+            c.plot.frame("Frame", view, graph),
+            c.event(("Tick", None)), # refresh every frame
+            ])
+        if key == "Frame":
+            view = value
+        if t() - t0 >= 2 * np.pi:
+            break
+        yield
+
+
 if __name__ == "__main__":
     im = all_examples(width=800, height=560, return_sshot=True, draw_cursor=False)
     Image.fromarray(im[...,:3]).save('screenshot.png')
@@ -169,3 +191,5 @@ if __name__ == "__main__":
     image(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/image.mp4')
 
     plot(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/plot.mp4')
+
+    animation(width=400, height=288, draw_cursor=False, save_screencast='docs/sshots/animation.mp4')

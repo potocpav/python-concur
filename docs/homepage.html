@@ -60,6 +60,9 @@
         <li class="nav-item">
           <a class="nav-link" id="tab4h" data-toggle="tab" href="#tab4" role="tab" aria-controls="tab4" aria-selected="false">Plotting</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tab5h" data-toggle="tab" href="#tab5" role="tab" aria-controls="tab5" aria-selected="false">Animation</a>
+        </li>
       </ul>
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1h">
@@ -126,6 +129,7 @@ c.main("Image", app(), 400, 288)</code></pre>
           <div class="d-flex flex-wrap">
             <div class="mx-auto col-md-7 order-md-1 my-4">
               <pre><code class="language-python container p-3 rounded border shadow-sm">import concur as c
+import numpy as np
 
 def line(tf):
     np.random.seed(0)
@@ -144,6 +148,39 @@ c.main("Plot", plot(), 400, 288)</code></pre>
             <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
               <video width=400 height=288 autoplay loop>
                 <source src="sshots/plot.mp4" type="video/mp4">
+              <video>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab5" role="tabpanel" aria-labelledby="tab5h">
+          <div class="d-flex flex-wrap">
+            <div class="mx-auto col-md-7 order-md-1 my-4">
+              <pre><code class="language-python container p-3 rounded border shadow-sm">import concur as c
+import numpy as np
+from time import monotonic as t
+
+def graph(tf):
+    ts = np.linspace(t(), t() + 1/2, 100)
+    pts = np.stack([np.sin(ts * 4), np.cos(ts * 5)]).T
+    return c.draw.polyline(pts, (0,0,1,1), tf=tf)
+
+def app():
+    view = c.plot.Frame((-1.5, 1.5), (1.5, -1.5))
+    while True:
+        key, value = yield from c.orr([
+            c.plot.frame("Frame", view, graph),
+            c.event(("Tick", None)), # refresh every frame
+            ])
+        if key == "Frame":
+            view = value
+        yield
+
+if __name__ == "__main__":
+    c.main("Plot", app(), 400, 288)</code></pre>
+              </div>
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+              <video width=400 height=288 autoplay loop>
+                <source src="sshots/animation.mp4" type="video/mp4">
               <video>
             </div>
           </div>
