@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -98,6 +99,64 @@ def image(tester):
     return c.orr([controlee(), controller()])
 
 
+@c.testing.test_widget
+def plot(tester):
+    def controlee():
+        def line(tf):
+            np.random.seed(0)
+            x = np.linspace(-2, 2, 10000)
+            y = np.cumsum(np.random.rand(len(x)) - 0.5) / 100
+            return c.draw.polyline(np.stack([x, y]).T, (0, 0, 1, 1), tf=tf)
+        frame = c.Frame((-1, 1), (1, -1))
+        while True:
+            _, frame = yield from c.frame("Frame", frame, line)
+            yield
+
+    def controller():
+        yield from tester.pause(30)
+        yield from tester.move_cursor(200, 150)
+        yield from tester.scroll_up()
+        yield from tester.pause(10)
+        yield from tester.scroll_up()
+        yield from tester.pause(10)
+        yield from tester.scroll_up()
+        yield from tester.move_cursor(210, 150)
+        yield from tester.scroll_up()
+        yield from tester.pause(10)
+        yield from tester.scroll_up()
+        yield from tester.pause(10)
+        yield from tester.scroll_up()
+        yield from tester.pause(10)
+        yield from tester.scroll_up()
+        yield from tester.pause(30)
+        yield from tester.move_cursor(210, 200)
+
+        yield from tester.mouse_dn(1)
+        np.random.seed(0)
+        for _ in range(5):
+            yield from tester.move_cursor(np.random.randint(100, 200), np.random.randint(100, 200))
+        yield from tester.move_cursor(210, 200)
+        yield from tester.mouse_up(1)
+
+        yield from tester.move_cursor(210, 150)
+        yield from tester.pause(30)
+        yield from tester.scroll_dn()
+        yield from tester.pause(10)
+        yield from tester.scroll_dn()
+        yield from tester.pause(10)
+        yield from tester.scroll_dn()
+        yield from tester.pause(10)
+        yield from tester.scroll_dn()
+        yield from tester.move_cursor(200, 150)
+        yield from tester.scroll_dn()
+        yield from tester.pause(10)
+        yield from tester.scroll_dn()
+        yield from tester.pause(10)
+        yield from tester.scroll_dn()
+        yield from tester.move_cursor(100, 100)
+    return c.orr([controlee(), controller()])
+
+
 if __name__ == "__main__":
     im = all_examples(width=800, height=560, return_sshot=True, draw_cursor=False)
     Image.fromarray(im[...,:3]).save('screenshot.png')
@@ -108,3 +167,5 @@ if __name__ == "__main__":
     counter(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/counter.mp4')
 
     image(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/image.mp4')
+
+    plot(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/plot.mp4')
