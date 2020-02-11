@@ -18,7 +18,7 @@ from concur.core import orr, optional
 
 __pdoc__ = dict(test=False)
 
-def test(widget_gen, slow=False, draw_cursor=True, width=512, height=512, *args, **argv):
+def test(widget_gen, slow=None, draw_cursor=True, width=512, height=512, *args, **argv):
     return main("Automatic Tester",
         lambda puppet_renderer: widget_gen(draw_cursor, Testing(puppet_renderer, slow)),
         width, height,
