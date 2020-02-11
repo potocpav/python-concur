@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 
+"""Show line rendering issues in ImGui."""
+
+
 import concur as c
 from PIL import Image
 import numpy as np
 import imgui
 
+
 def graph(tex_id, tex_w, tex_h, tf):
     return c.orr([
-        c.draw.polyline([(-1, 0), (0, 0), (0, -0.3), (0.3, 0), (1, 0.1), (-1, 0.5), (-1, 0.2)], (0,0,0,0.5), closed=True, thickness=20, tf=tf),
-        # c.draw.polyline(np.random.rand(100000,2), (0,0,1,1), thickness=4, tf=tf),
+        c.draw.polyline([(-1, 0), (0, 0), (0, -0.3), (0.3, 0), (1, 0.1), (-1, 0.5), (-1, 0.2)], (0,0,0,0.5),
+        closed=True, thickness=20, tf=tf),
         ])
 
 

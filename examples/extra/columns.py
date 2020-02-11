@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+"""Simple table example using the columns API."""
+
+
 import concur as c
 
 

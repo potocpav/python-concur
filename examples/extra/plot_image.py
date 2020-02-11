@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 
+
+"""Show image drawing inside graphs."""
+
+
 import concur as c
 from PIL import Image
 import numpy as np
 
 def graph(tex_id, tex_w, tex_h, tf):
-    x = np.linspace(0, 512, 10000, dtype=np.float32)
-    y = np.sin(np.log2(np.abs(x)) * 10) * np.cos(np.log2(np.abs(x)) / 2) * 256 + 256
+    x = np.linspace(-512, 512, 10000, dtype=np.float32)
+    y = np.sin(np.log2(np.abs(x)) * 10) * np.cos(np.log2(np.abs(x)) / 2) * 100 + 100
     pts = np.stack([x, y]).T
 
     return c.orr([
         c.draw.image(tex_id, tex_w, tex_h, tf=tf),
-        c.draw.polyline(pts, (1,1,0,1), thickness=1, tf=tf),
+        c.draw.polyline(pts, (0,0,0,1), thickness=1, tf=tf),
         c.draw.rect(0, 0, 512, 512, (1,1,1,1), tf=tf),
         ])
 
 
 def app():
     view = c.plot.Frame((0, 0), (512, 512), keep_aspect=True)
-    arr = np.array(Image.open("examples/lenna.png"))
+    arr = np.array(Image.open("examples/lenna.png").convert('RGBA')) # RGBA for transparent backgound
     tex = c.texture(arr)
 
     while True:
