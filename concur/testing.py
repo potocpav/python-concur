@@ -69,10 +69,13 @@ class Testing(object):
     All the methods in this class are widgets, and they can be composed as usual using
     `concur.core.orr`, `yield from`, and friends.
     """
-    def __init__(self, puppet_renderer, slow):
+    def __init__(self, puppet_renderer, slow=None):
         assert isinstance(puppet_renderer, PuppetRenderer)
         self.puppet = puppet_renderer
-        self.slow = 'SLOW_TEST' in os.environ and os.environ['SLOW_TEST'] == '1'
+        if slow is None:
+            self.slow = 'SLOW_TEST' in os.environ and os.environ['SLOW_TEST'] == '1'
+        else:
+            self.slow = slow
         self.marked = {}
 
     def click(self, button=0):
