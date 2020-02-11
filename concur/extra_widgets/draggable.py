@@ -1,15 +1,16 @@
-""" Widget which can be dragged around. """
+""" Add dragging functionality to any Widget.
+
+Useful for e.g. control points in images. Buttons work well as the base widget, but most graphical
+widgets can be used, apart from the `concur.draw` ones. """
 
 
 import imgui
 
 
 def draggable(name, widget, tag=None):
-    """Add draggable functionality to a widget. Emits (dx, dy) when dragged.
+    """Add draggable functionality to a widget. Emits (dx, dy) when dragged. The underlying widget works as usual.
 
-    The underlying widget works as usual.
-
-    Returned values are equal to the drag amount from the previous frame.
+    Returned values are equal to the mouse position difference from the previous frame.
     """
     io = imgui.get_io()
     while True:

@@ -1,4 +1,8 @@
-# -*- coding: utf-8 -*-
+"""Automation back-end with screen capture and programmatical user input.
+
+Normally, this is used with functions in `concur.testing`.
+"""
+
 from __future__ import absolute_import
 
 import glfw
@@ -18,7 +22,7 @@ from imgui.integrations.opengl import ProgrammablePipelineRenderer
 
 
 class PuppetRenderer(ProgrammablePipelineRenderer):
-    'Renderer for automated testing'
+    """Renderer for automated testing. User inputs are set programmatically, rather than interactively."""
     def __init__(self, window):
         super(PuppetRenderer, self).__init__()
         self.window = window
@@ -57,6 +61,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         key_map[imgui.KEY_Z] = glfw.KEY_Z
 
     def process_inputs(self):
+        """Process the virtual user inputs. Called by `main` at the beginning of each frame."""
         io = imgui.get_io()
 
         window_size = glfw.get_window_size(self.window)
@@ -90,21 +95,32 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         self._mouse_wheel = 0.0
 
     def click(self, button=0):
+        """Simulate a mouse button click.
+
+        * 0 .. left button
+        * 1 .. right button
+        * 2 .. middle button
+        """
         self._click[button] = True
 
     def set_mouse_pos(self, x, y):
+        'Set the mouse cursor position to a specified value.'
         self._mouse_pos = x, y
 
     def scroll_up(self):
+        'Scroll the mouse wheel up one click.'
         self._mouse_wheel = 1
 
     def scroll_dn(self):
+        'Scroll the mouse wheel down one click.'
         self._mouse_wheel = -1
 
     def mouse_dn(self, button=0):
+        """Push a specified mouse button."""
         self._mouse_buttons[button] = True
 
     def mouse_up(self, button=0):
+        """Release a specified mouse button."""
         self._mouse_buttons[button] = False
 
 
@@ -114,7 +130,7 @@ def main(name, widget_gen, width, height, save_screencast=None, return_sshot=Fal
     The resulting window is not hooked up to the user input. Instead, input is handled
     by a PuppetRenderer instance.
 
-    `widget_gen` takes as an argument a PuppetRenderer instance, and returns a widget.
+    `widget_gen` takes as an argument a `PuppetRenderer` instance, and returns a widget.
     """
     imgui.create_context()
 

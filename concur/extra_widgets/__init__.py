@@ -1,6 +1,7 @@
 """ Extra widgets that do not directly correspond to ImGui calls.
 """
 
+__pdoc__ = dict(time_controls=False)
 
 import concur.extra_widgets.plot
 
