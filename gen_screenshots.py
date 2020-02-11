@@ -46,6 +46,50 @@ def counter(tester):
     return c.orr([controlee(), controller()])
 
 
+def pan_and_zoom(tester):
+    yield from tester.pause(30)
+    yield from tester.move_cursor(200, 150)
+    yield from tester.scroll_up()
+    yield from tester.pause(10)
+    yield from tester.scroll_up()
+    yield from tester.pause(10)
+    yield from tester.scroll_up()
+    yield from tester.move_cursor(210, 150)
+    yield from tester.scroll_up()
+    yield from tester.pause(10)
+    yield from tester.scroll_up()
+    yield from tester.pause(10)
+    yield from tester.scroll_up()
+    yield from tester.pause(10)
+    yield from tester.scroll_up()
+    yield from tester.pause(30)
+    yield from tester.move_cursor(210, 200)
+
+    yield from tester.mouse_dn(1)
+    np.random.seed(0)
+    for _ in range(5):
+        yield from tester.move_cursor(np.random.randint(100, 200), np.random.randint(100, 200))
+    yield from tester.move_cursor(210, 200)
+    yield from tester.mouse_up(1)
+
+    yield from tester.move_cursor(210, 150)
+    yield from tester.pause(30)
+    yield from tester.scroll_dn()
+    yield from tester.pause(10)
+    yield from tester.scroll_dn()
+    yield from tester.pause(10)
+    yield from tester.scroll_dn()
+    yield from tester.pause(10)
+    yield from tester.scroll_dn()
+    yield from tester.move_cursor(200, 150)
+    yield from tester.scroll_dn()
+    yield from tester.pause(10)
+    yield from tester.scroll_dn()
+    yield from tester.pause(10)
+    yield from tester.scroll_dn()
+    yield from tester.move_cursor(100, 100)
+
+
 @c.testing.test_widget
 def image(tester):
     def controlee():
@@ -53,50 +97,7 @@ def image(tester):
         while True:
             _, view = yield from c.image("Image", view)
             yield
-    def controller():
-        yield from tester.pause(30)
-        yield from tester.move_cursor(200, 150)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.move_cursor(210, 150)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(30)
-        yield from tester.move_cursor(210, 200)
-
-        yield from tester.mouse_dn(1)
-        np.random.seed(0)
-        for _ in range(5):
-            yield from tester.move_cursor(np.random.randint(100, 200), np.random.randint(100, 200))
-        yield from tester.move_cursor(210, 200)
-        yield from tester.mouse_up(1)
-
-        yield from tester.move_cursor(210, 150)
-        yield from tester.pause(30)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.move_cursor(200, 150)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.move_cursor(100, 100)
-
-    return c.orr([controlee(), controller()])
+    return c.orr([controlee(), pan_and_zoom(tester)])
 
 
 @c.testing.test_widget
@@ -111,50 +112,7 @@ def plot(tester):
         while True:
             _, frame = yield from c.frame("Frame", frame, line)
             yield
-
-    def controller():
-        yield from tester.pause(30)
-        yield from tester.move_cursor(200, 150)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.move_cursor(210, 150)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(10)
-        yield from tester.scroll_up()
-        yield from tester.pause(30)
-        yield from tester.move_cursor(210, 200)
-
-        yield from tester.mouse_dn(1)
-        np.random.seed(0)
-        for _ in range(5):
-            yield from tester.move_cursor(np.random.randint(100, 200), np.random.randint(100, 200))
-        yield from tester.move_cursor(210, 200)
-        yield from tester.mouse_up(1)
-
-        yield from tester.move_cursor(210, 150)
-        yield from tester.pause(30)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.move_cursor(200, 150)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.pause(10)
-        yield from tester.scroll_dn()
-        yield from tester.move_cursor(100, 100)
-    return c.orr([controlee(), controller()])
+    return c.orr([controlee(), pan_and_zoom(tester)])
 
 
 @c.testing.test_widget
@@ -180,16 +138,16 @@ def animation(tester):
 
 
 if __name__ == "__main__":
-    im = all_examples(width=800, height=560, return_sshot=True, draw_cursor=False)
+    im = all_examples(slow=True, width=800, height=600, return_sshot=True, draw_cursor=False)
     Image.fromarray(im[...,:3]).save('screenshot.png')
 
-    im = hello_world(width=400, height=288, return_sshot=True, draw_cursor=False)
+    im = hello_world(slow=True, width=400, height=288, return_sshot=True, draw_cursor=False)
     Image.fromarray(im[...,:3]).save('docs/sshots/hello_world.png')
 
-    counter(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/counter.mp4')
+    counter(slow=True, width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/counter.mp4')
 
-    image(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/image.mp4')
+    image(slow=True, width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/image.mp4')
 
-    plot(width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/plot.mp4')
+    plot(slow=True, width=400, height=288, draw_cursor=True, save_screencast='docs/sshots/plot.mp4')
 
-    animation(width=400, height=288, draw_cursor=False, save_screencast='docs/sshots/animation.mp4')
+    animation(slow=True, width=400, height=288, draw_cursor=False, save_screencast='docs/sshots/animation.mp4')
