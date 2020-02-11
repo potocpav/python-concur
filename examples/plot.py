@@ -10,9 +10,9 @@ def graph(tf):
 
 
 def app():
-    view = c.plot.Frame((-1, 2), (1, -2), keep_aspect=False, fix_axis='y')
+    view = c.Frame((-1, 2), (1, -2), keep_aspect=False, fix_axis='y')
     while True:
-        _, view = yield from c.plot.frame("Frame", view, graph)
+        _, view = yield from c.frame("Frame", view, graph)
         yield
 
 

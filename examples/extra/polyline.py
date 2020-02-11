@@ -17,7 +17,7 @@ def graph(tex_id, tex_w, tex_h, tf):
 
 
 def app():
-    view = c.plot.Frame((-1, -1), (1, 1), keep_aspect=True)
+    view = c.Frame((-1, -1), (1, 1), keep_aspect=True)
     arr = np.array(Image.open("examples/lenna.png"))
     tex = c.texture(arr)
     style = imgui.get_style()
@@ -25,7 +25,7 @@ def app():
 
     while True:
         tag, value = yield from c.orr([
-            c.window("Graph", c.plot.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
+            c.window("Graph", c.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
             c.window("Controls", c.checkbox("Antialiasing", style.anti_aliased_lines)),
             ])
         if tag == "Frame":

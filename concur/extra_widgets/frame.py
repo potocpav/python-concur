@@ -1,4 +1,4 @@
-"""pannable, zoomable graph area with axes and gridlines."""
+"""Pannable, zoomable graph area with axes and gridlines."""
 
 from functools import partial
 import imgui

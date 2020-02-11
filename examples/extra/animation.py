@@ -10,10 +10,10 @@ def graph(tf):
     return c.draw.polyline(pts, (0,0,1,1), tf=tf)
 
 def app():
-    view = c.plot.Frame((-1.5, 1.5), (1.5, -1.5))
+    view = c.Frame((-1.5, 1.5), (1.5, -1.5))
     while True:
         key, value = yield from c.orr([
-            c.plot.frame("Frame", view, graph),
+            c.frame("Frame", view, graph),
             c.event(("Tick", None)), # refresh every frame
             ])
         if key == "Frame":

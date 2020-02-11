@@ -1,7 +1,7 @@
 """ Zoomable, pannable widget with arbitrary content.
 
 This widget is rarely used directly by user code. Most of the time, it's more convenient to use
-higher-level widgets `concur.extra_widgets.image.image`, or `concur.extra_widgets.plot.frame.frame`.
+higher-level widgets `concur.extra_widgets.image.image`, or `concur.extra_widgets.frame.frame`.
 """
 
 

@@ -21,13 +21,13 @@ def graph(tex_id, tex_w, tex_h, tf):
 
 
 def app():
-    view = c.plot.Frame((0, 0), (512, 512), keep_aspect=True)
+    view = c.Frame((0, 0), (512, 512), keep_aspect=True)
     arr = np.array(Image.open("examples/lenna.png").convert('RGBA')) # RGBA for transparent backgound
     tex = c.texture(arr)
 
     while True:
         tag, value = yield from c.orr([
-            c.window("Graph", c.plot.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
+            c.window("Graph", c.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
             c.window("Controls", c.button("Reset View")),
             ])
         if tag == "Frame":
