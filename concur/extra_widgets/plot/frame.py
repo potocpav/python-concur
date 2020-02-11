@@ -1,4 +1,4 @@
-
+"""pannable, zoomable graph area with axes and gridlines."""
 
 from functools import partial
 import imgui
@@ -14,6 +14,16 @@ margins = [50, 10, -10, -20]
 
 class Frame(PanZoom):
     def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None):
+        """
+        Simple PanZoom re-export with specified margins.
+
+        Arguments:
+            top_left:     Coordinates of the top left corner of the displayed content area.
+            bottom_right: Coordinates of the bottom right corner of the displayed content area.
+            keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
+                          if keep_aspect==True, it is equivalent to keep_aspect==1.
+            fix_axis:     Do not zoom in a given axis (`'x'`, `'y'`, or `None`).
+        """
         super().__init__(top_left, bottom_right, keep_aspect=keep_aspect, fix_axis=fix_axis, margins=margins)
 
 
@@ -67,5 +77,13 @@ def _frame(content_gen, show_grid, tf):
 
 
 def frame(name, state, content_gen=None, show_grid=True):
+    """The frame widget.
+
+    `state` is an instance of `Frame`. See the
+    [plot example](https://github.com/potocpav/python-concur/blob/master/examples/plot.py)
+    for an usage example.
+
+    Content is specified using `content_gen`, analogously to how it's done in `concur.extra_widgets.image.image`.
+    """
     return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
         pan_zoom(name, state, content_gen=partial(_frame, content_gen, show_grid)))

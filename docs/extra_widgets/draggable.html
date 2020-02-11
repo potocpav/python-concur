@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>concur.extra_widgets.draggable API documentation</title>
-<meta name="description" content="Widget which can be dragged around." />
+<meta name="description" content="Add dragging functionality to any Widget …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,23 +20,26 @@
 <h1 class="title">Module <code>concur.extra_widgets.draggable</code></h1>
 </header>
 <section id="section-intro">
-<p>Widget which can be dragged around.</p>
+<p>Add dragging functionality to any Widget.</p>
+<p>Useful for e.g. control points in images. Buttons work well as the base widget, but most graphical
+widgets can be used, apart from the <a title="concur.draw" href="../draw.html"><code>concur.draw</code></a> ones.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Widget which can be dragged around. &#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34; Add dragging functionality to any Widget.
+
+Useful for e.g. control points in images. Buttons work well as the base widget, but most graphical
+widgets can be used, apart from the `concur.draw` ones. &#34;&#34;&#34;
 
 
 import imgui
 
 
 def draggable(name, widget, tag=None):
-    &#34;&#34;&#34;Add draggable functionality to a widget. Emits (dx, dy) when dragged.
+    &#34;&#34;&#34;Add draggable functionality to a widget. Emits (dx, dy) when dragged. The underlying widget works as usual.
 
-    The underlying widget works as usual.
-
-    Returned values are equal to the drag amount from the previous frame.
+    Returned values are equal to the mouse position difference from the previous frame.
     &#34;&#34;&#34;
     io = imgui.get_io()
     while True:
@@ -63,19 +66,16 @@ def draggable(name, widget, tag=None):
 <span>def <span class="ident">draggable</span></span>(<span>name, widget, tag=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Add draggable functionality to a widget. Emits (dx, dy) when dragged.</p>
-<p>The underlying widget works as usual.</p>
-<p>Returned values are equal to the drag amount from the previous frame.</p></section>
+<section class="desc"><p>Add draggable functionality to a widget. Emits (dx, dy) when dragged. The underlying widget works as usual.</p>
+<p>Returned values are equal to the mouse position difference from the previous frame.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def draggable(name, widget, tag=None):
-    &#34;&#34;&#34;Add draggable functionality to a widget. Emits (dx, dy) when dragged.
+    &#34;&#34;&#34;Add draggable functionality to a widget. Emits (dx, dy) when dragged. The underlying widget works as usual.
 
-    The underlying widget works as usual.
-
-    Returned values are equal to the drag amount from the previous frame.
+    Returned values are equal to the mouse position difference from the previous frame.
     &#34;&#34;&#34;
     io = imgui.get_io()
     while True:

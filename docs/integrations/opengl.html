@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>concur.integrations.opengl API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Raw OpenGL functions, mostly for creating and deleting textures." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,13 +20,19 @@
 <h1 class="title">Module <code>concur.integrations.opengl</code></h1>
 </header>
 <section id="section-intro">
+<p>Raw OpenGL functions, mostly for creating and deleting textures.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import numpy as np
+<pre><code class="python">&#34;&#34;&#34;Raw OpenGL functions, mostly for creating and deleting textures.&#34;&#34;&#34;
+
+import numpy as np
 from PIL import Image
 from OpenGL.GL import *
+
+
+__pdoc__ = dict(create_offscreen_fb=False, get_fb_data=False)
 
 
 def texture(arr):
@@ -67,7 +73,9 @@ def rm_texture(tex_id):
 
 
 def replace_texture(arr, prev_tex_id):
-    &#34;&#34;&#34; Delete the previous texture, if not None, and create a new one, returning its texture ID. &#34;&#34;&#34;
+    &#34;&#34;&#34; Convenience function: delete the texture `prev_tex_id`, if not `None`, and create a new one,
+    returning its texture ID.
+    &#34;&#34;&#34;
     if prev_tex_id is not None:
         rm_texture(prev_tex_id)
     return texture(arr)
@@ -103,58 +111,20 @@ def get_fb_data(offscreen_fb, width, height):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="concur.integrations.opengl.create_offscreen_fb"><code class="name flex">
-<span>def <span class="ident">create_offscreen_fb</span></span>(<span>width, height)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def create_offscreen_fb(width, height):
-    texture = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D, texture)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, None)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-
-    # create new framebuffer
-    offscreen_fb = glGenFramebuffers(1)
-    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
-    # attach texture to framebuffer
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0)
-    return offscreen_fb</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.opengl.get_fb_data"><code class="name flex">
-<span>def <span class="ident">get_fb_data</span></span>(<span>offscreen_fb, width, height)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_fb_data(offscreen_fb, width, height):
-    glBindFramebuffer(GL_FRAMEBUFFER, offscreen_fb)
-    pixels = glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE)
-    image = Image.frombytes(&#39;RGBA&#39;, (width, height), pixels)
-    image = image.transpose(Image.FLIP_TOP_BOTTOM)
-    return np.array(image)</code></pre>
-</details>
-</dd>
 <dt id="concur.integrations.opengl.replace_texture"><code class="name flex">
 <span>def <span class="ident">replace_texture</span></span>(<span>arr, prev_tex_id)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Delete the previous texture, if not None, and create a new one, returning its texture ID.</p></section>
+<section class="desc"><p>Convenience function: delete the texture <code>prev_tex_id</code>, if not <code>None</code>, and create a new one,
+returning its texture ID.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def replace_texture(arr, prev_tex_id):
-    &#34;&#34;&#34; Delete the previous texture, if not None, and create a new one, returning its texture ID. &#34;&#34;&#34;
+    &#34;&#34;&#34; Convenience function: delete the texture `prev_tex_id`, if not `None`, and create a new one,
+    returning its texture ID.
+    &#34;&#34;&#34;
     if prev_tex_id is not None:
         rm_texture(prev_tex_id)
     return texture(arr)</code></pre>
@@ -241,9 +211,7 @@ def get_fb_data(offscreen_fb, width, height):
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="two-column">
-<li><code><a title="concur.integrations.opengl.create_offscreen_fb" href="#concur.integrations.opengl.create_offscreen_fb">create_offscreen_fb</a></code></li>
-<li><code><a title="concur.integrations.opengl.get_fb_data" href="#concur.integrations.opengl.get_fb_data">get_fb_data</a></code></li>
+<ul class="">
 <li><code><a title="concur.integrations.opengl.replace_texture" href="#concur.integrations.opengl.replace_texture">replace_texture</a></code></li>
 <li><code><a title="concur.integrations.opengl.rm_texture" href="#concur.integrations.opengl.rm_texture">rm_texture</a></code></li>
 <li><code><a title="concur.integrations.opengl.rm_textures" href="#concur.integrations.opengl.rm_textures">rm_textures</a></code></li>

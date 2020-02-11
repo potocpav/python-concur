@@ -9,13 +9,17 @@
 
 # API
 
-All the functions and classes from `concur.core`, `concur.widgets`, and `concur.extra_widgets` are re-exported in the
-`concur` module. The most convenient way to access them is by importing `concur` qualified:
+Most of the functions and classes from submodules (`concur.core`, `concur.widgets`, etc.) are re-exported in the
+`concur` root module. The most convenient way to access them is by importing `concur` qualified:
 
 ```python
 import concur as c
+
+# nearly anything can be accessed using `c.anything` now.
 ```
 
+A notable exception is the `concur.draw` functions: they have a bit different semantics (no layout,
+no user interaction), so they are separate and can be accessed using `c.draw.something`.
 """
 
 import concur.extra_widgets

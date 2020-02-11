@@ -31,6 +31,8 @@
 All of the functions in this module are re-exported in the root module for convenience.
 &#34;&#34;&#34;
 
+__pdoc__ = dict(remote_widget=False, fork_action=False, RemoteAction=False)
+
 
 import queue
 from typing import Generator, Any, Iterable, List, Callable, Tuple
@@ -42,7 +44,19 @@ Widget = Any # It isn&#39;t possible to type Widget correctly using mypy. Prove 
 
 
 def orr(widgets: Iterable[Widget]) -&gt; Widget:
-    &#34;&#34;&#34; Chain elements in space, returning the first event fired. &#34;&#34;&#34;
+    &#34;&#34;&#34; Chain elements in space, returning the first event fired.
+
+    This is the principal way to compose widgets in Concur. Windows, for example, typically contain multiple
+    widgets composed into one by `orr`:
+
+    ```python
+    c.window(&#34;Buttons&#34;, c.orr([
+        c.button(&#34;Button 1&#34;),
+        c.button(&#34;Button 2&#34;),
+        ]))
+    ```
+
+    Widgets are laid out vertically. For horizontal layout, use `concur.widgets.orr_same_line`.&#34;&#34;&#34;
     stop = False
     value = None
     while True:
@@ -63,7 +77,32 @@ def orr(widgets: Iterable[Widget]) -&gt; Widget:
 
 
 def multi_orr(widgets: Iterable[Widget]) -&gt; Widget:
-    &#34;&#34;&#34; Chain elements in space, returning all the events fired as a list &#34;&#34;&#34;
+    &#34;&#34;&#34; Chain elements in space, returning all the events fired as a list.
+
+    This is an alternative to `concur.core.orr` which doesn&#39;t throw away events, but is somewhat
+    less convenient to compose. Care must be taken not to update the same state variable twice
+    as a reaction to two different concurrent events. The first update may get overwritten.
+
+    Mostly, the transition from `orr` to `multi_orr` is trivial. Replace this:
+    ```python
+    key, value = c.orr([...])
+    # update
+    if key == &lt;this&gt;:
+        ...
+    elif key == &lt;that&gt;:
+        ...
+    ```
+    with this:
+    ```python
+    events = c.multi_orr([...])
+    for key, value in events:
+        # update
+        if key == &lt;this&gt;:
+            ...
+        elif key == &lt;that&gt;:
+            ...
+    ```
+    &#34;&#34;&#34;
     events: List = []
     while events == []:
         for i, elem in enumerate(widgets):
@@ -85,7 +124,10 @@ def forever(widget_gen: Callable[..., Widget], *args, **kwargs) -&gt; Widget:
     Function generating the widget must be passed as the first argument;
     remaining arguments are passed to said function.
 
-    This can be used to easily suppress any widget events
+    This can be used to easily suppress any widget events, like this:
+    ```python
+    c.forever(c.button, &#34;Not Clickable&#34;)
+    ```
     &#34;&#34;&#34;
     widget = widget_gen(*args, **kwargs)
     while True:
@@ -100,8 +142,10 @@ def forever(widget_gen: Callable[..., Widget], *args, **kwargs) -&gt; Widget:
 def lift(f: Callable[..., Any], *args, **argv) -&gt; Widget:
     &#34;&#34;&#34; Lift a function into a never-ending widget.
 
-    Useful for wrapping ImGui calls and passive widgets.
-    It is used to wrap some ImGui calls in `concur.widgets`.
+    Useful for wrapping ImGui calls and passive widgets. For example, to create a text widget:
+    ```python
+    c.lift(imgui.text, &#34;some text&#34;)
+    ```
     &#34;&#34;&#34;
     while True:
         f(*args, **argv)
@@ -113,7 +157,7 @@ def interactive_elem(elem, name, *args, **kwargs):
 
     Elements which take `name` as the first argument and return
     a pair `(changed, value)` can be wrapped using this function.
-    It is used to wrap some imgui widgets in `concur.widgets`.
+    It is used to wrap many imgui widgets in `concur.widgets`.
     &#34;&#34;&#34;
     if &#39;tag&#39; in kwargs:
         tag = kwargs[&#39;tag&#39;]
@@ -129,7 +173,7 @@ def interactive_elem(elem, name, *args, **kwargs):
 
 
 def nothing():
-    &#34;&#34;&#34; Widget that does nothing. &#34;&#34;&#34;
+    &#34;&#34;&#34; Widget that does nothing forever. &#34;&#34;&#34;
     while True: yield
 
 
@@ -150,7 +194,9 @@ def tag(tag_name: Any, elem: Widget) -&gt; Widget:
 
 
 def tag_value(tag_name: Any, elem: Widget) -&gt; Widget:
-    &#34;&#34;&#34; Transform any returned value `(t, v)` of `elem` into a tuple `t, (tag_name, v)`. &#34;&#34;&#34;
+    &#34;&#34;&#34; Transform any returned value `(t, v)` of `elem` into a tuple `t, (tag_name, v)`.
+
+    Useful for identifying elements in lists and tables.&#34;&#34;&#34;
     t, v = yield from elem
     return t, (tag_name, v)
 
@@ -162,6 +208,12 @@ def map(f: Any, elem: Widget) -&gt; Widget:
 
 
 def stateful(elem: Callable[[Any], Widget], initial_state: Any) -&gt; Widget:
+    &#34;&#34;&#34;Thread state from the widget into itself, creating a stateful never-ending widget.
+
+    Explicit state threading is mostly better than using this function, due to the added
+    flexibility and due to the fact than excessive use of higher-order functions is not
+    very Pythonic.
+    &#34;&#34;&#34;
     state = initial_state
     while True:
         state = yield from elem(state)
@@ -169,10 +221,14 @@ def stateful(elem: Callable[[Any], Widget], initial_state: Any) -&gt; Widget:
 
 
 class Block(object):
-    &#34;&#34;&#34; Create a widget that returns on future result. Useful for async computations.
+    &#34;&#34;&#34; Create a widget that returns on [Future](https://docs.python.org/3.9/library/asyncio-future.html#asyncio.Future) result.
+
+    This is useful for easily doing async computations. For an usage example, see the
+    [timers example](https://github.com/potocpav/python-concur/blob/master/examples/timers.py).
 
     This widget is constructed manually using a class, because the future must be
     canceled in the destructor. Destructor isn&#39;t available in generator functions.
+
     &#34;&#34;&#34;
     def __init__(self, future):
         self.future = future
@@ -189,7 +245,7 @@ class Block(object):
 
 
 def listen(que):
-    &#34;&#34;&#34; Listen to messages on a given queue. &#34;&#34;&#34;
+    &#34;&#34;&#34; Listen for messages in a given queue. &#34;&#34;&#34;
     while True:
         try:
             return que.get_nowait()
@@ -235,6 +291,7 @@ def fork_action(future, rest_gen):
     &#34;&#34;&#34; A common pattern - running a long running action (`future`) and keeping the GUI (`rest`) responsive.
 
     Because the action can&#39;t be restarted on every gui event, we must *fork* it off in the beginning.
+    It is typically easier to expicitly create a future than to use this function.
     &#34;&#34;&#34;
     action, value_gen = remote_widget(future)
     return orr([action, rest_gen(value_gen)])</code></pre>
@@ -269,7 +326,9 @@ def fork_action(future, rest_gen):
 <section class="desc"><p>Repeat a widget forever.</p>
 <p>Function generating the widget must be passed as the first argument;
 remaining arguments are passed to said function.</p>
-<p>This can be used to easily suppress any widget events</p></section>
+<p>This can be used to easily suppress any widget events, like this:</p>
+<pre><code class="python">c.forever(c.button, &quot;Not Clickable&quot;)
+</code></pre></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -280,7 +339,10 @@ remaining arguments are passed to said function.</p>
     Function generating the widget must be passed as the first argument;
     remaining arguments are passed to said function.
 
-    This can be used to easily suppress any widget events
+    This can be used to easily suppress any widget events, like this:
+    ```python
+    c.forever(c.button, &#34;Not Clickable&#34;)
+    ```
     &#34;&#34;&#34;
     widget = widget_gen(*args, **kwargs)
     while True:
@@ -291,25 +353,6 @@ remaining arguments are passed to said function.</p>
         yield</code></pre>
 </details>
 </dd>
-<dt id="concur.core.fork_action"><code class="name flex">
-<span>def <span class="ident">fork_action</span></span>(<span>future, rest_gen)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>A common pattern - running a long running action (<code>future</code>) and keeping the GUI (<code>rest</code>) responsive.</p>
-<p>Because the action can't be restarted on every gui event, we must <em>fork</em> it off in the beginning.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def fork_action(future, rest_gen):
-    &#34;&#34;&#34; A common pattern - running a long running action (`future`) and keeping the GUI (`rest`) responsive.
-
-    Because the action can&#39;t be restarted on every gui event, we must *fork* it off in the beginning.
-    &#34;&#34;&#34;
-    action, value_gen = remote_widget(future)
-    return orr([action, rest_gen(value_gen)])</code></pre>
-</details>
-</dd>
 <dt id="concur.core.interactive_elem"><code class="name flex">
 <span>def <span class="ident">interactive_elem</span></span>(<span>elem, name, *args, **kwargs)</span>
 </code></dt>
@@ -317,7 +360,7 @@ remaining arguments are passed to said function.</p>
 <section class="desc"><p>Function useful for wrapping a wide range of ImGui widgets.</p>
 <p>Elements which take <code>name</code> as the first argument and return
 a pair <code>(changed, value)</code> can be wrapped using this function.
-It is used to wrap some imgui widgets in <a title="concur.widgets" href="widgets.html"><code>concur.widgets</code></a>.</p></section>
+It is used to wrap many imgui widgets in <a title="concur.widgets" href="widgets.html"><code>concur.widgets</code></a>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -327,7 +370,7 @@ It is used to wrap some imgui widgets in <a title="concur.widgets" href="widgets
 
     Elements which take `name` as the first argument and return
     a pair `(changed, value)` can be wrapped using this function.
-    It is used to wrap some imgui widgets in `concur.widgets`.
+    It is used to wrap many imgui widgets in `concur.widgets`.
     &#34;&#34;&#34;
     if &#39;tag&#39; in kwargs:
         tag = kwargs[&#39;tag&#39;]
@@ -347,8 +390,9 @@ It is used to wrap some imgui widgets in <a title="concur.widgets" href="widgets
 </code></dt>
 <dd>
 <section class="desc"><p>Lift a function into a never-ending widget.</p>
-<p>Useful for wrapping ImGui calls and passive widgets.
-It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.html"><code>concur.widgets</code></a>.</p></section>
+<p>Useful for wrapping ImGui calls and passive widgets. For example, to create a text widget:</p>
+<pre><code class="python">c.lift(imgui.text, &quot;some text&quot;)
+</code></pre></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -356,8 +400,10 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <pre><code class="python">def lift(f: Callable[..., Any], *args, **argv) -&gt; Widget:
     &#34;&#34;&#34; Lift a function into a never-ending widget.
 
-    Useful for wrapping ImGui calls and passive widgets.
-    It is used to wrap some ImGui calls in `concur.widgets`.
+    Useful for wrapping ImGui calls and passive widgets. For example, to create a text widget:
+    ```python
+    c.lift(imgui.text, &#34;some text&#34;)
+    ```
     &#34;&#34;&#34;
     while True:
         f(*args, **argv)
@@ -368,13 +414,13 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <span>def <span class="ident">listen</span></span>(<span>que)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Listen to messages on a given queue.</p></section>
+<section class="desc"><p>Listen for messages in a given queue.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def listen(que):
-    &#34;&#34;&#34; Listen to messages on a given queue. &#34;&#34;&#34;
+    &#34;&#34;&#34; Listen for messages in a given queue. &#34;&#34;&#34;
     while True:
         try:
             return que.get_nowait()
@@ -401,13 +447,58 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <span>def <span class="ident">multi_orr</span></span>(<span>widgets)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Chain elements in space, returning all the events fired as a list</p></section>
+<section class="desc"><p>Chain elements in space, returning all the events fired as a list.</p>
+<p>This is an alternative to <a title="concur.core.orr" href="#concur.core.orr"><code>orr()</code></a> which doesn't throw away events, but is somewhat
+less convenient to compose. Care must be taken not to update the same state variable twice
+as a reaction to two different concurrent events. The first update may get overwritten.</p>
+<p>Mostly, the transition from <a title="concur.core.orr" href="#concur.core.orr"><code>orr()</code></a> to <a title="concur.core.multi_orr" href="#concur.core.multi_orr"><code>multi_orr()</code></a> is trivial. Replace this:</p>
+<pre><code class="python">key, value = c.orr([...])
+# update
+if key == &lt;this&gt;:
+    ...
+elif key == &lt;that&gt;:
+    ...
+</code></pre>
+<p>with this:</p>
+<pre><code class="python">events = c.multi_orr([...])
+for key, value in events:
+    # update
+    if key == &lt;this&gt;:
+        ...
+    elif key == &lt;that&gt;:
+        ...
+</code></pre></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def multi_orr(widgets: Iterable[Widget]) -&gt; Widget:
-    &#34;&#34;&#34; Chain elements in space, returning all the events fired as a list &#34;&#34;&#34;
+    &#34;&#34;&#34; Chain elements in space, returning all the events fired as a list.
+
+    This is an alternative to `concur.core.orr` which doesn&#39;t throw away events, but is somewhat
+    less convenient to compose. Care must be taken not to update the same state variable twice
+    as a reaction to two different concurrent events. The first update may get overwritten.
+
+    Mostly, the transition from `orr` to `multi_orr` is trivial. Replace this:
+    ```python
+    key, value = c.orr([...])
+    # update
+    if key == &lt;this&gt;:
+        ...
+    elif key == &lt;that&gt;:
+        ...
+    ```
+    with this:
+    ```python
+    events = c.multi_orr([...])
+    for key, value in events:
+        # update
+        if key == &lt;this&gt;:
+            ...
+        elif key == &lt;that&gt;:
+            ...
+    ```
+    &#34;&#34;&#34;
     events: List = []
     while events == []:
         for i, elem in enumerate(widgets):
@@ -427,13 +518,13 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <span>def <span class="ident">nothing</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Widget that does nothing.</p></section>
+<section class="desc"><p>Widget that does nothing forever.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def nothing():
-    &#34;&#34;&#34; Widget that does nothing. &#34;&#34;&#34;
+    &#34;&#34;&#34; Widget that does nothing forever. &#34;&#34;&#34;
     while True: yield</code></pre>
 </details>
 </dd>
@@ -455,13 +546,33 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <span>def <span class="ident">orr</span></span>(<span>widgets)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Chain elements in space, returning the first event fired.</p></section>
+<section class="desc"><p>Chain elements in space, returning the first event fired.</p>
+<p>This is the principal way to compose widgets in Concur. Windows, for example, typically contain multiple
+widgets composed into one by <a title="concur.core.orr" href="#concur.core.orr"><code>orr()</code></a>:</p>
+<pre><code class="python">c.window(&quot;Buttons&quot;, c.orr([
+    c.button(&quot;Button 1&quot;),
+    c.button(&quot;Button 2&quot;),
+    ]))
+</code></pre>
+<p>Widgets are laid out vertically. For horizontal layout, use <a title="concur.widgets.orr_same_line" href="widgets.html#concur.widgets.orr_same_line"><code>orr_same_line()</code></a>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def orr(widgets: Iterable[Widget]) -&gt; Widget:
-    &#34;&#34;&#34; Chain elements in space, returning the first event fired. &#34;&#34;&#34;
+    &#34;&#34;&#34; Chain elements in space, returning the first event fired.
+
+    This is the principal way to compose widgets in Concur. Windows, for example, typically contain multiple
+    widgets composed into one by `orr`:
+
+    ```python
+    c.window(&#34;Buttons&#34;, c.orr([
+        c.button(&#34;Button 1&#34;),
+        c.button(&#34;Button 2&#34;),
+        ]))
+    ```
+
+    Widgets are laid out vertically. For horizontal layout, use `concur.widgets.orr_same_line`.&#34;&#34;&#34;
     stop = False
     value = None
     while True:
@@ -481,40 +592,25 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
             yield</code></pre>
 </details>
 </dd>
-<dt id="concur.core.remote_widget"><code class="name flex">
-<span>def <span class="ident">remote_widget</span></span>(<span>future)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Separate the effect of the widget from its result</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def remote_widget(future):
-    &#34;&#34;&#34; Separate the effect of the widget from its result &#34;&#34;&#34;
-    q = queue.Queue()
-
-    def value():
-        while True:
-            try:
-                v = q.get_nowait()
-                return v
-            except queue.Empty:
-                yield
-
-    return RemoteAction(future, q), value</code></pre>
-</details>
-</dd>
 <dt id="concur.core.stateful"><code class="name flex">
 <span>def <span class="ident">stateful</span></span>(<span>elem, initial_state)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Thread state from the widget into itself, creating a stateful never-ending widget.</p>
+<p>Explicit state threading is mostly better than using this function, due to the added
+flexibility and due to the fact than excessive use of higher-order functions is not
+very Pythonic.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def stateful(elem: Callable[[Any], Widget], initial_state: Any) -&gt; Widget:
+    &#34;&#34;&#34;Thread state from the widget into itself, creating a stateful never-ending widget.
+
+    Explicit state threading is mostly better than using this function, due to the added
+    flexibility and due to the fact than excessive use of higher-order functions is not
+    very Pythonic.
+    &#34;&#34;&#34;
     state = initial_state
     while True:
         state = yield from elem(state)
@@ -539,13 +635,16 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <span>def <span class="ident">tag_value</span></span>(<span>tag_name, elem)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Transform any returned value <code>(t, v)</code> of <code>elem</code> into a tuple <code>t, (tag_name, v)</code>.</p></section>
+<section class="desc"><p>Transform any returned value <code>(t, v)</code> of <code>elem</code> into a tuple <code>t, (tag_name, v)</code>.</p>
+<p>Useful for identifying elements in lists and tables.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def tag_value(tag_name: Any, elem: Widget) -&gt; Widget:
-    &#34;&#34;&#34; Transform any returned value `(t, v)` of `elem` into a tuple `t, (tag_name, v)`. &#34;&#34;&#34;
+    &#34;&#34;&#34; Transform any returned value `(t, v)` of `elem` into a tuple `t, (tag_name, v)`.
+
+    Useful for identifying elements in lists and tables.&#34;&#34;&#34;
     t, v = yield from elem
     return t, (tag_name, v)</code></pre>
 </details>
@@ -560,7 +659,9 @@ It is used to wrap some ImGui calls in <a title="concur.widgets" href="widgets.h
 <span>(</span><span>future)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a widget that returns on future result. Useful for async computations.</p>
+<section class="desc"><p>Create a widget that returns on <a href="https://docs.python.org/3.9/library/asyncio-future.html#asyncio.Future">Future</a> result.</p>
+<p>This is useful for easily doing async computations. For an usage example, see the
+<a href="https://github.com/potocpav/python-concur/blob/master/examples/timers.py">timers example</a>.</p>
 <p>This widget is constructed manually using a class, because the future must be
 canceled in the destructor. Destructor isn't available in generator functions.</p></section>
 <details class="source">
@@ -568,10 +669,14 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Block(object):
-    &#34;&#34;&#34; Create a widget that returns on future result. Useful for async computations.
+    &#34;&#34;&#34; Create a widget that returns on [Future](https://docs.python.org/3.9/library/asyncio-future.html#asyncio.Future) result.
+
+    This is useful for easily doing async computations. For an usage example, see the
+    [timers example](https://github.com/potocpav/python-concur/blob/master/examples/timers.py).
 
     This widget is constructed manually using a class, because the future must be
     canceled in the destructor. Destructor isn&#39;t available in generator functions.
+
     &#34;&#34;&#34;
     def __init__(self, future):
         self.future = future
@@ -585,35 +690,6 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 
     def __del__(self):
         self.future.cancel()</code></pre>
-</details>
-</dd>
-<dt id="concur.core.RemoteAction"><code class="flex name class">
-<span>class <span class="ident">RemoteAction</span></span>
-<span>(</span><span>future, que)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class RemoteAction(object):
-    def __init__(self, future, que):
-        self.que = que
-        self.future = future
-        self.sent = False
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.future is not None and not self.sent and self.future.done():
-            self.que.put(self.future.result())
-            self.sent = True
-
-    def __del__(self):
-        if self.future is not None:
-            self.future.cancel()</code></pre>
 </details>
 </dd>
 </dl>
@@ -634,7 +710,6 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 <ul class="two-column">
 <li><code><a title="concur.core.event" href="#concur.core.event">event</a></code></li>
 <li><code><a title="concur.core.forever" href="#concur.core.forever">forever</a></code></li>
-<li><code><a title="concur.core.fork_action" href="#concur.core.fork_action">fork_action</a></code></li>
 <li><code><a title="concur.core.interactive_elem" href="#concur.core.interactive_elem">interactive_elem</a></code></li>
 <li><code><a title="concur.core.lift" href="#concur.core.lift">lift</a></code></li>
 <li><code><a title="concur.core.listen" href="#concur.core.listen">listen</a></code></li>
@@ -643,7 +718,6 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 <li><code><a title="concur.core.nothing" href="#concur.core.nothing">nothing</a></code></li>
 <li><code><a title="concur.core.optional" href="#concur.core.optional">optional</a></code></li>
 <li><code><a title="concur.core.orr" href="#concur.core.orr">orr</a></code></li>
-<li><code><a title="concur.core.remote_widget" href="#concur.core.remote_widget">remote_widget</a></code></li>
 <li><code><a title="concur.core.stateful" href="#concur.core.stateful">stateful</a></code></li>
 <li><code><a title="concur.core.tag" href="#concur.core.tag">tag</a></code></li>
 <li><code><a title="concur.core.tag_value" href="#concur.core.tag_value">tag_value</a></code></li>
@@ -653,9 +727,6 @@ canceled in the destructor. Destructor isn't available in generator functions.</
 <ul>
 <li>
 <h4><code><a title="concur.core.Block" href="#concur.core.Block">Block</a></code></h4>
-</li>
-<li>
-<h4><code><a title="concur.core.RemoteAction" href="#concur.core.RemoteAction">RemoteAction</a></code></h4>
 </li>
 </ul>
 </li>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>concur.integrations.puppet API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Automation back-end with screen capture and programmatical user input …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,11 +20,17 @@
 <h1 class="title">Module <code>concur.integrations.puppet</code></h1>
 </header>
 <section id="section-intro">
+<p>Automation back-end with screen capture and programmatical user input.</p>
+<p>Normally, this is used with functions in <a title="concur.testing" href="../testing.html"><code>concur.testing</code></a>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python"># -*- coding: utf-8 -*-
+<pre><code class="python">&#34;&#34;&#34;Automation back-end with screen capture and programmatical user input.
+
+Normally, this is used with functions in `concur.testing`.
+&#34;&#34;&#34;
+
 from __future__ import absolute_import
 
 import glfw
@@ -44,7 +50,7 @@ from imgui.integrations.opengl import ProgrammablePipelineRenderer
 
 
 class PuppetRenderer(ProgrammablePipelineRenderer):
-    &#39;Renderer for automated testing&#39;
+    &#34;&#34;&#34;Renderer for automated testing. User inputs are set programmatically, rather than interactively.&#34;&#34;&#34;
     def __init__(self, window):
         super(PuppetRenderer, self).__init__()
         self.window = window
@@ -83,6 +89,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         key_map[imgui.KEY_Z] = glfw.KEY_Z
 
     def process_inputs(self):
+        &#34;&#34;&#34;Process the virtual user inputs. Called by `main` at the beginning of each frame.&#34;&#34;&#34;
         io = imgui.get_io()
 
         window_size = glfw.get_window_size(self.window)
@@ -116,21 +123,32 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         self._mouse_wheel = 0.0
 
     def click(self, button=0):
+        &#34;&#34;&#34;Simulate a mouse button click.
+
+        * 0 .. left button
+        * 1 .. right button
+        * 2 .. middle button
+        &#34;&#34;&#34;
         self._click[button] = True
 
     def set_mouse_pos(self, x, y):
+        &#39;Set the mouse cursor position to a specified value.&#39;
         self._mouse_pos = x, y
 
     def scroll_up(self):
+        &#39;Scroll the mouse wheel up one click.&#39;
         self._mouse_wheel = 1
 
     def scroll_dn(self):
+        &#39;Scroll the mouse wheel down one click.&#39;
         self._mouse_wheel = -1
 
     def mouse_dn(self, button=0):
+        &#34;&#34;&#34;Push a specified mouse button.&#34;&#34;&#34;
         self._mouse_buttons[button] = True
 
     def mouse_up(self, button=0):
+        &#34;&#34;&#34;Release a specified mouse button.&#34;&#34;&#34;
         self._mouse_buttons[button] = False
 
 
@@ -140,7 +158,7 @@ def main(name, widget_gen, width, height, save_screencast=None, return_sshot=Fal
     The resulting window is not hooked up to the user input. Instead, input is handled
     by a PuppetRenderer instance.
 
-    `widget_gen` takes as an argument a PuppetRenderer instance, and returns a widget.
+    `widget_gen` takes as an argument a `PuppetRenderer` instance, and returns a widget.
     &#34;&#34;&#34;
     imgui.create_context()
 
@@ -231,7 +249,7 @@ def main(name, widget_gen, width, height, save_screencast=None, return_sshot=Fal
 <section class="desc"><p>Create a GLFW window, spin up the main loop, and display a given widget inside.</p>
 <p>The resulting window is not hooked up to the user input. Instead, input is handled
 by a PuppetRenderer instance.</p>
-<p><code>widget_gen</code> takes as an argument a PuppetRenderer instance, and returns a widget.</p></section>
+<p><code>widget_gen</code> takes as an argument a <a title="concur.integrations.puppet.PuppetRenderer" href="#concur.integrations.puppet.PuppetRenderer"><code>PuppetRenderer</code></a> instance, and returns a widget.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -242,7 +260,7 @@ by a PuppetRenderer instance.</p>
     The resulting window is not hooked up to the user input. Instead, input is handled
     by a PuppetRenderer instance.
 
-    `widget_gen` takes as an argument a PuppetRenderer instance, and returns a widget.
+    `widget_gen` takes as an argument a `PuppetRenderer` instance, and returns a widget.
     &#34;&#34;&#34;
     imgui.create_context()
 
@@ -329,13 +347,13 @@ by a PuppetRenderer instance.</p>
 <span>(</span><span>window)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Renderer for automated testing</p></section>
+<section class="desc"><p>Renderer for automated testing. User inputs are set programmatically, rather than interactively.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PuppetRenderer(ProgrammablePipelineRenderer):
-    &#39;Renderer for automated testing&#39;
+    &#34;&#34;&#34;Renderer for automated testing. User inputs are set programmatically, rather than interactively.&#34;&#34;&#34;
     def __init__(self, window):
         super(PuppetRenderer, self).__init__()
         self.window = window
@@ -374,6 +392,7 @@ by a PuppetRenderer instance.</p>
         key_map[imgui.KEY_Z] = glfw.KEY_Z
 
     def process_inputs(self):
+        &#34;&#34;&#34;Process the virtual user inputs. Called by `main` at the beginning of each frame.&#34;&#34;&#34;
         io = imgui.get_io()
 
         window_size = glfw.get_window_size(self.window)
@@ -407,21 +426,32 @@ by a PuppetRenderer instance.</p>
         self._mouse_wheel = 0.0
 
     def click(self, button=0):
+        &#34;&#34;&#34;Simulate a mouse button click.
+
+        * 0 .. left button
+        * 1 .. right button
+        * 2 .. middle button
+        &#34;&#34;&#34;
         self._click[button] = True
 
     def set_mouse_pos(self, x, y):
+        &#39;Set the mouse cursor position to a specified value.&#39;
         self._mouse_pos = x, y
 
     def scroll_up(self):
+        &#39;Scroll the mouse wheel up one click.&#39;
         self._mouse_wheel = 1
 
     def scroll_dn(self):
+        &#39;Scroll the mouse wheel down one click.&#39;
         self._mouse_wheel = -1
 
     def mouse_dn(self, button=0):
+        &#34;&#34;&#34;Push a specified mouse button.&#34;&#34;&#34;
         self._mouse_buttons[button] = True
 
     def mouse_up(self, button=0):
+        &#34;&#34;&#34;Release a specified mouse button.&#34;&#34;&#34;
         self._mouse_buttons[button] = False</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -435,12 +465,23 @@ by a PuppetRenderer instance.</p>
 <span>def <span class="ident">click</span></span>(<span>self, button=0)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Simulate a mouse button click.</p>
+<ul>
+<li>0 .. left button</li>
+<li>1 .. right button</li>
+<li>2 .. middle button</li>
+</ul></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def click(self, button=0):
+    &#34;&#34;&#34;Simulate a mouse button click.
+
+    * 0 .. left button
+    * 1 .. right button
+    * 2 .. middle button
+    &#34;&#34;&#34;
     self._click[button] = True</code></pre>
 </details>
 </dd>
@@ -448,12 +489,13 @@ by a PuppetRenderer instance.</p>
 <span>def <span class="ident">mouse_dn</span></span>(<span>self, button=0)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Push a specified mouse button.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mouse_dn(self, button=0):
+    &#34;&#34;&#34;Push a specified mouse button.&#34;&#34;&#34;
     self._mouse_buttons[button] = True</code></pre>
 </details>
 </dd>
@@ -461,12 +503,13 @@ by a PuppetRenderer instance.</p>
 <span>def <span class="ident">mouse_up</span></span>(<span>self, button=0)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Release a specified mouse button.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mouse_up(self, button=0):
+    &#34;&#34;&#34;Release a specified mouse button.&#34;&#34;&#34;
     self._mouse_buttons[button] = False</code></pre>
 </details>
 </dd>
@@ -474,12 +517,13 @@ by a PuppetRenderer instance.</p>
 <span>def <span class="ident">process_inputs</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Process the virtual user inputs. Called by <a title="concur.integrations.puppet.main" href="#concur.integrations.puppet.main"><code>main()</code></a> at the beginning of each frame.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def process_inputs(self):
+    &#34;&#34;&#34;Process the virtual user inputs. Called by `main` at the beginning of each frame.&#34;&#34;&#34;
     io = imgui.get_io()
 
     window_size = glfw.get_window_size(self.window)
@@ -517,12 +561,13 @@ by a PuppetRenderer instance.</p>
 <span>def <span class="ident">scroll_dn</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Scroll the mouse wheel down one click.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def scroll_dn(self):
+    &#39;Scroll the mouse wheel down one click.&#39;
     self._mouse_wheel = -1</code></pre>
 </details>
 </dd>
@@ -530,12 +575,13 @@ by a PuppetRenderer instance.</p>
 <span>def <span class="ident">scroll_up</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Scroll the mouse wheel up one click.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def scroll_up(self):
+    &#39;Scroll the mouse wheel up one click.&#39;
     self._mouse_wheel = 1</code></pre>
 </details>
 </dd>
@@ -543,12 +589,13 @@ by a PuppetRenderer instance.</p>
 <span>def <span class="ident">set_mouse_pos</span></span>(<span>self, x, y)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Set the mouse cursor position to a specified value.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set_mouse_pos(self, x, y):
+    &#39;Set the mouse cursor position to a specified value.&#39;
     self._mouse_pos = x, y</code></pre>
 </details>
 </dd>

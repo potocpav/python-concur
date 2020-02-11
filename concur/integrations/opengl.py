@@ -1,7 +1,11 @@
+"""Raw OpenGL functions, mostly for creating and deleting textures."""
 
 import numpy as np
 from PIL import Image
 from OpenGL.GL import *
+
+
+__pdoc__ = dict(create_offscreen_fb=False, get_fb_data=False)
 
 
 def texture(arr):
@@ -42,7 +46,9 @@ def rm_texture(tex_id):
 
 
 def replace_texture(arr, prev_tex_id):
-    """ Delete the previous texture, if not None, and create a new one, returning its texture ID. """
+    """ Convenience function: delete the texture `prev_tex_id`, if not `None`, and create a new one,
+    returning its texture ID.
+    """
     if prev_tex_id is not None:
         rm_texture(prev_tex_id)
     return texture(arr)

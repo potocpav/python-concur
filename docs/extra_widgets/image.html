@@ -44,15 +44,26 @@ def image(name, state, width=None, height=None, content_gen=None):
 
     `state` is an instance of `concur.extra_widgets.image.Image`. Width and
     height are optional; if not specified, the widget stretches to fill
-    the parent element. Returns a modified `Image` object on user interaction.
+    the parent element. Returns a modified `Image` object tagged with `name` on user interaction.
 
     `content_gen` is a function that takes as an argument a transformation
     object `concur.extra_widgets.pan_zoom.TF`, and returns a widget that will be displayed as image
     overlay. Any events fired by the overlay widget are passed through unchanged.
 
-    The transformation object can be used to display overlay on the image, positioned
-    and scaled appropriately. It can be used explicitly, or passed as the `tf` argument to any
-    Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
+    The transformation object can be used to position and scale the overlay widget appropriately.
+    It can be used explicitly, or passed as the `tf` argument to any geometrical objects
+    in `concur.draw`. Widgets which don&#39;t accept the `tf` arguments, such as buttons, can be
+    wrapped inside the `concur.widgets.transform` widget.
+    See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
+
+    It is very common to use `concur.partial` to pass additional arguments to the `content_gen` function:
+
+    ```python
+    def overlay(pos, tf):
+        return c.circle(*pos, 10, (0,0,0,1), tf=tf)
+
+    _, im = yield from c.image(&#34;Image&#34;, im, content_gen=c.partial(overlay, pos))
+    ```
     &#34;&#34;&#34;
     while True:
         _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr([
@@ -69,10 +80,10 @@ def image(name, state, width=None, height=None, content_gen=None):
 
 
 class Image(object):
-    &#34;&#34;&#34; Image state, containing pan and zoom information, and texture data. &#34;&#34;&#34;
+    &#34;&#34;&#34; Image state containing pan and zoom information, and texture data. &#34;&#34;&#34;
     def __init__(self, image=None):
-        &#34;&#34;&#34; `image` must be something convertible to `numpy.array`: greyscale or RGB, channel is
-        in the last dimension.
+        &#34;&#34;&#34; `image ` must be something convertible to `numpy.array`: greyscale, RGB, or RGBA.
+        Channel is in the last dimension.
         &#34;&#34;&#34;
         # TODO: remove this hack with last_{w,h}; create a more principled way of changing content size
         self.last_w, self.last_h = None, None
@@ -82,9 +93,9 @@ class Image(object):
         self.change_image(image)
 
     def change_image(self, image):
-        &#34;&#34;&#34; Change the image for a different one. `image` must be None, or something convertible to
-        `numpy.array` in greyscale or RGB format, channel is in the last dimension. If None, a black placeholder
-        image is displayed.
+        &#34;&#34;&#34; Change the image for a different one. `image ` must be None, or something convertible to
+        `numpy.array` in greyscale, RGB, or RGBA format. Channel is in the last dimension.
+        If None, a black placeholder image is displayed.
 
         `change_image` must be called at most once per each frame for one Image.
         &#34;&#34;&#34;
@@ -124,13 +135,21 @@ class Image(object):
 <section class="desc"><p>The image widget.</p>
 <p><code>state</code> is an instance of <a title="concur.extra_widgets.image.Image" href="#concur.extra_widgets.image.Image"><code>Image</code></a>. Width and
 height are optional; if not specified, the widget stretches to fill
-the parent element. Returns a modified <a title="concur.extra_widgets.image.Image" href="#concur.extra_widgets.image.Image"><code>Image</code></a> object on user interaction.</p>
+the parent element. Returns a modified <a title="concur.extra_widgets.image.Image" href="#concur.extra_widgets.image.Image"><code>Image</code></a> object tagged with <code>name</code> on user interaction.</p>
 <p><code>content_gen</code> is a function that takes as an argument a transformation
 object <a title="concur.extra_widgets.pan_zoom.TF" href="pan_zoom.html#concur.extra_widgets.pan_zoom.TF"><code>TF</code></a>, and returns a widget that will be displayed as image
 overlay. Any events fired by the overlay widget are passed through unchanged.</p>
-<p>The transformation object can be used to display overlay on the image, positioned
-and scaled appropriately. It can be used explicitly, or passed as the <code>tf</code> argument to any
-Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/image.py">image example</a> for example usage.</p></section>
+<p>The transformation object can be used to position and scale the overlay widget appropriately.
+It can be used explicitly, or passed as the <code>tf</code> argument to any geometrical objects
+in <a title="concur.draw" href="../draw.html"><code>concur.draw</code></a>. Widgets which don't accept the <code>tf</code> arguments, such as buttons, can be
+wrapped inside the <a title="concur.widgets.transform" href="../widgets.html#concur.widgets.transform"><code>transform()</code></a> widget.
+See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/image.py">image example</a> for example usage.</p>
+<p>It is very common to use <a title="concur.partial" href="../index.html#concur.partial"><code>partial()</code></a> to pass additional arguments to the <code>content_gen</code> function:</p>
+<pre><code class="python">def overlay(pos, tf):
+    return c.circle(*pos, 10, (0,0,0,1), tf=tf)
+
+_, im = yield from c.image(&quot;Image&quot;, im, content_gen=c.partial(overlay, pos))
+</code></pre></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -140,15 +159,26 @@ Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/
 
     `state` is an instance of `concur.extra_widgets.image.Image`. Width and
     height are optional; if not specified, the widget stretches to fill
-    the parent element. Returns a modified `Image` object on user interaction.
+    the parent element. Returns a modified `Image` object tagged with `name` on user interaction.
 
     `content_gen` is a function that takes as an argument a transformation
     object `concur.extra_widgets.pan_zoom.TF`, and returns a widget that will be displayed as image
     overlay. Any events fired by the overlay widget are passed through unchanged.
 
-    The transformation object can be used to display overlay on the image, positioned
-    and scaled appropriately. It can be used explicitly, or passed as the `tf` argument to any
-    Geometrical objects. See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
+    The transformation object can be used to position and scale the overlay widget appropriately.
+    It can be used explicitly, or passed as the `tf` argument to any geometrical objects
+    in `concur.draw`. Widgets which don&#39;t accept the `tf` arguments, such as buttons, can be
+    wrapped inside the `concur.widgets.transform` widget.
+    See the [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for example usage.
+
+    It is very common to use `concur.partial` to pass additional arguments to the `content_gen` function:
+
+    ```python
+    def overlay(pos, tf):
+        return c.circle(*pos, 10, (0,0,0,1), tf=tf)
+
+    _, im = yield from c.image(&#34;Image&#34;, im, content_gen=c.partial(overlay, pos))
+    ```
     &#34;&#34;&#34;
     while True:
         _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr([
@@ -174,18 +204,18 @@ Geometrical objects. See the <a href="https://github.com/potocpav/python-concur/
 <span>(</span><span>image=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Image state, containing pan and zoom information, and texture data. </p>
-<p><a title="concur.extra_widgets.image.image" href="#concur.extra_widgets.image.image"><code>image()</code></a> must be something convertible to <code>numpy.array</code>: greyscale or RGB, channel is
-in the last dimension.</p></section>
+<section class="desc"><p>Image state containing pan and zoom information, and texture data. </p>
+<p><code>image</code> must be something convertible to <code>numpy.array</code>: greyscale, RGB, or RGBA.
+Channel is in the last dimension.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Image(object):
-    &#34;&#34;&#34; Image state, containing pan and zoom information, and texture data. &#34;&#34;&#34;
+    &#34;&#34;&#34; Image state containing pan and zoom information, and texture data. &#34;&#34;&#34;
     def __init__(self, image=None):
-        &#34;&#34;&#34; `image` must be something convertible to `numpy.array`: greyscale or RGB, channel is
-        in the last dimension.
+        &#34;&#34;&#34; `image ` must be something convertible to `numpy.array`: greyscale, RGB, or RGBA.
+        Channel is in the last dimension.
         &#34;&#34;&#34;
         # TODO: remove this hack with last_{w,h}; create a more principled way of changing content size
         self.last_w, self.last_h = None, None
@@ -195,9 +225,9 @@ in the last dimension.</p></section>
         self.change_image(image)
 
     def change_image(self, image):
-        &#34;&#34;&#34; Change the image for a different one. `image` must be None, or something convertible to
-        `numpy.array` in greyscale or RGB format, channel is in the last dimension. If None, a black placeholder
-        image is displayed.
+        &#34;&#34;&#34; Change the image for a different one. `image ` must be None, or something convertible to
+        `numpy.array` in greyscale, RGB, or RGBA format. Channel is in the last dimension.
+        If None, a black placeholder image is displayed.
 
         `change_image` must be called at most once per each frame for one Image.
         &#34;&#34;&#34;
@@ -228,18 +258,18 @@ in the last dimension.</p></section>
 <span>def <span class="ident">change_image</span></span>(<span>self, image)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Change the image for a different one. <a title="concur.extra_widgets.image.image" href="#concur.extra_widgets.image.image"><code>image()</code></a> must be None, or something convertible to
-<code>numpy.array</code> in greyscale or RGB format, channel is in the last dimension. If None, a black placeholder
-image is displayed.</p>
+<section class="desc"><p>Change the image for a different one. <code>image</code> must be None, or something convertible to
+<code>numpy.array</code> in greyscale, RGB, or RGBA format. Channel is in the last dimension.
+If None, a black placeholder image is displayed.</p>
 <p><code>change_image</code> must be called at most once per each frame for one Image.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def change_image(self, image):
-    &#34;&#34;&#34; Change the image for a different one. `image` must be None, or something convertible to
-    `numpy.array` in greyscale or RGB format, channel is in the last dimension. If None, a black placeholder
-    image is displayed.
+    &#34;&#34;&#34; Change the image for a different one. `image ` must be None, or something convertible to
+    `numpy.array` in greyscale, RGB, or RGBA format. Channel is in the last dimension.
+    If None, a black placeholder image is displayed.
 
     `change_image` must be called at most once per each frame for one Image.
     &#34;&#34;&#34;

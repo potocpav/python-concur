@@ -1,11 +1,15 @@
-""" Passive geometric shape widgets to be drawn as `concur.extra_widgets.image.image` overlay, or on their own.
+""" Passive geometric shape widgets to be drawn as `concur.extra_widgets.image.image` or `concur.extra_widgets.plot.frame.frame` overlay, or on their own.
 
 All these widgets have the following in common:
 
-* They are passive, so they don't need names. For active overlay, use normal widgets such as buttons.
-* `color` is specified as RGBA tuple with values between 0 and 1. For example, `(0.5, 0.5, 1, 1)` is light blue.
+* They are passive, so they don't need names. For active overlay, use normal widgets, such as buttons, wrapped inside `concur.widgets.transform`.
+* They don't do automatic layout. Instead the exact position is specified by hand.
+* `color` is specified as an RGBA tuple with values between 0 and 1. For example, `(0.5, 0.5, 1, 1)` is light blue.
 * `tf` is the `concur.extra_widgets.pan_zoom.TF` object specifying transformations from screen-space to image-space and back.
   If no transformation is supplied, the element is drawn in screen space units.
+
+Theses widgets are not re-exported in the root module, and are normally used as `c.draw.line(...)`, etc.
+They can be composed normally using the `concur.core.orr` function.
 """
 
 
@@ -62,7 +66,10 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
 
 
 def polyline(points, color, closed=False, thickness=1, tf=None):
-    """ Polygonal line or a closed polygon. """
+    """ Polygonal line or a closed polygon.
+
+    `points` is a list of (x, y) tuples, or a NumPy array of equivalent shape. NumPy arrays are
+    much more efficient."""
     if tf is not None:
         if isinstance(points, np.ndarray):
             points = np.matmul(tf.c2s, np.column_stack([points, np.ones(len(points))]).T).T
@@ -90,7 +97,7 @@ def text(x, y, color, string, tf=None):
 
 
 def image(tex_id, w, h, tf):
-    """ Draw an image with given width and height.
+    """ Draw an image with the given width and height.
 
     This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
     """
@@ -109,7 +116,7 @@ def image(tex_id, w, h, tf):
 
 
 def ellipse(mean, cov, sd, color, thickness=1, num_segments=16, tf=None):
-    "Ellipse defined by a mean, covariance matrix, and SD"
+    "Ellipse defined by a mean, covariance matrix, and SD."
     [e1, e2], vs = np.linalg.eig(cov)
     assert e1 > 0 and e2 > 0, "cov must be positive-semidefinite"
     v1, v2 = vs.T

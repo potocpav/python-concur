@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>concur.integrations.glfw API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Main integration back-end." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,17 +20,24 @@
 <h1 class="title">Module <code>concur.integrations.glfw</code></h1>
 </header>
 <section id="section-intro">
+<p>Main integration back-end.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import glfw
+<pre><code class="python">&#34;&#34;&#34;Main integration back-end.&#34;&#34;&#34;
+
+
+import glfw
 import OpenGL.GL as gl
 
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 from concur.integrations.opengl import create_offscreen_fb, get_fb_data
 import time
+
+
+__pdoc__ = dict(create_window=False, begin_maximized_window=False, create_window_dock=False)
 
 
 def create_window(window_name, width, height):
@@ -157,78 +164,6 @@ def main(name, widget, width, height, save_screencast=None):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="concur.integrations.glfw.begin_maximized_window"><code class="name flex">
-<span>def <span class="ident">begin_maximized_window</span></span>(<span>name, glfw_window)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def begin_maximized_window(name, glfw_window):
-    imgui.set_next_window_position(0, 0)
-    imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
-    imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
-    imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
-    window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
-    imgui.begin(name, True, window_flags)
-    imgui.pop_style_var(2)</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.glfw.create_window"><code class="name flex">
-<span>def <span class="ident">create_window</span></span>(<span>window_name, width, height)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Create a GLFW window.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def create_window(window_name, width, height):
-    &#34;&#34;&#34; Create a GLFW window. &#34;&#34;&#34;
-    if not glfw.init():
-        print(&#34;Could not initialize OpenGL context&#34;)
-        exit(1)
-
-    # OS X supports only forward-compatible core profiles from 3.2
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-    glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
-
-    # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(
-        int(width), int(height), window_name, None, None
-    )
-    glfw.make_context_current(window)
-
-    if not window:
-        glfw.terminate()
-        print(&#34;Could not initialize Window&#34;)
-        exit(1)
-
-    return window</code></pre>
-</details>
-</dd>
-<dt id="concur.integrations.glfw.create_window_dock"><code class="name flex">
-<span>def <span class="ident">create_window_dock</span></span>(<span>glfw_window)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def create_window_dock(glfw_window):
-    imgui.set_next_window_bg_alpha(0)
-    imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
-    begin_maximized_window(&#34;Background Window&#34;, glfw_window)
-    imgui.pop_style_var(1)
-    imgui.dock_space(&#34;Window Dock Space&#34;, 0., 0., 1 &lt;&lt; 3)
-    imgui.end()</code></pre>
-</details>
-</dd>
 <dt id="concur.integrations.glfw.main"><code class="name flex">
 <span>def <span class="ident">main</span></span>(<span>name, widget, width, height, save_screencast=None)</span>
 </code></dt>
@@ -330,9 +265,6 @@ def main(name, widget, width, height, save_screencast=None):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="concur.integrations.glfw.begin_maximized_window" href="#concur.integrations.glfw.begin_maximized_window">begin_maximized_window</a></code></li>
-<li><code><a title="concur.integrations.glfw.create_window" href="#concur.integrations.glfw.create_window">create_window</a></code></li>
-<li><code><a title="concur.integrations.glfw.create_window_dock" href="#concur.integrations.glfw.create_window_dock">create_window_dock</a></code></li>
 <li><code><a title="concur.integrations.glfw.main" href="#concur.integrations.glfw.main">main</a></code></li>
 </ul>
 </li>

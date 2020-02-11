@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>concur.extra_widgets.pan_zoom API documentation</title>
-<meta name="description" content="Zoomable, pannable widget with arbitrary content." />
+<meta name="description" content="Zoomable, pannable widget with arbitrary content …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,13 +21,17 @@
 </header>
 <section id="section-intro">
 <p>Zoomable, pannable widget with arbitrary content.</p>
+<p>This widget is rarely used directly by user code. Most of the time, it's more convenient to use
+higher-level widgets <a title="concur.extra_widgets.image.image" href="image.html#concur.extra_widgets.image.image"><code>image()</code></a>, or <a title="concur.extra_widgets.plot.frame.frame" href="plot/frame.html#concur.extra_widgets.plot.frame.frame"><code>frame()</code></a>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Zoomable, pannable widget with arbitrary content. &#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34; Zoomable, pannable widget with arbitrary content.
 
-&#34;&#34;&#34; Scrollable, zoomable image widget with overlay support. &#34;&#34;&#34;
+This widget is rarely used directly by user code. Most of the time, it&#39;s more convenient to use
+higher-level widgets `concur.extra_widgets.image.image`, or `concur.extra_widgets.plot.frame.frame`.
+&#34;&#34;&#34;
 
 
 import copy
@@ -40,9 +44,9 @@ from concur.widgets import child
 def pan_zoom(name, state, width=None, height=None, content_gen=None):
     &#34;&#34;&#34; Create the Pan &amp; Zoom widget.
 
-    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widget,
-    this widget returns events in a special format: `(name, state, child_event)`. State or child_event may be `None`
-    in case `state` didn&#39;t change, or `child_event` didn&#39;t fire. `name` is the name supplied to this function
+    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widgets,
+    this widget returns events in a special format: `(name, state, child_event)`. `state` or `child_event` may be `None`
+    in case `state` didn&#39;t change, or `child_event` didn&#39;t fire. `name` is the name supplied to this function.
 
     `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
@@ -171,7 +175,7 @@ class PanZoom(object):
         &#34;&#34;&#34;
         Arguments:
             top_left:     Coordinates of the top left corner of the displayed content area.
-            bottom_right: oordinates of the bottom right corner of the displayed content area.
+            bottom_right: Coordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
                           if keep_aspect==True, it is equivalent to keep_aspect==1.
             fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, `&#39;y&#39;`, or `None`).
@@ -209,8 +213,9 @@ class PanZoom(object):
 class TF(object):
     &#34;&#34;&#34; Transformation object containing information necessary for converting between screen-space and image-space.
 
-    Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
-    Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).
+    Screen-space coordinates are in pixels with top-left window corner equal to (0, 0). Image space is
+    arbitrary, given by the respective PanZoom widget state. Transformations are expressed as NumPy
+    matrices in homogenous coordinates with two rows and three columns (shape: `(2, 3)`).
 
     For example, a point `[px, py]` can be transformed to screen-space by left multiplication:
 
@@ -218,15 +223,16 @@ class TF(object):
     q = np.matmul(c2s, [px, py, 1])
     ```
 
-    Mostly, the necessary conversions are performed by overlay widgets.
+    Mostly, the necessary conversions are performed by overlay widgets in `concur.draw`.
+    It may be useful to transform stuff by hand in cases when default behavior is not sufficient,
+    such as specifying the line width in image coordinates.
 
     Attributes:
         c2s:      Content-to-screen transformation matrix.
         s2c:      Screen-to-content transformation matrix.
         view_s:   Screen-space viewport coordinates as a list [left, top, right, bottom].
         view_c:   Image-space viewport coordinates as a list [left, top, right, bottom].
-        hovered:  `True` if the image widget is hovered over. Useful for some interactive elements,
-                  such as draggable widgets.
+        hovered:  `True` if the image widget is hovered over.
     &#34;&#34;&#34;
     def __init__(self, c2s, s2c, view_c, view_s, hovered):
         self.c2s = c2s
@@ -257,9 +263,9 @@ class TF(object):
 </code></dt>
 <dd>
 <section class="desc"><p>Create the Pan &amp; Zoom widget.</p>
-<p>This widget is a pannable, zoomable view of a thing given by <code>content_gen</code>. To ease integration with other widget,
-this widget returns events in a special format: <code>(name, state, child_event)</code>. State or child_event may be <code>None</code>
-in case <code>state</code> didn't change, or <code>child_event</code> didn't fire. <code>name</code> is the name supplied to this function</p>
+<p>This widget is a pannable, zoomable view of a thing given by <code>content_gen</code>. To ease integration with other widgets,
+this widget returns events in a special format: <code>(name, state, child_event)</code>. <code>state</code> or <code>child_event</code> may be <code>None</code>
+in case <code>state</code> didn't change, or <code>child_event</code> didn't fire. <code>name</code> is the name supplied to this function.</p>
 <p><code>content_gen</code> is a function that takes the <a title="concur.extra_widgets.pan_zoom.TF" href="#concur.extra_widgets.pan_zoom.TF"><code>TF</code></a> object, and returns a Concur
 widget. It is up to the widget to do the necessary transformations using the <a title="concur.extra_widgets.pan_zoom.TF" href="#concur.extra_widgets.pan_zoom.TF"><code>TF</code></a> object.</p></section>
 <details class="source">
@@ -269,9 +275,9 @@ widget. It is up to the widget to do the necessary transformations using the <a 
 <pre><code class="python">def pan_zoom(name, state, width=None, height=None, content_gen=None):
     &#34;&#34;&#34; Create the Pan &amp; Zoom widget.
 
-    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widget,
-    this widget returns events in a special format: `(name, state, child_event)`. State or child_event may be `None`
-    in case `state` didn&#39;t change, or `child_event` didn&#39;t fire. `name` is the name supplied to this function
+    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widgets,
+    this widget returns events in a special format: `(name, state, child_event)`. `state` or `child_event` may be `None`
+    in case `state` didn&#39;t change, or `child_event` didn&#39;t fire. `name` is the name supplied to this function.
 
     `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
@@ -412,7 +418,7 @@ widget. It is up to the widget to do the necessary transformations using the <a 
 <p>Coordinates of the top left corner of the displayed content area.</p>
 </dd>
 <dt><strong><code>bottom_right</code></strong></dt>
-<dd>oordinates of the bottom right corner of the displayed content area.</dd>
+<dd>Coordinates of the bottom right corner of the displayed content area.</dd>
 <dt><strong><code>keep_aspect</code></strong></dt>
 <dd>Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
 if keep_aspect==True, it is equivalent to keep_aspect==1.</dd>
@@ -437,7 +443,7 @@ margins=[5,5,-5,-5].</p>
         &#34;&#34;&#34;
         Arguments:
             top_left:     Coordinates of the top left corner of the displayed content area.
-            bottom_right: oordinates of the bottom right corner of the displayed content area.
+            bottom_right: Coordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
                           if keep_aspect==True, it is equivalent to keep_aspect==1.
             fix_axis:     Do not zoom in a given axis (`&#39;x&#39;`, `&#39;y&#39;`, or `None`).
@@ -508,12 +514,15 @@ margins=[5,5,-5,-5].</p>
 </code></dt>
 <dd>
 <section class="desc"><p>Transformation object containing information necessary for converting between screen-space and image-space.</p>
-<p>Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
-Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).</p>
+<p>Screen-space coordinates are in pixels with top-left window corner equal to (0, 0). Image space is
+arbitrary, given by the respective PanZoom widget state. Transformations are expressed as NumPy
+matrices in homogenous coordinates with two rows and three columns (shape: <code>(2, 3)</code>).</p>
 <p>For example, a point <code>[px, py]</code> can be transformed to screen-space by left multiplication:</p>
 <pre><code class="python">q = np.matmul(c2s, [px, py, 1])
 </code></pre>
-<p>Mostly, the necessary conversions are performed by overlay widgets.</p>
+<p>Mostly, the necessary conversions are performed by overlay widgets in <a title="concur.draw" href="../draw.html"><code>concur.draw</code></a>.
+It may be useful to transform stuff by hand in cases when default behavior is not sufficient,
+such as specifying the line width in image coordinates.</p>
 <h2 id="attributes">Attributes</h2>
 <dl>
 <dt><strong><code>c2s</code></strong></dt>
@@ -529,8 +538,7 @@ Transformations are expressed as NumPy matrices in homogenous coordinates with t
 <dt><strong><code>view_c</code></strong></dt>
 <dd>Image-space viewport coordinates as a list [left, top, right, bottom].</dd>
 <dt><strong><code>hovered</code></strong></dt>
-<dd><code>True</code> if the image widget is hovered over. Useful for some interactive elements,
-such as draggable widgets.</dd>
+<dd><code>True</code> if the image widget is hovered over.</dd>
 </dl></section>
 <details class="source">
 <summary>
@@ -539,8 +547,9 @@ such as draggable widgets.</dd>
 <pre><code class="python">class TF(object):
     &#34;&#34;&#34; Transformation object containing information necessary for converting between screen-space and image-space.
 
-    Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
-    Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).
+    Screen-space coordinates are in pixels with top-left window corner equal to (0, 0). Image space is
+    arbitrary, given by the respective PanZoom widget state. Transformations are expressed as NumPy
+    matrices in homogenous coordinates with two rows and three columns (shape: `(2, 3)`).
 
     For example, a point `[px, py]` can be transformed to screen-space by left multiplication:
 
@@ -548,15 +557,16 @@ such as draggable widgets.</dd>
     q = np.matmul(c2s, [px, py, 1])
     ```
 
-    Mostly, the necessary conversions are performed by overlay widgets.
+    Mostly, the necessary conversions are performed by overlay widgets in `concur.draw`.
+    It may be useful to transform stuff by hand in cases when default behavior is not sufficient,
+    such as specifying the line width in image coordinates.
 
     Attributes:
         c2s:      Content-to-screen transformation matrix.
         s2c:      Screen-to-content transformation matrix.
         view_s:   Screen-space viewport coordinates as a list [left, top, right, bottom].
         view_c:   Image-space viewport coordinates as a list [left, top, right, bottom].
-        hovered:  `True` if the image widget is hovered over. Useful for some interactive elements,
-                  such as draggable widgets.
+        hovered:  `True` if the image widget is hovered over.
     &#34;&#34;&#34;
     def __init__(self, c2s, s2c, view_c, view_s, hovered):
         self.c2s = c2s

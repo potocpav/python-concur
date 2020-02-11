@@ -1,3 +1,5 @@
+"""Main integration back-end."""
+
 
 import glfw
 import OpenGL.GL as gl
@@ -6,6 +8,9 @@ import imgui
 from imgui.integrations.glfw import GlfwRenderer
 from concur.integrations.opengl import create_offscreen_fb, get_fb_data
 import time
+
+
+__pdoc__ = dict(create_window=False, begin_maximized_window=False, create_window_dock=False)
 
 
 def create_window(window_name, width, height):

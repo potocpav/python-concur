@@ -1,6 +1,8 @@
-""" Zoomable, pannable widget with arbitrary content. """
+""" Zoomable, pannable widget with arbitrary content.
 
-""" Scrollable, zoomable image widget with overlay support. """
+This widget is rarely used directly by user code. Most of the time, it's more convenient to use
+higher-level widgets `concur.extra_widgets.image.image`, or `concur.extra_widgets.plot.frame.frame`.
+"""
 
 
 import copy
@@ -13,9 +15,9 @@ from concur.widgets import child
 def pan_zoom(name, state, width=None, height=None, content_gen=None):
     """ Create the Pan & Zoom widget.
 
-    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widget,
-    this widget returns events in a special format: `(name, state, child_event)`. State or child_event may be `None`
-    in case `state` didn't change, or `child_event` didn't fire. `name` is the name supplied to this function
+    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widgets,
+    this widget returns events in a special format: `(name, state, child_event)`. `state` or `child_event` may be `None`
+    in case `state` didn't change, or `child_event` didn't fire. `name` is the name supplied to this function.
 
     `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
     widget. It is up to the widget to do the necessary transformations using the `TF` object.
@@ -144,7 +146,7 @@ class PanZoom(object):
         """
         Arguments:
             top_left:     Coordinates of the top left corner of the displayed content area.
-            bottom_right: oordinates of the bottom right corner of the displayed content area.
+            bottom_right: Coordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
                           if keep_aspect==True, it is equivalent to keep_aspect==1.
             fix_axis:     Do not zoom in a given axis (`'x'`, `'y'`, or `None`).
@@ -182,8 +184,9 @@ class PanZoom(object):
 class TF(object):
     """ Transformation object containing information necessary for converting between screen-space and image-space.
 
-    Both screen-space and image-space are in pixels with top-left corner equal to (0, 0).
-    Transformations are expressed as NumPy matrices in homogenous coordinates with two rows and three columns (shape: (2, 3)).
+    Screen-space coordinates are in pixels with top-left window corner equal to (0, 0). Image space is
+    arbitrary, given by the respective PanZoom widget state. Transformations are expressed as NumPy
+    matrices in homogenous coordinates with two rows and three columns (shape: `(2, 3)`).
 
     For example, a point `[px, py]` can be transformed to screen-space by left multiplication:
 
@@ -191,15 +194,16 @@ class TF(object):
     q = np.matmul(c2s, [px, py, 1])
     ```
 
-    Mostly, the necessary conversions are performed by overlay widgets.
+    Mostly, the necessary conversions are performed by overlay widgets in `concur.draw`.
+    It may be useful to transform stuff by hand in cases when default behavior is not sufficient,
+    such as specifying the line width in image coordinates.
 
     Attributes:
         c2s:      Content-to-screen transformation matrix.
         s2c:      Screen-to-content transformation matrix.
         view_s:   Screen-space viewport coordinates as a list [left, top, right, bottom].
         view_c:   Image-space viewport coordinates as a list [left, top, right, bottom].
-        hovered:  `True` if the image widget is hovered over. Useful for some interactive elements,
-                  such as draggable widgets.
+        hovered:  `True` if the image widget is hovered over.
     """
     def __init__(self, c2s, s2c, view_c, view_s, hovered):
         self.c2s = c2s

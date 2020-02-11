@@ -81,10 +81,14 @@ if tag == &quot;Second&quot;:
 <p><strong>Asynchronous computations</strong></p>
 <p>In <a href="https://github.com/ajnsit/concur-js">other </a><a href="https://github.com/purescript-concur/purescript-concur-react">versions </a><a href="https://github.com/ajnsit/concur">of Concur</a>, all widgets are triggered asynchronously. This may not be practical in Python, due to a limitation of async generators: they can't <code>return</code>, they only <code>yield</code>. Synchronous generators are used instead, which means that all widget code is run in the main thread. Asynchronous code must be explicitly run in a background thread, which is easily achieved by passing a future into the <code>concur.core.Block</code> function. See the <a href="https://github.com/potocpav/python-concur/blob/master/examples/timers.py">timers example</a> for details.</p>
 <h1 id="api">API</h1>
-<p>All the functions and classes from <code>concur.core</code>, <code>concur.widgets</code>, and <code>concur.extra_widgets</code> are re-exported in the
-<code>concur</code> module. The most convenient way to access them is by importing <code>concur</code> qualified:</p>
+<p>Most of the functions and classes from submodules (<code>concur.core</code>, <code>concur.widgets</code>, etc.) are re-exported in the
+<code>concur</code> root module. The most convenient way to access them is by importing <code>concur</code> qualified:</p>
 <pre><code class="python">import concur as c
+
+# nearly anything can be accessed using `c.anything` now.
 </code></pre>
+<p>A notable exception is the <a title="concur.draw" href="draw.html"><code>concur.draw</code></a> functions: they have a bit different semantics (no layout,
+no user interaction), so they are separate and can be accessed using <code>c.draw.something</code>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -100,13 +104,17 @@ if tag == &quot;Second&quot;:
 
 # API
 
-All the functions and classes from `concur.core`, `concur.widgets`, and `concur.extra_widgets` are re-exported in the
-`concur` module. The most convenient way to access them is by importing `concur` qualified:
+Most of the functions and classes from submodules (`concur.core`, `concur.widgets`, etc.) are re-exported in the
+`concur` root module. The most convenient way to access them is by importing `concur` qualified:
 
 ```python
 import concur as c
+
+# nearly anything can be accessed using `c.anything` now.
 ```
 
+A notable exception is the `concur.draw` functions: they have a bit different semantics (no layout,
+no user interaction), so they are separate and can be accessed using `c.draw.something`.
 &#34;&#34;&#34;
 
 import concur.extra_widgets
@@ -137,7 +145,7 @@ def partial(*args, **argv):
 </dd>
 <dt><code class="name"><a title="concur.draw" href="draw.html">concur.draw</a></code></dt>
 <dd>
-<section class="desc"><p>Passive geometric shape widgets to be drawn as <a title="concur.extra_widgets.image.image" href="extra_widgets/image.html#concur.extra_widgets.image.image"><code>image()</code></a> overlay, or on their own …</p></section>
+<section class="desc"><p>Passive geometric shape widgets to be drawn as <a title="concur.extra_widgets.image.image" href="extra_widgets/image.html#concur.extra_widgets.image.image"><code>image()</code></a> or <a title="concur.extra_widgets.plot.frame.frame" href="extra_widgets/plot/frame.html#concur.extra_widgets.plot.frame.frame"><code>frame()</code></a> overlay, or on their own …</p></section>
 </dd>
 <dt><code class="name"><a title="concur.extra_widgets" href="extra_widgets/index.html">concur.extra_widgets</a></code></dt>
 <dd>
@@ -145,11 +153,12 @@ def partial(*args, **argv):
 </dd>
 <dt><code class="name"><a title="concur.integrations" href="integrations/index.html">concur.integrations</a></code></dt>
 <dd>
-<section class="desc"><p>Even using PyImGui's integration code, quite a bit of boilerplate is needed just to create a window, or to display an image. This module provides …</p></section>
+<section class="desc"><p>Even using PyImGui's integration code, quite a bit of boilerplate is needed just to create a window,
+or to display an image. This module provides …</p></section>
 </dd>
 <dt><code class="name"><a title="concur.testing" href="testing.html">concur.testing</a></code></dt>
 <dd>
-<section class="desc"><p>Routines for automated testing.</p></section>
+<section class="desc"><p>Routines for automated testing …</p></section>
 </dd>
 <dt><code class="name"><a title="concur.widgets" href="widgets.html">concur.widgets</a></code></dt>
 <dd>

@@ -22,11 +22,11 @@
 <section id="section-intro">
 <p>A collection of widgets based off of ImGui.</p>
 <p>By convention, all widgets take a string identifier as the first parameter, and return the <code>(identifier, value)</code> pair.
-This is done to increase convenience, as Python syntax for mapping values is a bit busy.</p>
+This is done for convenience, as Python syntax for mapping values is a bit busy.</p>
 <p>Most widgets are just thin wrappers over <a href="https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html">widgets in PyImGui</a>.
 If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing
-generators, or by using helper functions <a title="concur.core.interactive_elem" href="core.html#concur.core.interactive_elem"><code>interactive_elem()</code></a> or <a title="concur.core.lift" href="core.html#concur.core.lift"><code>lift()</code></a> from <a title="concur.core" href="core.html"><code>concur.core</code></a>.</p>
-<p>Some widgets don't do any drawing and serve purely for control flow, or user interaction.</p>
+generators by hand, or by using helper functions <a title="concur.core.interactive_elem" href="core.html#concur.core.interactive_elem"><code>interactive_elem()</code></a> or <a title="concur.core.lift" href="core.html#concur.core.lift"><code>lift()</code></a>.</p>
+<p>Some widgets (<a title="concur.widgets.transform" href="#concur.widgets.transform"><code>transform()</code></a>, <a title="concur.widgets.key_pressed" href="#concur.widgets.key_pressed"><code>key_pressed()</code></a>, etc.) don't do any drawing and serve purely for control flow, or user interaction.</p>
 <p>All of the functions in this module are re-exported in the root module for convenience.</p>
 <details class="source">
 <summary>
@@ -35,16 +35,18 @@ generators, or by using helper functions <a title="concur.core.interactive_elem"
 <pre><code class="python">&#34;&#34;&#34; A collection of widgets based off of ImGui.
 
 By convention, all widgets take a string identifier as the first parameter, and return the `(identifier, value)` pair.
-This is done to increase convenience, as Python syntax for mapping values is a bit busy.
+This is done for convenience, as Python syntax for mapping values is a bit busy.
 
 Most widgets are just thin wrappers over [widgets in PyImGui](https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html).
 If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing
-generators, or by using helper functions `concur.core.interactive_elem` or `concur.core.lift` from `concur.core`.
+generators by hand, or by using helper functions `concur.core.interactive_elem` or `concur.core.lift`.
 
-Some widgets don&#39;t do any drawing and serve purely for control flow, or user interaction.
+Some widgets (`transform`, `key_pressed`, etc.) don&#39;t do any drawing and serve purely for control flow, or user interaction.
 
 All of the functions in this module are re-exported in the root module for convenience.
 &#34;&#34;&#34;
+
+__pdoc__ = dict(same_line=False)
 
 
 import numpy as np # for `transform`
@@ -601,24 +603,6 @@ Key codes are specified by the integration layer, e.g. <code>glfw.KEY_A</code>, 
     return (tag if tag is not None else text), None</code></pre>
 </details>
 </dd>
-<dt id="concur.widgets.same_line"><code class="name flex">
-<span>def <span class="ident">same_line</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Call between widgets to layout them horizontally.</p>
-<p>This is Consider using <a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line"><code>orr_same_line()</code></a> instead as it is more robust.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def same_line():
-    &#34;&#34;&#34; Call between widgets to layout them horizontally.
-
-    This is Consider using `concur.widgets.orr_same_line` instead as it is more robust.
-    &#34;&#34;&#34;
-    return lift(imgui.same_line)</code></pre>
-</details>
-</dd>
 <dt id="concur.widgets.separator"><code class="name flex">
 <span>def <span class="ident">separator</span></span>(<span>)</span>
 </code></dt>
@@ -872,7 +856,6 @@ is at <code>[x, y]</code>.</p></section>
 <li><code><a title="concur.widgets.key_pressed" href="#concur.widgets.key_pressed">key_pressed</a></code></li>
 <li><code><a title="concur.widgets.orr_same_line" href="#concur.widgets.orr_same_line">orr_same_line</a></code></li>
 <li><code><a title="concur.widgets.radio_button" href="#concur.widgets.radio_button">radio_button</a></code></li>
-<li><code><a title="concur.widgets.same_line" href="#concur.widgets.same_line">same_line</a></code></li>
 <li><code><a title="concur.widgets.separator" href="#concur.widgets.separator">separator</a></code></li>
 <li><code><a title="concur.widgets.slider_float" href="#concur.widgets.slider_float">slider_float</a></code></li>
 <li><code><a title="concur.widgets.slider_int" href="#concur.widgets.slider_int">slider_int</a></code></li>

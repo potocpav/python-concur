@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>concur.integrations API documentation</title>
-<meta name="description" content="Even using PyImGui&#39;s integration code, quite a bit of boilerplate is needed just to create a window, or to display an image. This module provides …" />
+<meta name="description" content="Even using PyImGui&#39;s integration code, quite a bit of boilerplate is needed just to create a window,
+or to display an image. This module provides …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,19 +21,21 @@
 <h1 class="title">Module <code>concur.integrations</code></h1>
 </header>
 <section id="section-intro">
-<p>Even using PyImGui's integration code, quite a bit of boilerplate is needed just to create a window, or to display an image. This module provides functions that simplify getting stuff rendered.</p>
+<p>Even using PyImGui's integration code, quite a bit of boilerplate is needed just to create a window,
+or to display an image. This module provides functions that simplify getting stuff rendered to just
+a couple of lines of code.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; Even using PyImGui&#39;s integration code, quite a bit of boilerplate is needed just to create a window, or to display an image. This module provides functions that simplify getting stuff rendered.
+<pre><code class="python">&#34;&#34;&#34; Even using PyImGui&#39;s integration code, quite a bit of boilerplate is needed just to create a window,
+or to display an image. This module provides functions that simplify getting stuff rendered to just
+a couple of lines of code.
 &#34;&#34;&#34;
 
 import concur.integrations.glfw
 import concur.integrations.opengl
 import concur.integrations.puppet
-#
-# __all__ = glfw.__all__ + opengl.__all__
 
 from .glfw import *
 from .opengl import *</code></pre>
@@ -43,19 +46,19 @@ from .opengl import *</code></pre>
 <dl>
 <dt><code class="name"><a title="concur.integrations.glfw" href="glfw.html">concur.integrations.glfw</a></code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Main integration back-end.</p></section>
 </dd>
 <dt><code class="name"><a title="concur.integrations.opengl" href="opengl.html">concur.integrations.opengl</a></code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Raw OpenGL functions, mostly for creating and deleting textures.</p></section>
 </dd>
 <dt><code class="name"><a title="concur.integrations.plot" href="plot.html">concur.integrations.plot</a></code></dt>
 <dd>
-<section class="desc"><p>Simple interface for people who just want to plot things</p></section>
+<section class="desc"><p>Simple WIP interface for people who just want to plot things …</p></section>
 </dd>
 <dt><code class="name"><a title="concur.integrations.puppet" href="puppet.html">concur.integrations.puppet</a></code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Automation back-end with screen capture and programmatical user input …</p></section>
 </dd>
 </dl>
 </section>
