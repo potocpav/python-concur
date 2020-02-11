@@ -16,7 +16,7 @@ def timer():
 
 
 def app():
-    return c.orr([c.forever(timer) for _ in range(5)])
+    return c.orr([c.forever(timer) for _ in range(3)])
 
 
 if __name__ == "__main__":
