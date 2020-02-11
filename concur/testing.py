@@ -116,6 +116,7 @@ class Testing(object):
         yield from self.move_cursor(x0 + x, y0 + y)
         yield from self.pause()
         yield from self.click()
+        yield
 
     def move_cursor(self, x, y):
         "Move cursor to a given position."
@@ -148,6 +149,11 @@ class Testing(object):
     def mouse_dn(self, button=0):
         "Push the given mouse button."
         self.puppet.mouse_dn(button)
+        yield
+
+    def write_char(self, ch):
+        "Write a given character."
+        self.puppet.write_char(ch)
         yield
 
     def pause(self, nframes=0):

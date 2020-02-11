@@ -86,29 +86,29 @@ def collapsing_header(text, widget, open=True):
         yield
 
 
-def button(text, tag=None):
-    """ Button. Returns `(text, value)` on click, or `(tag, value)` if tag is specified. """
-    while not imgui.button(text):
+def button(label, tag=None):
+    """ Button. Returns `(label, None)` on click, or `(tag, None)` if tag is specified. """
+    while not imgui.button(label):
         yield
-    return tag if tag is not None else text, None
+    return tag if tag is not None else label, None
 
 
-def color_button(text, color, tag=None):
+def color_button(label, color, tag=None):
     """ Colored button. Color is specified as a tuple (R,G,B,A), each in range 0..1.
 
-    Returns `(text, value)` on click, or `(tag, value)` if tag is specified.
+    Returns `(label, None)` on click, or `(tag, None)` if tag is specified.
     """
     r, g, b, a = color
-    while not imgui.color_button(text, r, g, b, a):
+    while not imgui.color_button(label, r, g, b, a):
         yield
-    return tag if tag is not None else text, None
+    return tag if tag is not None else label, None
 
 
-def radio_button(text, active, tag=None):
-    """ Radio button. Returns ``(text, value)`` on click. """
-    while not imgui.radio_button(text, active):
+def radio_button(label, active, tag=None):
+    """ Radio button. Returns `(label, None)` on click, or `(tag, None)` if tag is specified. """
+    while not imgui.radio_button(label, active):
         yield
-    return (tag if tag is not None else text), None
+    return (tag if tag is not None else label), None
 
 
 def input_text(name, value, buffer_length=255, tag=None):
