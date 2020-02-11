@@ -99,10 +99,13 @@ class Testing(object):
     All the methods in this class are widgets, and they can be composed as usual using
     `concur.core.orr`, `yield from`, and friends.
     &#34;&#34;&#34;
-    def __init__(self, puppet_renderer, slow):
+    def __init__(self, puppet_renderer, slow=None):
         assert isinstance(puppet_renderer, PuppetRenderer)
         self.puppet = puppet_renderer
-        self.slow = &#39;SLOW_TEST&#39; in os.environ and os.environ[&#39;SLOW_TEST&#39;] == &#39;1&#39;
+        if slow is None:
+            self.slow = &#39;SLOW_TEST&#39; in os.environ and os.environ[&#39;SLOW_TEST&#39;] == &#39;1&#39;
+        else:
+            self.slow = slow
         self.marked = {}
 
     def click(self, button=0):
@@ -269,7 +272,7 @@ primitives from <a title="concur.integrations.puppet.PuppetRenderer" href="integ
 <dl>
 <dt id="concur.testing.Testing"><code class="flex name class">
 <span>class <span class="ident">Testing</span></span>
-<span>(</span><span>puppet_renderer, slow)</span>
+<span>(</span><span>puppet_renderer, slow=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Must be used in conjunction with the <a title="concur.integrations.puppet" href="integrations/puppet.html"><code>concur.integrations.puppet</code></a> backend.</p>
@@ -288,10 +291,13 @@ primitives from <a title="concur.integrations.puppet.PuppetRenderer" href="integ
     All the methods in this class are widgets, and they can be composed as usual using
     `concur.core.orr`, `yield from`, and friends.
     &#34;&#34;&#34;
-    def __init__(self, puppet_renderer, slow):
+    def __init__(self, puppet_renderer, slow=None):
         assert isinstance(puppet_renderer, PuppetRenderer)
         self.puppet = puppet_renderer
-        self.slow = &#39;SLOW_TEST&#39; in os.environ and os.environ[&#39;SLOW_TEST&#39;] == &#39;1&#39;
+        if slow is None:
+            self.slow = &#39;SLOW_TEST&#39; in os.environ and os.environ[&#39;SLOW_TEST&#39;] == &#39;1&#39;
+        else:
+            self.slow = slow
         self.marked = {}
 
     def click(self, button=0):

@@ -24,6 +24,7 @@
       <nav class="my-2 my-md-0 mr-md-3">
         <a class="p-2 text-white" href="https://potocpav.github.io/python-concur/">Documentation</a>
         <a class="p-2 text-white" href="https://github.com/potocpav/python-concur">GitHub</a>
+        <a class="p-2 text-white" href="https://pypi.org/project/concur/">PyPI</a>
       </nav>
     </div>
 
@@ -40,14 +41,14 @@
             <p class="lead">Build interactive data analysis and visualization GUI in Python.</p>
             <p class="lead">Concur is a library for rapidly developing user interfaces.
               Responsive interfaces can be written with just a few lines of code.</p>
-            <a href="#" class="btn btn-primary">Introduction</a>
           </div>
         </div>
       </div>
     </main>
 
+    <section class="bg-light">
     <div class="container py-4">
-      <ul class="nav nav-tabs  nav-fill" id="myTab" role="tablist">
+      <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
         <li class="nav-item">
           <a class="nav-link active" id="tab1h" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Hello, world!</a>
         </li>
@@ -72,7 +73,7 @@
 
 c.main("Hello World", c.text("Hello, world!"), 400, 288)</code></pre>
               </div>
-            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: center">
               <img class="img-fluid" width="400" src="sshots/hello_world.png">
             </div>
           </div>
@@ -85,20 +86,20 @@ c.main("Hello World", c.text("Hello, world!"), 400, 288)</code></pre>
 def counter():
     count = 5
     while True:
-        action, _ = yield from c.orr([
+        tag, _ = yield from c.orr([
             c.text(f"Count: {count}"),
             c.button("Increment"),
             c.button("Decrement"),
             ])
-        if action == "Increment":
+        if tag == "Increment":
             count += 1
-        elif action == "Decrement":
+        elif tag == "Decrement":
             count -= 1
         yield
 
 c.main("Counter", counter(), 400, 288)</code></pre>
               </div>
-            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: center">
               <video width=400 height=288 autoplay loop>
                 <source src="sshots/counter.mp4" type="video/mp4">
               <video>
@@ -118,7 +119,7 @@ def app():
 
 c.main("Image", app(), 400, 288)</code></pre>
               </div>
-            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: center">
               <video width=400 height=288 autoplay loop>
                 <source src="sshots/image.mp4" type="video/mp4">
               <video>
@@ -145,7 +146,7 @@ def plot():
 
 c.main("Plot", plot(), 400, 288)</code></pre>
               </div>
-            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: center">
               <video width=400 height=288 autoplay loop>
                 <source src="sshots/plot.mp4" type="video/mp4">
               <video>
@@ -165,10 +166,10 @@ def graph(tf):
     return c.draw.polyline(pts, (0,0,1,1), tf=tf)
 
 def app():
-    view = c.plot.Frame((-1.5, 1.5), (1.5, -1.5))
+    view = c.Frame((-1.5, 1.5), (1.5, -1.5))
     while True:
         key, value = yield from c.orr([
-            c.plot.frame("Frame", view, graph),
+            c.frame("Frame", view, graph),
             c.event(("Tick", None)), # refresh every frame
             ])
         if key == "Frame":
@@ -178,7 +179,7 @@ def app():
 if __name__ == "__main__":
     c.main("Plot", app(), 400, 288)</code></pre>
               </div>
-            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: right">
+            <div class="mx-auto col-md-5 order-md-2 my-4" style="text-align: center">
               <video width=400 height=288 autoplay loop>
                 <source src="sshots/animation.mp4" type="video/mp4">
               <video>
@@ -188,57 +189,57 @@ if __name__ == "__main__":
 
       </div>
     </div>
+    </section>
 
-    <div class="container py-4">
+    <section>
+      <div class="container py-4 d-flex flex-wrap">
+        <div class="mx-auto col-md-6 order-md-1 my-4">
+          <h2>Benefits</h2>
+          <ul>
+            <li>Useful for simple visualizations, as well as interactive applications.</li>
+            <li>Works well with Jupyter</li>
+            <li>Real-time performant plotting</li>
+            <li>Vector-based image overlays</li>
+            <li>Scales to complicated applications without code becoming spaghetti</li>
+            <li><a href="https://dennisreimann.de/articles/elm-architecture-overview.html">The Elm Architecture</a>
+              (Model-View-Update architecture) can be recovered in a few lines of code</li>
+          </ul>
+        </div>
 
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Automated Testing</h5>
-              <p class="card-text">Create UI tests and automation. Simulate input, generate screenshots.
-                All the examples on this page were programmatically generated.</p>
-              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Works well with Jupyter</h5>
-              <p class="card-text">ToDo: text</p>
-              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Functional programming</h5>
-              <p class="card-text">No objects, no observable internal state. Widgets are generators.
-                Elm architecture can be implemented in a few lines of code.</p>
-              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-            </div>
-          </div>
+        <div class="mx-auto col-md-6 order-md-2 my-4">
+          <h2>Installation</h2>
+          <p>
+            You need to have:
+            <ul>
+              <li>Python ≥ 3.6</li>
+              <li>C++ compiler</li>
+              <li>GLFW</li>
+            </ul>
+            Concur is hosted on PyPI:
+          </p>
+          <p>
+            <pre><code class="language-sh p-3 rounded border shadow-sm">pip install concur</code></pre>
+          </p>
         </div>
       </div>
-    </div>
+      <div class="container mb-4" style="text-align: center">
+        <a class="my-2 mx-4 btn btn-lg btn-outline-dark" style="min-width: 10rem" href="index.html" >Documentation</a>
+        <a class="my-2 mx-4 btn btn-lg btn-outline-dark" style="min-width: 10rem" href="https://github.com/potocpav/python-concur">GitHub</a>
+        <a class="my-2 mx-4 btn btn-lg btn-outline-dark" style="min-width: 10rem" href="https://pypi.org/project/concur/">PyPI</a>
+      </div>
+    </section>
 
-    <div class="container py-4">
-      <h2>Get Concur</h2>
-      <p>
-        You need to have:
-        <ul>
-          <li>Python ≥ 3.6</li>
-          <li>C++ compiler</li>
-          <li>GLFW</li>
-        </ul>
-        Concur is hosted on PyPI:
-      </p>
-      <p>
-        <pre><code class="language-sh p-3 rounded border shadow-sm">pip install concur</code></pre>
-      </p>
-    </div>
+    <section class="bg-light py-4">
+      <div class="container">
+        <h2>Gallery</h2>
+        <p>
+          ToDo: Gallery
+        </p>
+        <div style="height:10rem;"></div>
+      </div>
+    </section>
+
+
     <!-- bootstap js -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

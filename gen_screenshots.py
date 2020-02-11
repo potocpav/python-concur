@@ -123,11 +123,11 @@ def animation(tester):
         pts = np.stack([np.sin(ts * 4), np.cos(ts * 5)]).T
         return c.draw.polyline(pts, (0,0,1,1), tf=tf)
 
-    view = c.plot.Frame((-1.5, 1.5), (1.5, -1.5))
+    view = c.Frame((-1.5, 1.5), (1.5, -1.5))
     t0 = t()
     while True:
         key, value = yield from c.orr([
-            c.plot.frame("Frame", view, graph),
+            c.frame("Frame", view, graph),
             c.event(("Tick", None)), # refresh every frame
             ])
         if key == "Frame":

@@ -1,4 +1,4 @@
-""" Passive geometric shape widgets to be drawn as `concur.extra_widgets.image.image` or `concur.extra_widgets.plot.frame.frame` overlay, or on their own.
+""" Passive geometric shape widgets to be drawn as `concur.extra_widgets.image.image` or `concur.extra_widgets.frame.frame` overlay, or on their own.
 
 All these widgets have the following in common:
 

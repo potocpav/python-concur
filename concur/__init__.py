@@ -9,7 +9,7 @@
 
 # API
 
-Most of the functions and classes from submodules (`concur.core`, `concur.widgets`, etc.) are re-exported in the
+Most of the functions and classes from submodules are re-exported in the
 `concur` root module. The most convenient way to access them is by importing `concur` qualified:
 
 ```python
