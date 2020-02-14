@@ -11,7 +11,7 @@ def overlay(tf):
         c.draw.line(20, 20, 20, 200, yellow, 2, tf=tf),
         c.draw.rect(40, 20, 100, 200, yellow, 2, 5, tf=tf),
         c.draw.circle(70, 110, 20, yellow, 2, 16, tf=tf),
-        c.draw.text(120, 20, (0,0,1,1), "Overlay text", tf=tf),
+        c.draw.text("Overlay text", 120, 20, (0,0,1,1), tf=tf),
         c.draw.polyline(np.array([(50, 30), (90, 30), (70, 50)]), yellow, True, 2, tf=tf),
         c.transform(120, 50, c.button("Rotate"), tf=tf),
         ])

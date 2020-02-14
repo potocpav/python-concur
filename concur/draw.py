@@ -81,7 +81,7 @@ def polyline(points, color, closed=False, thickness=1, tf=None):
         yield
 
 
-def text(x, y, color, string, tf=None):
+def text(string, x, y, color, tf=None):
     """ Text, using the default font and font size.
 
     This is a raw drawing function. Use `concur.widgets.text` instead if you want a text widget.

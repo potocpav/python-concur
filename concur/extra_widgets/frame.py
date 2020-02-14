@@ -68,8 +68,8 @@ def _frame(content_gen, show_grid, tf):
             print(f"msd: {msd}, stride: {lsd}, n_chars: {1 + msd - lsd + (lsd < 0) + some_negative}")
             format_x = f"{{:<6.{-lsd}f}}"
             format_y = f"{{:>6.{-lsd}f}}"
-        xtick_labels = [draw.text(ts, viewport_s[3], (0,0,0,1), tick_format(vticks_c, "<").format(tc)) for ts, tc in zip(vticks_s, vticks_c)]
-        ytick_labels = [draw.text(viewport_s[0] - 45, ts - 7, (0,0,0,1), tick_format(hticks_c, ">").format(tc)) for ts, tc in zip(hticks_s, hticks_c)]
+        xtick_labels = [draw.text(tick_format(vticks_c, "<").format(tc), ts, viewport_s[3], (0,0,0,1)) for ts, tc in zip(vticks_s, vticks_c)]
+        ytick_labels = [draw.text(tick_format(hticks_c, ">").format(tc), viewport_s[0] - 45, ts - 7, (0,0,0,1)) for ts, tc in zip(hticks_s, hticks_c)]
         return orr(xtick_labels + ytick_labels)
 
     def grid():
