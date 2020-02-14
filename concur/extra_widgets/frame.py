@@ -53,11 +53,23 @@ def _frame(content_gen, show_grid, tf):
     hticks_s = np.matmul(tf.c2s, np.stack([np.zeros_like(hticks_c), hticks_c, np.ones_like(hticks_c)]))[1]
     vticks_s = np.matmul(tf.c2s, np.stack([vticks_c, np.zeros_like(vticks_c), np.ones_like(vticks_c)]))[0]
 
-    def tick_labels(format=("{:<6.1g}", "{:>6.1g}")):
-        if isinstance(format, str):
-            format = (format, format)
-        xtick_labels = [draw.text(ts, viewport_s[3], (0,0,0,1), format[0].format(tc)) for ts, tc in zip(vticks_s, vticks_c)]
-        ytick_labels = [draw.text(viewport_s[0] - 45, ts - 7, (0,0,0,1), format[1].format(tc)) for ts, tc in zip(hticks_s, hticks_c)]
+    def tick_labels():
+        def tick_format(ticks_c, align):
+            mag = max(1, abs(ticks_c[0]), abs(ticks_c[-1]))
+            stride = abs(ticks_c[1] - ticks_c[0]) if len(ticks_c) > 1 else 1
+            some_negative = ticks_c[0] < 0 or ticks_c[-1] < 0
+            msd = int(np.floor(np.log10(mag)))
+            lsd = int(np.minimum(0, np.floor(np.log10(stride))))
+            if 1 + msd - lsd + (lsd < 0) + some_negative > 6:
+                format = f"{{:{align}6.1g}}"
+            else:
+                format = f"{{:{align}6.{-lsd}f}}"
+            return format
+            print(f"msd: {msd}, stride: {lsd}, n_chars: {1 + msd - lsd + (lsd < 0) + some_negative}")
+            format_x = f"{{:<6.{-lsd}f}}"
+            format_y = f"{{:>6.{-lsd}f}}"
+        xtick_labels = [draw.text(ts, viewport_s[3], (0,0,0,1), tick_format(vticks_c, "<").format(tc)) for ts, tc in zip(vticks_s, vticks_c)]
+        ytick_labels = [draw.text(viewport_s[0] - 45, ts - 7, (0,0,0,1), tick_format(hticks_c, ">").format(tc)) for ts, tc in zip(hticks_s, hticks_c)]
         return orr(xtick_labels + ytick_labels)
 
     def grid():
