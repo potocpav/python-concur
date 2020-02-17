@@ -220,3 +220,7 @@ class TF(object):
             self.view_s == other.view_s and \
             self.hovered == other.hovered and \
             True
+
+    def transform(self, points):
+        """Transform a given NumPy array of `n` points of shape `(n, 2)`."""
+        return np.tensordot(np.hstack([points, np.ones((points.shape[0], 1))]), self.c2s, (1, 1))
