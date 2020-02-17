@@ -15,6 +15,7 @@ They can be composed normally using the `concur.core.orr` function.
 
 import numpy as np
 import imgui
+from concur.core import nothing
 
 
 def line(x0, y0, x1, y1, color, thickness=1, tf=None):
@@ -40,19 +41,25 @@ def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
         yield
 
 
-def rects(rects, color, thickness=1, rounding=0, tf=None):
+def rects(rects, color, thickness=1, tf=None):
     """ Multiple straight non-filled rectangles specified by their two corners.
 
     `rects` is a NumPy array of shape `(n, 4)`, where `n` is the number of rectangles.
     """
     if tf is not None:
-        [x0, y0], [x1, y1] = tf.transform(np.array([[x0, y0], [x1, y1]]))
+        rects = tf.transform(rects.reshape(-1, 2)).reshape(rects.shape)
     # Avoid issues with disappearing lines on very large rectangles
-    x0, x1 = np.clip([x0, x1], -8192, 8192)
-    y0, y1 = np.clip([y0, y1], -8192, 8192)
+    rects = np.clip(rects, -8192, 8192)
+    polys = np.empty((len(rects), 4, 2), dtype=rects.dtype)
+    polys[:,0] = rects[:,:2]
+    polys[:,1,0] = rects[:,0]
+    polys[:,1,1] = rects[:,3]
+    polys[:,2] = rects[:,2:]
+    polys[:,3,0] = rects[:,2]
+    polys[:,3,1] = rects[:,1]
     draw_list = imgui.get_window_draw_list()
     while(True):
-        draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, thickness)
+        draw_list.add_polylines(polys, imgui.get_color_u32_rgba(*color), True, thickness)
         yield
 
 
@@ -86,12 +93,15 @@ def polyline(points, color, closed=False, thickness=1, tf=None):
 
     `points` is a list of (x, y) tuples, or a NumPy array of equivalent shape.
     """
+    if len(points) == 0:
+        while True:
+            yield
     if not isinstance(points, np.ndarray):
         points = np.array(points)
     if tf is not None:
         points = tf.transform(points)
     draw_list = imgui.get_window_draw_list()
-    while(True):
+    while True:
         draw_list.add_polyline(points, imgui.get_color_u32_rgba(*color), closed, thickness)
         yield
 
