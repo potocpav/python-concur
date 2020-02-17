@@ -168,3 +168,25 @@ def ellipse(mean, cov, sd, color, thickness=1, num_segments=16, tf=None):
     t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
     el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
     return polyline(el + mean, color, True, thickness, tf=tf)
+
+
+def ellipses(means, covs, sd, color, thickness=1, num_segments=16, tf=None):
+    """Multiple ellipses defined by a means, covariance matrices, and SD.
+
+    The call is very similar to `ellipse`, but `mean` and `cov` are vectorized: there is one more dimension (zeroth) for both.
+    For `n` ellipses, the shape of `mean` is `(n, 2)`, and the shape of `cov` is `(n, 2, 2)`.
+    """
+    if len(means) == 0 and len(covs) == 0:
+        return nothing()
+    assert len(means) == len(covs)
+    assert len(means.shape) == 2 and means.shape[1] == 2
+    assert len(covs.shape) == 3 and covs.shape[1] == 2 and covs.shape[2] == 2
+    es, vs = np.linalg.eig(covs)
+    assert np.all(es > 0), "covariance matrices must be positive-semidefinite"
+    v1 = vs[...,0].reshape(-1, 1, 2)
+    v2 = vs[...,1].reshape(-1, 1, 2)
+    e1 = es[:,0].reshape(-1, 1, 1)
+    e2 = es[:,1].reshape(-1, 1, 1)
+    t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
+    el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
+    return polylines(el + means.reshape(-1, 1, 2), color, True, thickness, tf=tf)
