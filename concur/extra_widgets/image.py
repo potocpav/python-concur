@@ -33,7 +33,7 @@ def image(name, state, width=None, height=None, content_gen=None):
 
     ```python
     def overlay(pos, tf):
-        return c.circle(*pos, 10, (0,0,0,1), tf=tf)
+        return c.draw.circle(*pos, 10, (0,0,0,1), tf=tf)
 
     _, im = yield from c.image("Image", im, content_gen=c.partial(overlay, pos))
     ```
