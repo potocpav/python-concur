@@ -9,6 +9,7 @@ services:
 before_install:
   - sudo apt-get -y install libglfw3-dev
 install:
+  - pip install pytest-benchmark
   - pip install -e.
 script:
   - pytest
