@@ -15,3 +15,15 @@ def test_polylines_perf():
     while True:
         yield from c.image("Image", im, content_gen=content)
         yield
+
+
+@c.testing.test_widget
+def test_scatter(tester):
+    def content(tf):
+        np.random.seed(0)
+        return c.orr([
+            c.draw.scatter(np.random.rand(100, 2), (1,1,1,1), '+', thickness=1, tf=tf),
+            c.draw.scatter(np.random.rand(100, 2), (1,1,0,1), 'x', thickness=1, tf=tf),
+            c.draw.scatter(np.random.rand(100, 2), (1,0,1,1), 'o', thickness=1, tf=tf),
+            ])
+    yield from c.orr([c.image("Image", c.Image(), content_gen=content), tester.pause()])

@@ -190,3 +190,46 @@ def ellipses(means, covs, sd, color, thickness=1, num_segments=16, tf=None):
     t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
     el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
     return polylines(el + means.reshape(-1, 1, 2), color, True, thickness, tf=tf)
+
+
+def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
+    """Draw a scatter plot with given marker settings.
+
+    `pts` is a NumPy array with shape `(n, 2)`, where `n` is the point count.
+
+    If multiple settings are desired (such as two distinct point colors), call
+    this function more than once with different parameters.
+
+    Some markers are more performant than others, depending on the amount of
+    generated geometry.
+    """
+    if tf is not None:
+        pts = tf.transform(pts)
+
+    if marker == '+':
+        r = marker_size / 2
+        polys = np.empty((len(pts) * 2, 2, 2))
+        polys[0::2, 0, :] = pts - [r, 0]
+        polys[0::2, 1, :] = pts + [r, 0]
+        polys[1::2, 0, :] = pts - [0, r]
+        polys[1::2, 1, :] = pts + [0, r]
+        return polylines(polys, color, False, thickness)
+    elif marker in ['X', 'x', '×']:
+        r = marker_size / np.sqrt(8)
+        polys = np.empty((len(pts) * 2, 2, 2))
+        polys[0::2, 0, :] = pts - [r, r]
+        polys[0::2, 1, :] = pts + [r, r]
+        polys[1::2, 0, :] = pts - [-r, r]
+        polys[1::2, 1, :] = pts + [-r, r]
+        return polylines(polys, color, False, thickness)
+    elif marker in ['O', 'o']:
+        r = marker_size / 2
+        n_verts = 7
+        t = np.linspace(0, np.pi * 2, n_verts, endpoint=False)
+        polys = np.empty((len(pts), n_verts, 2))
+        polys[...,0] = np.sin(t) * r
+        polys[...,1] = np.cos(t) * r
+        polys += pts.reshape(-1, 1, 2)
+        return polylines(polys, color, True, thickness)
+    else:
+        raise ValueError('Invalid marker')
