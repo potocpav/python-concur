@@ -81,6 +81,23 @@ def polyline(points, color, closed=False, thickness=1, tf=None):
         yield
 
 
+def polylines(points, color, closed=False, thickness=1, tf=None):
+    """ Multiple polygonal lines with the same length and parameters.
+
+    Calling this function is more efficient than calling `polyline` multiple times, because all the data is given
+    to the C++ back-end in one Python call, and because transformation is vectorized.
+
+    `points` is a NumPy array with shape `(n, m, 2)`, where `n` is the number of polylines, and `m` is the number of points
+    in each polyline.
+    """
+    if tf is not None:
+        points = np.tensordot(np.dstack([points, np.ones((*points.shape[:2], 1))]), tf.c2s, (2, 1))
+    draw_list = imgui.get_window_draw_list()
+    while(True):
+        draw_list.add_polylines(points, imgui.get_color_u32_rgba(*color), closed, thickness)
+        yield
+
+
 def text(string, x, y, color, tf=None):
     """ Text, using the default font and font size.
 

@@ -13,7 +13,7 @@ import time
 __pdoc__ = dict(create_window=False, begin_maximized_window=False, create_window_dock=False)
 
 
-def create_window(window_name, width, height):
+def create_window(window_name, width, height, visible=True):
     """ Create a GLFW window. """
     if not glfw.init():
         print("Could not initialize OpenGL context")
@@ -24,6 +24,8 @@ def create_window(window_name, width, height):
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
     glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
+    if not visible:
+        glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
 
     # Create a windowed mode window and its OpenGL context
     window = glfw.create_window(

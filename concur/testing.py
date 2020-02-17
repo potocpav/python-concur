@@ -61,6 +61,23 @@ def test_widget(f):
     return g
 
 
+def benchmark_widget(f_gen):
+    """ Benchmark a widget (experimental).
+
+    See tests/test_draw.py for example usage.
+
+    TODO: improve, document
+    """
+    f = f_gen()
+    def widget(_):
+        for _ in range(240):
+            next(f)
+            yield
+    def g(benchmark):
+        benchmark.pedantic(main, ("Perf Tester", widget, 512, 512), dict(fps=None), rounds=1)
+    return g
+
+
 class Testing(object):
     """ Must be used in conjunction with the `concur.integrations.puppet` backend.
 

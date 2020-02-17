@@ -137,20 +137,21 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
 
 
 
-def main(name, widget_gen, width, height, save_screencast=None, return_sshot=False):
+def main(name, widget_gen, width, height, save_screencast=None, return_sshot=False, headless=False, fps=60):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     The resulting window is not hooked up to the user input. Instead, input is handled
     by a PuppetRenderer instance.
 
     `widget_gen` takes as an argument a `PuppetRenderer` instance, and returns a widget.
+    `fps` optionally limits FPS (if None, FPS is unlimited)
     """
     imgui.create_context()
 
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height)
+    window = create_window(name, width, height, visible=not headless)
     impl = PuppetRenderer(window)
     widget = widget_gen(impl)
     offscreen_fb = create_offscreen_fb(width, height)
@@ -196,8 +197,8 @@ def main(name, widget_gen, width, height, save_screencast=None, return_sshot=Fal
         glfw.swap_buffers(window)
 
         t1 = time.perf_counter()
-        if t1 - t0 < 1/60:
-            time.sleep(1/60 - (t1 - t0))
+        if fps is not None and t1 - t0 < 1/fps:
+            time.sleep(1/fps - (t1 - t0))
 
     if save_screencast:
         writer.close()

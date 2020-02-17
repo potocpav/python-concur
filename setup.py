@@ -32,7 +32,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'concur-imgui >= 1.2.1',
+        'concur-imgui >= 1.2.2',
         'Pillow',
         'numpy',
         'glfw',
