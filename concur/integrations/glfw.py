@@ -63,7 +63,12 @@ def main(name, widget, width, height, save_screencast=None):
 
     To create a maximized window, pass width and height larger than the screen.
 
-    `save_screencast` is for capturing and saving the UI into a specified video file (experimental).
+    Arguments:
+        widget: The widget to display inside the window. When the widget returns, the application exits.
+        width: Desired window width.
+        height: Desired window height.
+        save_screencast: Capture and save the UI into a specified video file (experimental). Main window shouldn't
+            be resized while the application is running when using this option.
     """
     imgui.create_context()
 
@@ -75,10 +80,12 @@ def main(name, widget, width, height, save_screencast=None):
 
     ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
     # glfw.swap_interval(-1)
+    fps = 60
     if save_screencast:
         import imageio
+        width, height = glfw.get_framebuffer_size(window)
         offscreen_fb = create_offscreen_fb(width, height)
-        writer = imageio.get_writer(save_screencast, mode='I', fps=60)
+        writer = imageio.get_writer(save_screencast, mode='I', fps=fps)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
@@ -120,8 +127,8 @@ def main(name, widget, width, height, save_screencast=None):
         glfw.swap_buffers(window)
 
         t1 = time.perf_counter()
-        if t1 - t0 < 1/60:
-            time.sleep(1/60 - (t1 - t0))
+        if t1 - t0 < 1/fps:
+            time.sleep(1/fps - (t1 - t0))
 
     if save_screencast:
         writer.close()
