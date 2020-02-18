@@ -60,7 +60,7 @@ def create_window_dock(glfw_window):
     imgui.end()
 
 
-def main(name, widget, width, height, save_screencast=None):
+def main(name, widget, width, height, save_screencast=None, screencast_fps=60):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     To create a maximized window, pass width and height larger than the screen.
@@ -71,6 +71,7 @@ def main(name, widget, width, height, save_screencast=None):
         height: Desired window height.
         save_screencast: Capture and save the UI into a specified video file (experimental). Main window shouldn't
             be resized while the application is running when using this option.
+        screencast_fps: Save the screencast video with a given FPS.
     """
     imgui.create_context()
 
@@ -87,7 +88,7 @@ def main(name, widget, width, height, save_screencast=None):
         import imageio
         width, height = glfw.get_framebuffer_size(window)
         offscreen_fb = create_offscreen_fb(width, height)
-        writer = imageio.get_writer(save_screencast, mode='I', fps=fps)
+        writer = imageio.get_writer(save_screencast, mode='I', fps=screencast_fps)
 
     while not glfw.window_should_close(window):
         t0 = time.perf_counter()
