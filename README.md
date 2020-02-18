@@ -13,6 +13,7 @@
 * [**Documentation**](https://potocpav.github.io/python-concur/)
 * [**Examples**](https://github.com/potocpav/python-concur/tree/master/examples)
 * [**PyPI**](https://pypi.org/project/concur/)
+* [**Changelog**](https://github.com/potocpav/python-concur/tree/master/CHANGELOG.md)
 
 <!-- Start docs -->
 
