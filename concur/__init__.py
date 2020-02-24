@@ -30,7 +30,7 @@ import concur.testing
 from .core import *
 from .widgets import *
 from .extra_widgets import *
-from .integrations import main
+from .integrations import main, quick_plot
 
 import functools
 

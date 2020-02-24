@@ -11,3 +11,4 @@ import concur.integrations.puppet
 
 from .glfw import *
 from .opengl import *
+from .plot import quick_plot

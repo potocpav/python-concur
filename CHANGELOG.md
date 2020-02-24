@@ -1,4 +1,10 @@
 
+## 0.6.1
+
+**Additions**
+
+* Add a `c.quick_plot` function for quick asynchronous plotting without worrying about the threading and event details
+
 ## 0.6.0
 
 **Breaking Changes**
