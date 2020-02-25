@@ -60,7 +60,7 @@ def create_window_dock(glfw_window):
     imgui.end()
 
 
-def main(name, widget, width, height, save_screencast=None, screencast_fps=60):
+def main(name, widget, width, height, fps=60, save_screencast=None, screencast_fps=60):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     To create a maximized window, pass width and height larger than the screen.
@@ -69,6 +69,7 @@ def main(name, widget, width, height, save_screencast=None, screencast_fps=60):
         widget: The widget to display inside the window. When the widget returns, the application exits.
         width: Desired window width.
         height: Desired window height.
+        fps: Maximum number of frames per second
         save_screencast: Capture and save the UI into a specified video file (experimental). Main window shouldn't
             be resized while the application is running when using this option.
         screencast_fps: Save the screencast video with a given FPS.
@@ -83,7 +84,6 @@ def main(name, widget, width, height, save_screencast=None, screencast_fps=60):
 
     ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
     # glfw.swap_interval(-1)
-    fps = 60
     if save_screencast:
         import imageio
         width, height = glfw.get_framebuffer_size(window)

@@ -4,12 +4,13 @@
 **Additions**
 
 * Add a `c.quick_plot` function for quick asynchronous plotting without worrying about the threading and event details
+* Add a `fps` argument to `c.main`
 
 ## 0.6.0
 
 **Breaking Changes**
 
-* Change the argument order for c.draw.text from (x, y, color, text) to (text, x, y, color).
+* Change the argument order for `c.draw.text` from `(x, y, color, text)` to `(text, x, y, color)`.
 
 **Other Changes**
 

@@ -16,8 +16,8 @@ def thread(c, q, quit_q, max_fps):
     try:
         for x in c:
             t1 = time.perf_counter()
-            time.sleep(0)
             if t1 - t0 > 1/max_fps:
+                time.sleep(0)
                 try:
                     q.put_nowait(x)
                 except queue.Full:
@@ -111,4 +111,4 @@ def quick_image(overlay_gen, w, h, max_fps=60):
 
     t.start()
     x0 = q.get()
-    main("Quick Plot", quick_image_w(quit_q, q, x0), w, h)
+    main("Quick Plot", quick_image_w(quit_q, q, x0), w, h, fps=max_fps)
