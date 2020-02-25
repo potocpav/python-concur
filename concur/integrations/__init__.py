@@ -11,4 +11,4 @@ import concur.integrations.puppet
 
 from .glfw import *
 from .opengl import *
-from .plot import quick_plot
+from .quick import quick_plot, quick_window, quick_image
