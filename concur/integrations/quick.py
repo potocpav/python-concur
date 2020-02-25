@@ -1,5 +1,9 @@
+""" Simple plotting functions designed to monitor a process without slowing it down too much (experimental).
 
-#!/usr/bin/env python3
+This is not a simple task, as threading in Python is slow, and multiprocessing is fiddly
+
+I am not happy with these interfaces yet, and they may change or be removed in the future.
+"""
 
 import threading
 import queue
@@ -111,4 +115,4 @@ def quick_image(overlay_gen, w, h, max_fps=60):
 
     t.start()
     x0 = q.get()
-    main("Quick Plot", quick_image_w(quit_q, q, x0), w, h, fps=max_fps)
+    main("Quick Plot", quick_image_w(quit_q, q, x0), w, h)
