@@ -1,8 +1,16 @@
 
-## 0.6.1
+## 0.7.0 (planned)
+
+**Breaking Changes**
+
+* Rename `key_pressed` to `key_press`
+* Rename TF.is_hovered
+
+## 0.6.1 (master)
 
 **Additions**
 
+* Add `concur.widgets.mouse_click` widget, which returns mouse position on click
 * Add `c.quick_*` functions for quick asynchronous plotting without worrying about the threading and event details
 * Add a `fps` argument to `c.main`
     - this is breaking if screencast arguments were used positionally.

@@ -124,7 +124,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
 
         content_value = None
         try:
-            new_tf = TF(c2s, s2c, view_c, view_s, st.is_hovered)
+            new_tf = TF(c2s, s2c, view_c, view_s, imgui.is_window_hovered())
             if tf is None or tf != new_tf:
                 tf = new_tf
                 content = content_gen(tf)
