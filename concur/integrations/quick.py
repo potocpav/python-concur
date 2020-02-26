@@ -49,14 +49,14 @@ def quick_plot_w(quit_q, q, x0):
         yield
 
 
-def quick_plot(overlay_gen):
+def quick_plot(overlay_gen, w, h, max_fps=60):
     q = queue.Queue(1)
     quit_q = queue.Queue(1)
-    t = threading.Thread(target=thread, args=(overlay_gen, q, quit_q))
+    t = threading.Thread(target=thread, args=(overlay_gen, q, quit_q, max_fps))
 
     t.start()
     x0 = q.get()
-    main("Quick Plot", quick_plot_w(quit_q, q, x0), 500, 500)
+    main("Quick Plot", quick_plot_w(quit_q, q, x0), w, h)
 
 
 def quick_window_w(quit_q, q, x0):
@@ -78,14 +78,14 @@ def quick_window_w(quit_q, q, x0):
 
 
 
-def quick_window(widget_gen):
+def quick_window(widget_gen, w, h, max_fps=60):
     q = queue.Queue(1)
     quit_q = queue.Queue(1)
-    t = threading.Thread(target=thread, args=(widget_gen, q, quit_q))
+    t = threading.Thread(target=thread, args=(widget_gen, q, quit_q, max_fps))
 
     t.start()
     x0 = q.get()
-    main("Quick Window", quick_window_w(quit_q, q, x0), 500, 500)
+    main("Quick Window", quick_window_w(quit_q, q, x0), w, h)
 
 
 def quick_image_w(quit_q, q, x0):

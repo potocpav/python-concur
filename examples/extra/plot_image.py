@@ -15,15 +15,14 @@ def graph(tex_id, tex_w, tex_h, tf):
 
     return c.orr([
         c.draw.image(tex_id, tex_w, tex_h, tf=tf),
-        c.draw.polyline(pts, (0,0,0,1), thickness=1, tf=tf),
-        c.draw.rect(0, 0, 512, 512, (1,1,1,1), tf=tf),
+        c.draw.polyline(pts, 'black', thickness=1, tf=tf),
         ])
 
 
 def app():
     view = c.Frame((0, 0), (512, 512), keep_aspect=True)
     arr = np.array(Image.open("examples/lenna.png").convert('RGBA')) # RGBA for transparent backgound
-    tex = c.texture(arr)
+    tex = c.integrations.opengl.texture(arr)
 
     while True:
         tag, value = yield from c.orr([

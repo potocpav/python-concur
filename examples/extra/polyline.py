@@ -11,7 +11,7 @@ import imgui
 
 def graph(tex_id, tex_w, tex_h, tf):
     return c.orr([
-        c.draw.polyline([(-1, 0), (0, 0), (0, -0.3), (0.3, 0), (1, 0.1), (-1, 0.5), (-1, 0.2)], (0,0,0,0.5),
+        c.draw.polyline([(-1, 0), (0, 0), (0, -0.3), (0.3, 0), (1, 0.1), (-1, 0.5), (-1, 0.2)], ('black', 0.5),
         closed=True, thickness=20, tf=tf),
         ])
 
@@ -19,7 +19,7 @@ def graph(tex_id, tex_w, tex_h, tf):
 def app():
     view = c.Frame((-1, -1), (1, 1), keep_aspect=True)
     arr = np.array(Image.open("examples/lenna.png"))
-    tex = c.texture(arr)
+    tex = c.integrations.opengl.texture(arr)
     style = imgui.get_style()
     style.anti_aliased_lines = False
 

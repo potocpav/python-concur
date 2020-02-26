@@ -6,8 +6,8 @@ import time
 def computation():
     def draw(i, tf):
         return c.orr([
-            c.draw.circle(0, 0, 1, (1,0,0,1), tf=tf),
-            c.draw.text(f"iter: {i}", 0, 0, (0,0,0,1), tf=tf)
+            c.draw.circle(0, 0, 1, 'red', tf=tf),
+            c.draw.text(f"iter: {i}", 0, 0, 'black', tf=tf),
             ])
 
     for i in range(2000000):
@@ -19,7 +19,7 @@ def computation():
 def computation():
     def draw(i):
         return c.orr([
-            c.button(f"i: {i}"),
+            c.text(f"i: {i}"),
             ])
 
     for i in range(20000):
@@ -27,4 +27,4 @@ def computation():
         yield draw(i)
     print("Computation done.")
 
-c.quick_window(computation())
+c.quick_window(computation(), 500, 500)

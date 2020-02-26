@@ -4,7 +4,12 @@ All these widgets have the following in common:
 
 * They are passive, so they don't need names. For active overlay, use normal widgets, such as buttons, wrapped inside `concur.widgets.transform`.
 * They don't do automatic layout. Instead the exact position is specified by hand.
-* `color` is specified as an RGBA tuple with values between 0 and 1. For example, `(0.5, 0.5, 1, 1)` is light blue.
+* Color can be specified in several ways:
+    * RGBA tuple with values between 0 and 1. For example, `(0.5, 0.5, 1, 1)` is light blue.
+    * RGB tuple with values between 0 and 1. The result is opaque.
+    * String specifying a color from the [xkcd color set](https://xkcd.com/color/rgb/), for example, `'red'`.
+    * `(str, float)` pair, where the first element specifies color, and the second element specifies alpha.
+    * A single `int`, specifying ABGR color. For example, `0xffaa0000` is dark blue.
 * `tf` is the `concur.extra_widgets.pan_zoom.TF` object specifying transformations from screen-space to image-space and back.
   If no transformation is supplied, the element is drawn in screen space units.
 
@@ -15,6 +20,7 @@ They can be composed normally using the `concur.core.orr` function.
 
 import numpy as np
 import imgui
+from concur.colors import color_to_rgba
 from concur.core import nothing
 
 
@@ -23,8 +29,9 @@ def line(x0, y0, x1, y1, color, thickness=1, tf=None):
     if tf is not None:
         [x0, y0], [x1, y1] = tf.transform(np.array([[x0, y0], [x1, y1]]))
     draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
     while True:
-        draw_list.add_line(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), thickness)
+        draw_list.add_line(x0, y0, x1, y1, col, thickness)
         yield
 
 
@@ -36,8 +43,9 @@ def rect(x0, y0, x1, y1, color, thickness=1, rounding=0, tf=None):
     x0, x1 = np.clip([x0, x1], -8192, 8192)
     y0, y1 = np.clip([y0, y1], -8192, 8192)
     draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
     while True:
-        draw_list.add_rect(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0, thickness)
+        draw_list.add_rect(x0, y0, x1, y1, col, rounding, 15 if rounding else 0, thickness)
         yield
 
 
@@ -61,8 +69,9 @@ def rects(rects, color, thickness=1, tf=None):
     polys[:,3,0] = rects[:,2]
     polys[:,3,1] = rects[:,1]
     draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
     while True:
-        draw_list.add_polylines(polys, imgui.get_color_u32_rgba(*color), True, thickness)
+        draw_list.add_polylines(polys, col, True, thickness)
         yield
 
 
@@ -74,8 +83,9 @@ def rect_filled(x0, y0, x1, y1, color, rounding=0, tf=None):
     x0, x1 = np.clip([x0, x1], -8192, 8192)
     y0, y1 = np.clip([y0, y1], -8192, 8192)
     draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
     while True:
-        draw_list.add_rect_filled(x0, y0, x1, y1, imgui.get_color_u32_rgba(*color), rounding, 15 if rounding else 0)
+        draw_list.add_rect_filled(x0, y0, x1, y1, col, rounding, 15 if rounding else 0)
         yield
 
 
@@ -86,8 +96,9 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
             "`tf` must be aspect ratio preserving to draw circles. Use `ellipse` instead, if it isn't the case."
         [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
     draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
     while True:
-        draw_list.add_circle(cx, cy, radius, imgui.get_color_u32_rgba(*color), num_segments=num_segments, thickness=thickness)
+        draw_list.add_circle(cx, cy, radius, col, num_segments=num_segments, thickness=thickness)
         yield
 
 
@@ -104,8 +115,9 @@ def polyline(points, color, closed=False, thickness=1, tf=None):
     if tf is not None:
         points = tf.transform(points)
     draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
     while True:
-        draw_list.add_polyline(points, imgui.get_color_u32_rgba(*color), closed, thickness)
+        draw_list.add_polyline(points, col, closed, thickness)
         yield
 
 
@@ -121,8 +133,9 @@ def polylines(points, color, closed=False, thickness=1, tf=None):
     if tf is not None:
         points = tf.transform(points.reshape(-1, 2)).reshape(points.shape)
     draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
     while True:
-        draw_list.add_polylines(points, imgui.get_color_u32_rgba(*color), closed, thickness)
+        draw_list.add_polylines(points, col, closed, thickness)
         yield
 
 
@@ -133,11 +146,12 @@ def text(string, x, y, color, tf=None):
     """
     if tf is not None:
         x, y = np.matmul(tf.c2s, [x, y, 1])
+    col = color_to_rgba(color)
     while True:
         # Text was hanging the application if too far away
         if -8192 < x < 8192 and -8192 < y < 8192:
             draw_list = imgui.get_window_draw_list()
-            draw_list.add_text(x, y, imgui.get_color_u32_rgba(*color), string)
+            draw_list.add_text(x, y, col, string)
         yield
 
 

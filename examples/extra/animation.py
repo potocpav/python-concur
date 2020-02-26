@@ -7,7 +7,7 @@ from time import monotonic as t
 def graph(tf):
     ts = np.linspace(t(), t() + 1/2, 100)
     pts = np.stack([np.sin(ts * 4), np.cos(ts * 5)]).T
-    return c.draw.polyline(pts, (0,0,1,1), tf=tf)
+    return c.draw.polyline(pts, 'blue', tf=tf)
 
 def app():
     view = c.Frame((-1.5, 1.5), (1.5, -1.5))

@@ -6,7 +6,7 @@ import numpy as np
 def graph(tf):
     x = np.linspace(-1, 1, 1000)
     y = np.sin(np.log2(np.abs(x)) * 10) * np.cos(np.log2(np.abs(x)) / 2)
-    return c.draw.polyline(np.stack([x, y]).T, (0,0,0,1), tf=tf)
+    return c.draw.polyline(np.stack([x, y]).T, 'black', tf=tf)
 
 
 def app():
