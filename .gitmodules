@@ -1,0 +1,4 @@
+[submodule "docs"]
+	path = docs
+	url = git@github.com:potocpav/python-concur-docs.git
+	branch = master

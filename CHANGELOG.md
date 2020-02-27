@@ -7,6 +7,10 @@
 * Rename `TF.is_hovered` to something more fitting
 * Remove the name parameter from `mouse_click`.
 
+**Other Changes**
+
+* Move the documentation and homepage to a separate repository
+
 ## 0.6.2
 
 * Implement the square marker `'.'` for scatter plot.
