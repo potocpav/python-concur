@@ -7,9 +7,9 @@
 * Rename `TF.is_hovered` to something more fitting
 * Remove the name parameter from `mouse_click`.
 
-**Other Changes**
+## 0.6.3
 
-* Move the documentation and homepage to a separate repository
+* Move the documentation and homepage to a [separate repository](https://github.com/potocpav/python-concur-docs)
 
 ## 0.6.2
 
