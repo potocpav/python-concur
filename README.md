@@ -58,5 +58,5 @@ To build documentation, install [pdoc3](https://pdoc3.github.io/pdoc/) (`pip ins
 
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/potocpav/python-concur/master/screenshot.png">
+<img src="https://raw.githubusercontent.com/potocpav/python-concur-docs/master/screenshot.png">
 </p>

@@ -139,7 +139,7 @@ def animation(tester):
 
 if __name__ == "__main__":
     im = all_examples(slow=True, width=800, height=600, return_sshot=True, draw_cursor=False)
-    Image.fromarray(im[...,:3]).save('screenshot.png')
+    Image.fromarray(im[...,:3]).save('docs/screenshot.png')
 
     im = hello_world(slow=True, width=400, height=288, return_sshot=True, draw_cursor=False)
     Image.fromarray(im[...,:3]).save('docs/sshots/hello_world.png')
