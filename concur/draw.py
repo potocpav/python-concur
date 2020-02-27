@@ -17,11 +17,12 @@ Theses widgets are not re-exported in the root module, and are normally used as 
 They can be composed normally using the `concur.core.orr` function.
 """
 
-
 import numpy as np
 import imgui
 from concur.colors import color_to_rgba
 from concur.core import nothing
+
+__pdoc__ = dict(prepare_polyline_points=False)
 
 
 def line(x0, y0, x1, y1, color, thickness=1, tf=None):
@@ -102,22 +103,39 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
         yield
 
 
+def prepare_polyline_points(points, tf):
+    if len(points) == 0:
+        return []
+    if not isinstance(points, np.ndarray):
+        points = np.array(points)
+    if tf is not None:
+        points = tf.transform(points)
+    return points
+
+
 def polyline(points, color, closed=False, thickness=1, tf=None):
     """ Polygonal line or a closed polygon.
 
     `points` is a list of (x, y) tuples, or a NumPy array of equivalent shape.
     """
-    if len(points) == 0:
-        while True:
-            yield
-    if not isinstance(points, np.ndarray):
-        points = np.array(points)
-    if tf is not None:
-        points = tf.transform(points)
+    points = prepare_polyline_points(points, tf)
     draw_list = imgui.get_window_draw_list()
     col = color_to_rgba(color)
     while True:
         draw_list.add_polyline(points, col, closed, thickness)
+        yield
+
+
+def polygon(points, color, tf=None):
+    """ Filled polygon. Points must form a convex area.
+
+    `points` is a list of (x, y) tuples, or a NumPy array of equivalent shape.
+    """
+    points = prepare_polyline_points(points, tf)
+    draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
+    while True:
+        draw_list.add_convex_poly_filled(points, col)
         yield
 
 
@@ -136,6 +154,24 @@ def polylines(points, color, closed=False, thickness=1, tf=None):
     col = color_to_rgba(color)
     while True:
         draw_list.add_polylines(points, col, closed, thickness)
+        yield
+
+
+def polygons(points, color, tf=None):
+    """ Multiple filled polygons with the same length and color.
+
+    Calling this function is more efficient than calling `polygon` multiple times, because all the data is given
+    to the C++ back-end in one Python call, and because transformation is vectorized.
+
+    `points` is a NumPy array with shape `(n, m, 2)`, where `n` is the number of polygons, and `m` is the number of points
+    in each polyline.
+    """
+    if tf is not None:
+        points = tf.transform(points.reshape(-1, 2)).reshape(points.shape)
+    draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
+    while True:
+        draw_list.add_convex_polys_filled(points, col)
         yield
 
 
@@ -209,18 +245,38 @@ def ellipses(means, covs, sd, color, thickness=1, num_segments=16, tf=None):
 def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
     """Draw a scatter plot with given marker settings.
 
-    `pts` is a NumPy array with shape `(n, 2)`, where `n` is the point count.
-
     If multiple settings are desired (such as two distinct point colors), call
     this function more than once with different parameters.
 
     Some markers are more performant than others, depending on the amount of
     generated geometry.
+
+    Arguments:
+      pts: NumPy array with shape `(n, 2)`, where `n` is the point count.
+      color: Color to draw the markers.
+      marker: Marker type. See the table below.
+      marker_size: Size of the markers in pixels.
+      thickness: Line width for non-filled markers
+    ------
+    marker | description
+    ------ | ---
+    `"."`  | filled square
+    `"x"`  | cross
+    `"+"`  | plus sign
+    `"o"`  | non-filled circle
     """
     if tf is not None:
         pts = tf.transform(pts)
 
-    if marker == '+':
+    if marker == '.':
+        r = marker_size / 2
+        polys = np.empty((len(pts), 4, 2))
+        polys[:, 0, :] = pts + [-r, -r]
+        polys[:, 1, :] = pts + [ r, -r]
+        polys[:, 2, :] = pts + [ r,  r]
+        polys[:, 3, :] = pts + [-r,  r]
+        return polygons(polys, color)
+    elif marker == '+':
         r = marker_size / 2
         polys = np.empty((len(pts) * 2, 2, 2))
         polys[0::2, 0, :] = pts - [r, 0]

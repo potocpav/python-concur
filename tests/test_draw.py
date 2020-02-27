@@ -11,7 +11,7 @@ def test_polylines_perf():
     im = c.Image()
 
     def content(tf):
-        return c.draw.polylines(polylines, (1,1,1,1), tf=tf)
+        return c.draw.polylines(polylines, 'white', tf=tf)
     while True:
         yield from c.image("Image", im, content_gen=content)
         yield
@@ -22,8 +22,21 @@ def test_scatter(tester):
     def content(tf):
         np.random.seed(0)
         return c.orr([
-            c.draw.scatter(np.random.rand(100, 2), (1,1,1,1), '+', thickness=1, tf=tf),
-            c.draw.scatter(np.random.rand(100, 2), (1,1,0,1), 'x', thickness=1, tf=tf),
-            c.draw.scatter(np.random.rand(100, 2), (1,0,1,1), 'o', thickness=1, tf=tf),
+            c.draw.scatter(np.random.rand(100, 2), 'white', '+', thickness=1, tf=tf),
+            c.draw.scatter(np.random.rand(100, 2), 'yellow', 'x', thickness=1, tf=tf),
+            c.draw.scatter(np.random.rand(100, 2), 'magenta', 'o', thickness=1, tf=tf),
+            c.draw.scatter(np.random.rand(100, 2), 'green', '.', marker_size=3, tf=tf),
+            ])
+    yield from c.orr([c.image("Image", c.Image(), content_gen=content), tester.pause()])
+
+
+@c.testing.test_widget
+def test_shapes(tester):
+    def content(tf):
+        np.random.seed(0)
+        return c.orr([
+            c.draw.polygon([], 'white', tf=tf),
+            c.draw.polygon(np.array([(0.5,0.5), (0.7,0.5), (0.7,0.7), (0.5,0.7)]), 'white', tf=tf),
+            c.draw.polygon([(0.5,0.5), (0.6,0.5), (0.6,0.6), (0.5,0.6)], 'brown', tf=tf),
             ])
     yield from c.orr([c.image("Image", c.Image(), content_gen=content), tester.pause()])

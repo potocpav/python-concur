@@ -4,11 +4,15 @@
 **Breaking Changes**
 
 * Rename `key_pressed` to `key_press`
-* Rename TF.is_hovered
+* Rename `TF.is_hovered` to something more fitting
+* Remove the name parameter from `mouse_click`.
 
-## 0.6.1 (master)
+## 0.6.2
 
-**Additions**
+* Implement the square marker `'.'` for scatter plot.
+* Implement `draw.polygon` and `draw.polygons` - filled convex polygons.
+
+## 0.6.1
 
 * Add `concur.widgets.mouse_click` widget, which returns mouse position on click
 * Add `c.quick_*` functions for quick asynchronous plotting without worrying about the threading and event details
