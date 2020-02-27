@@ -54,7 +54,7 @@ pip install -e.
 examples/all.py # Run the examples to verify installation
 ```
 
-To build documentation, install [pdoc3](https://pdoc3.github.io/pdoc/) (`pip install pdoc3`) and run the script `./mkdocs.sh`.
+To build documentation, install [pdoc3](https://pdoc3.github.io/pdoc/) (`pip install pdoc3`), clone the submodules (`git submodule update --init`), and run the script `./mkdocs.sh`.
 
 
 <p align="center">
