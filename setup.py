@@ -11,10 +11,11 @@ setuptools.setup(
     description="Concur UI Framework for Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://potocpav.github.io/python-concur/homepage.html",
+    url="https://potocpav.github.io/python-concur-docs/homepage.html",
     project_urls={
-        "Documentation": "https://potocpav.github.io/python-concur/",
+        "Documentation": "https://potocpav.github.io/python-concur-docs/master",
         "Source Code": "https://github.com/potocpav/python-concur",
+        "Bug Tracker": "https://github.com/potocpav/python-concur/issues",
     },
     packages=setuptools.find_packages(),
     classifiers=[

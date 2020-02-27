@@ -22,7 +22,7 @@
 * Add `c.quick_*` functions for quick asynchronous plotting without worrying about the threading and event details
 * Add a `fps` argument to `c.main`
     - this is breaking if screencast arguments were used positionally.
-* Flexible [color specification](https://potocpav.github.io/python-concur/draw.html) including [xkcd strings](https://xkcd.com/color/rgb/). Colors like `(0,1,1)`, `'dark red'`, `('blue', 0.5)`, or `0xffaa0000` are now possible.
+* Flexible [color specification](https://potocpav.github.io/python-concur-docs/master/draw.html) including [xkcd strings](https://xkcd.com/color/rgb/). Colors like `(0,1,1)`, `'dark red'`, `('blue', 0.5)`, or `0xffaa0000` are now possible.
 
 ## 0.6.0
 

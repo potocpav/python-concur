@@ -9,8 +9,8 @@
 
 [![Build Status](https://travis-ci.com/potocpav/python-concur.svg?branch=master)](https://travis-ci.com/potocpav/python-concur)
 
-* [**Documentation**](https://potocpav.github.io/python-concur/)
-* [**Homepage**](https://potocpav.github.io/python-concur/homepage.html)
+* [**Documentation**](https://potocpav.github.io/python-concur-docs/master/)
+* [**Homepage**](https://potocpav.github.io/python-concur-docs/homepage.html)
 * [Examples](https://github.com/potocpav/python-concur/tree/master/examples)
 * [PyPI](https://pypi.org/project/concur/)
 * [Changelog](https://github.com/potocpav/python-concur/tree/master/CHANGELOG.md)
