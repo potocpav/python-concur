@@ -7,6 +7,10 @@
 * Rename `TF.is_hovered` to something more fitting
 * Remove the name parameter from `mouse_click`.
 
+## 0.6.4
+
+* Fix a bug where long polylines were sometimes corrupted (use-after-free).
+
 ## 0.6.3
 
 * Move the documentation and homepage to a [separate repository](https://github.com/potocpav/python-concur-docs)
