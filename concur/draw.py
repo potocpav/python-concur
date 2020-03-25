@@ -105,7 +105,7 @@ def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
 
 def prepare_polyline_points(points, tf):
     if len(points) == 0:
-        return []
+        return np.zeros((0, 2))
     if not isinstance(points, np.ndarray):
         points = np.array(points)
     if tf is not None:

@@ -44,6 +44,8 @@ python -c 'import concur as c; c.main("Hello", c.button("Close"), 500, 500)'
 
 Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.
 
+## Development
+
 For Concur development, clone the repo and install it using pip:
 
 ```sh
@@ -52,6 +54,14 @@ cd python-concur
 pip install -e.
 
 examples/all.py # Run the examples to verify installation
+```
+
+To run the tests, you need PyTest and PyTest-benchmark:
+
+```sh
+pip install pytest pytest-benchmark
+
+pytest # Run the tests
 ```
 
 To build documentation, install [pdoc3](https://pdoc3.github.io/pdoc/) (`pip install pdoc3`), clone the submodules (`git submodule update --init`), and run the script `./mkdocs.sh`.

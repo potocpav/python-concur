@@ -35,7 +35,19 @@ def test_shapes(tester):
     def content(tf):
         np.random.seed(0)
         return c.orr([
+            # Empty polygonal shapes of all kinds
             c.draw.polygon([], 'white', tf=tf),
+            c.draw.polygon(np.array([]), 'white', tf=tf),
+            c.draw.polygon(np.zeros((0, 2)), 'white', tf=tf),
+            c.draw.polyline([], 'white', tf=tf),
+            c.draw.polyline(np.array([]), 'white', tf=tf),
+            c.draw.polyline(np.zeros((0, 2)), 'white', tf=tf),
+            c.draw.polygons(np.zeros((0, 123, 2)), 'white', tf=tf),
+            c.draw.polygons(np.zeros((123, 0, 2)), 'white', tf=tf),
+            c.draw.polylines(np.zeros((0, 123, 2)), 'white', tf=tf),
+            c.draw.polylines(np.zeros((123, 0, 2)), 'white', tf=tf),
+
+            # Normal polygonal shapes
             c.draw.polygon(np.array([(0.5,0.5), (0.7,0.5), (0.7,0.7), (0.5,0.7)]), 'white', tf=tf),
             c.draw.polygon([(0.5,0.5), (0.6,0.5), (0.6,0.6), (0.5,0.6)], 'brown', tf=tf),
             ])
