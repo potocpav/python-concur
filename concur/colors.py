@@ -11,13 +11,13 @@ MAX_COLOR = 256 - sys.float_info.epsilon * 128
 def color_to_rgba(c):
     if isinstance(c, int):
         return c
-    elif isinstance(c, tuple) and len(c) == 4:
+    elif isinstance(c, (tuple, list)) and len(c) == 4:
         return int(MAX_COLOR * c[3]) * 0x1000000 + int(MAX_COLOR * c[2]) * 0x10000 + int(MAX_COLOR * c[1]) * 0x100 + int(MAX_COLOR * c[0])
-    elif isinstance(c, tuple) and len(c) == 3:
+    elif isinstance(c, (tuple, list)) and len(c) == 3:
         return 0xff000000 + int(MAX_COLOR * c[2]) * 0x10000 + int(MAX_COLOR * c[1]) * 0x100 + int(MAX_COLOR * c[0])
     elif isinstance(c, str):
         return xkcd_colors[c]
-    elif isinstance(c, tuple) and len(c) == 2 and isinstance(c[0], str):
+    elif isinstance(c, (tuple, list)) and len(c) == 2 and isinstance(c[0], str):
         return xkcd_colors[c[0]] - 0xff000000 + (min(255, max(0, int(MAX_COLOR * c[1]))) << 24)
     else:
         raise ValueError("Color must be RGBA tuple, RGB tuple, string, int, or (str, float) name & alpha tuple")
