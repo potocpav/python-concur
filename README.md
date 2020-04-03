@@ -23,7 +23,7 @@ It is a port of [Concur for Purescript](https://github.com/ajnsit/purescript-con
 
 For introduction to core concepts, see the [documentation](file:///home/pavel/build/python-concur/docs/index.html#introduction). A more comprehensive introduction can be found in the [Documentation for the Haskell/Purescript versions](https://github.com/ajnsit/concur-documentation/blob/master/README.md). This obviously uses Haskell/Purescript syntax and semantics, but many of the concepts will apply to the Python version.
 
-Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications. ImGui functions can be used directly for any functionality that is not wrapped by Concur. See the [PyImGui docs](https://pyimgui.readthedocs.io/en/latest/) for additional widgets, or [ImGui itself](https://github.com/ocornut/imgui).
+Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications. ImGui functions can be used directly for any functionality that is not wrapped by Concur. See the [PyImGui docs](https://pyimgui.readthedocs.io/en/latest/) for additional widgets, or [ImGui itself](https://github.com/ocornut/imgui) if you need to poke really deep.
 
 <!-- End docs -->
 

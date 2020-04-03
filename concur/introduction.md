@@ -2,7 +2,7 @@
 
 UI components ("widgets") in Concur are Python generators. Internally, widgets do three things:
 
-1. Call ImGui commands to draw stuff to screen
+1. They call ImGui commands to draw stuff to screen
 2. When the drawing is done, they `yield` and pass control flow upstream.
 3. On user interaction, they `return result`, where result is a value representing user action and/or new widget state.
 
@@ -24,7 +24,7 @@ value = yield from button("Click me")
 assert value == 123
 ```
 
-This shows the most interesting property of Concur: **widgets only exist until they are interacted with.** To interact with a widget repeatedly, it must be re-created each time it's interacted with. This concept is _surprisingly_ powerful – it enables composition in time by simply chaining statements:
+This shows the most interesting property of Concur: **widgets only exist until they are interacted with.** To interact with a widget repeatedly, it must be re-created each time it's interacted with, perhaps inside a loop. This concept is _surprisingly_ powerful – it enables composition in time by simply chaining statements:
 
 ```python
 yield from button("one button")
@@ -66,4 +66,4 @@ That's it for now. Play around with it. You will discover that these handful of 
 
 ----
 
-<sup>1</sup> The name `orr` is derived from the fact that the resulting widget returns if any child returns (child1 **or** child2). To signify that a list of children is expected (not a pair), **orr** is used instead of **or**. In Concur for Purescript, there is also the [`andd` operator](https://pursuit.purescript.org/packages/purescript-concur-core/0.4.1/docs/Concur.Core.Types#v:andd) which returns when all children return.
+<sup>1</sup> The name `orr` is originally derived from the fact that the resulting widget returns if any child returns (child1 **or** child2). To signify that a list of children is expected (not a pair), **orr** is used instead of **or**. In Concur for Purescript, there is also the dual [`andd` operator](https://pursuit.purescript.org/packages/purescript-concur-core/0.4.1/docs/Concur.Core.Types#v:andd) which returns when all children return.
