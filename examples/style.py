@@ -10,7 +10,7 @@ def app():
     while True:
         ch, _ = yield from c.orr_same_line([c.radio_button(ch[0], choice == ch[0], tag=ch) for ch in choices])
         choice = ch[0]
-        ch[1]()
+        ch[1]() # Call the ImGui function
         yield
 
 

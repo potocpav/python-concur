@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Show the highly experimental `quick_window` and `quick_plot` entry-points"""
+
 import concur as c
 import time
 
