@@ -20,6 +20,7 @@ from typing import Iterable, Any, Tuple
 import imgui
 
 from concur.core import orr, lift, Widget, interactive_elem
+from concur.colors import color_to_rgba_tuple
 
 
 def orr_same_line(widgets):
@@ -94,11 +95,12 @@ def button(label, tag=None):
 
 
 def color_button(label, color, tag=None):
-    """ Colored button. Color is specified as a tuple (R,G,B,A), each in range 0..1.
+    """ Colored button. Color can be specified in multiple ways listed in
+    [concur.draw].
 
     Returns `(label, None)` on click, or `(tag, None)` if tag is specified.
     """
-    r, g, b, a = color
+    r, g, b, a = color_to_rgba_tuple(color)
     while not imgui.color_button(label, r, g, b, a):
         yield
     return tag if tag is not None else label, None
@@ -121,7 +123,7 @@ def input_text(name, value, buffer_length=255, tag=None):
             yield
 
 
-def key_pressed(name, key_index, repeat=True):
+def key_press(name, key_index, repeat=True):
     """ Invisible widget that waits for a given key to be pressed.
 
     No widget must be active at the time to prevent triggering hotkeys by editing text fields.
@@ -133,17 +135,17 @@ def key_pressed(name, key_index, repeat=True):
         yield
 
 
-def mouse_click(name, button=0):
+def mouse_click(button=0):
     """ Invisible widget that waits for a given mouse button to be clicked (default: LMB).
 
-    No interactive widget must be active to trigger this function.
-    Event is returned in the format `(name, (x, y))`, where `(x, y)` are the coordinates
+    This function is triggered only when no widgets are interacted with using mouse.
+    Event is returned in the format `(x, y)`, where `(x, y)` are the coordinates
     of the clicked position.
     """
     io = imgui.get_io()
     while True:
         if not imgui.is_any_item_active() and imgui.is_mouse_clicked(button):
-            return name, io.mouse_pos
+            return io.mouse_pos
         yield
 
 
@@ -204,8 +206,9 @@ def text(s):
     """ Passive text display widget. """
     return lift(imgui.text, s)
 
-def text_colored(s, r, g, b, a=1.):
+def text_colored(s, color):
     """ Passive colored text display widget. """
+    r, g, b, a = color_to_rgba_tuple(color)
     return lift(imgui.text_colored, s, r, g, b, a)
 
 def checkbox(label, checked, *args, **kwargs):

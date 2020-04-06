@@ -8,7 +8,8 @@ For a slightly more practical (but still very simple) example, see the
 
 File | Description
 --- | ---
-[all.py](all.py) | All the other examples in a single window
+[all.py](all.py) | All the other examples in a single window.
+[animation.py](animation.py) | Animated plot.
 [counters.py](counters.py) | Classic counter app. Basic state manipulation.
 [hello_world.py](hello_world.py) | *Hello, world!* with a single button.
 [image.py](image.py) | Image widget with interactive overlay.

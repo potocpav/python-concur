@@ -3,9 +3,10 @@
 
 **Breaking Changes**
 
-* Rename `key_pressed` to `key_press`
-* Rename `TF.is_hovered` to something more fitting
-* Remove the name parameter from `mouse_click`.
+* [x] Change colored widget `text_colored` and `color_button` to use the same color spec as the draw functions.
+* [x] Rename `key_pressed` to `key_press`
+* [ ] Rename `TF.is_hovered` to something more fitting
+* [x] Remove the name parameter from `mouse_click`.
 
 ## 0.6.4
 

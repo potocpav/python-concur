@@ -22,6 +22,13 @@ def color_to_rgba(c):
     else:
         raise ValueError("Color must be RGBA tuple, RGB tuple, string, int, or (str, float) name & alpha tuple")
 
+def color_to_rgba_tuple(c):
+    n = color_to_rgba(c)
+    return ((n // 0x1) % 0x100) / 255, \
+           ((n // 0x100) % 0x100) / 255, \
+           ((n // 0x10000) % 0x100) / 255, \
+           ((n // 0x1000000) % 0x100) / 255
+
 
 # License: http://creativecommons.org/publicdomain/zero/1.0/
 xkcd_colors = {

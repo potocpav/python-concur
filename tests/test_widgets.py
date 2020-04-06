@@ -56,7 +56,7 @@ def test_color_button(tester):
     yield
     res = yield from c.orr([
         tester.click_next(),
-        c.color_button("That", (1, 0, 0, 1), tag="Tag"),
+        c.color_button("That", 'red', tag="Tag"),
         ])
     assert res == ("Tag", None)
 
@@ -90,6 +90,16 @@ def test_checkbox(tester):
         ])
     assert res == ("Tag", True)
 
+
+@c.testing.test_widget
+def test_text_colored(tester):
+    yield from c.orr([
+        c.text_colored("This", 'blue'),
+        c.text_colored("This", (1, 0, 0)),
+        tester.pause(),
+        ])
+    yield
+    
 
 # @c.testing.test_widget
 # def test_input_text(tester):
