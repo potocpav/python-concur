@@ -46,6 +46,9 @@ def test_shapes(tester):
             c.draw.polygons(np.zeros((123, 0, 2)), 'white', tf=tf),
             c.draw.polylines(np.zeros((0, 123, 2)), 'white', tf=tf),
             c.draw.polylines(np.zeros((123, 0, 2)), 'white', tf=tf),
+            c.draw.scatter(np.array([]), 'white', 'x', tf=tf),
+            c.draw.scatter(np.zeros([0]), 'white', 'x', tf=tf),
+            c.draw.scatter(np.zeros([0,2]), 'white', 'x', tf=tf),
 
             # Normal polygonal shapes
             c.draw.polygon(np.array([(0.5,0.5), (0.7,0.5), (0.7,0.7), (0.5,0.7)]), 'white', tf=tf),

@@ -265,6 +265,9 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
     `"+"`  | plus sign
     `"o"`  | non-filled circle
     """
+    if len(pts) == 0:
+        pts = pts.reshape(-1, 2)
+    assert len(pts.shape) == 2 and pts.shape[1] == 2
     if tf is not None:
         pts = tf.transform(pts)
 
