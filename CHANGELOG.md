@@ -5,13 +5,18 @@
 
 * [x] Change colored widgets `text_colored` and `color_button` to use the same color spec as the draw functions.
 * [x] Rename `key_pressed` to `key_press`
-* [ ] Rename `TF.is_hovered` to something more fitting
 * [x] Remove the name parameter from `mouse_click`.
+* [x] Remove `TF.hovered`. Left mouse click & drag is now handled by the `pan_zoom` object.
+* [x] Add left mouse interaction support to `image` and `frame`. New arguments `drag_tag` and `down_tag`.
+  - `pan_zoom.is_hovered` is no longer present.
+  - `image` event handling was substantially reworked. Starting the drag outside image window no longer triggers panning.
 
 **Other changes**
 
+* add `TF.inv_transform` to tranasform from screen-space to content-space
 * Make `scatter` also work with empty one-dimensional arrays
 * Add an `invisible_button`
+* Enable empty polylines
 
 ## 0.6.4
 

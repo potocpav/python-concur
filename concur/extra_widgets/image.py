@@ -11,7 +11,7 @@ from concur.extra_widgets.pan_zoom import PanZoom, pan_zoom
 from concur.core import orr, optional
 
 
-def image(name, state, width=None, height=None, content_gen=None):
+def image(name, state, width=None, height=None, content_gen=None, drag_tag=None, down_tag=None):
     """ The image widget.
 
     `state` is an instance of `concur.extra_widgets.image.Image`. Width and
@@ -41,7 +41,7 @@ def image(name, state, width=None, height=None, content_gen=None):
         _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr([
             raw_image(state.tex_id, state.tex_w, state.tex_h, tf),
             optional(content_gen is not None, content_gen, tf),
-        ]))
+        ]), drag_tag=drag_tag, down_tag=down_tag)
         if st is not None:
             new_state = copy.deepcopy(state)
             new_state.pan_zoom = st

@@ -148,6 +148,9 @@ def polylines(points, color, closed=False, thickness=1, tf=None):
     `points` is a NumPy array with shape `(n, m, 2)`, where `n` is the number of polylines, and `m` is the number of points
     in each polyline.
     """
+    if len(points) == 0:
+        while True:
+            yield
     if tf is not None:
         points = tf.transform(points.reshape(-1, 2)).reshape(points.shape)
     draw_list = imgui.get_window_draw_list()

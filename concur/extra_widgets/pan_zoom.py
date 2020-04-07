@@ -9,18 +9,37 @@ import copy
 import numpy as np
 
 import imgui
-from concur.widgets import child
+from concur.widgets import child, invisible_button
+from concur.core import orr, forever, optional, map as cmap
+from concur.extra_widgets.draggable import draggable
 
 
-def pan_zoom(name, state, width=None, height=None, content_gen=None):
-    """ Create the Pan & Zoom widget.
+def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=None, down_tag=None):
+    """ Create the Pan & Zoom widget, serving as a container for a thing given by `content_gen`.
 
-    This widget is a pannable, zoomable view of a thing given by `content_gen`. To ease integration with other widgets,
-    this widget returns events in a special format: `(name, state, child_event)`. `state` or `child_event` may be `None`
-    in case `state` didn't change, or `child_event` didn't fire. `name` is the name supplied to this function.
+    This widget is mostly not used directly. Instead, a special-purpose wrapper can be used,
+    such as `concur.extra_widgets.image.image`, or `concur.extra_widgets.frame.frame`.
 
-    `content_gen` is a function that takes the `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
-    widget. It is up to the widget to do the necessary transformations using the `TF` object.
+    Arguments:
+        name: widget name. Also serves as an event identifier
+        state: `PanZoom` object representing state.
+        width: widget width in pixels. If `None`, it fills the available space.
+        height: widget height in pixels. If `None`, it fills the available space.
+        content_gen: Widget generator to display inside the pan-zoom widget. All events are passed
+            through as a return tuple member. This is a function that takes the
+            `concur.extra_widgets.pan_zoom.TF` object, and returns a Concur
+            widget. It is up to the widget to do the necessary transformations
+            using the `TF` object.
+        drag_tag: The event tag for LMB drag events. If `None`, no drag events are fired.
+        down_tag: The event tag for LMB down events. If `None`, no down events are fired.
+            Useful in combination with `drag_tag` to indicate when the dragging started.
+
+    Returns:
+        To ease integration with other widgets, this widget returns events in a special format:
+        `(name, state, event)`. `state` or `event` may be `None` in case `state` didn't change,
+        or there is no `event`.
+
+        If `drag_tag`, or `down_tag` arguments are used, these are fired in the `event` member of the return tuple.
     """
     assert content_gen is not None
     tf, content = None, None
@@ -67,18 +86,17 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         # Interaction
         st = copy.deepcopy(state)
         io = imgui.get_io()
-        is_mouse_down = io.mouse_down[1] or io.mouse_down[2]
-        if is_mouse_down and not st.was_mouse_down and imgui.is_window_hovered():
-            st.was_mouse_down = True
-            st.is_hovered = imgui.is_window_hovered()
-        if not is_mouse_down:
-            st.was_mouse_down = False
-            st.is_hovered = False
+        is_window_hovered = imgui.is_window_hovered()
+
+        if (imgui.is_mouse_clicked(1) or imgui.is_mouse_clicked(2)) and is_window_hovered:
+            st.is_rmb_dragged = True
+        if not (io.mouse_down[1] or io.mouse_down[2]):
+            st.is_rmb_dragged = False
 
         delta = io.mouse_delta
 
         # Pan
-        if st.is_hovered and (delta[0] or delta[1]):
+        if st.is_rmb_dragged and (delta[0] or delta[1]):
             if st.fix_axis != 'x':
                 st.left -= delta[0] / zoom_x
                 st.right -= delta[0] / zoom_x
@@ -87,7 +105,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
                 st.bottom -= delta[1] / zoom_y
 
         # Zoom
-        if (imgui.is_window_hovered() or st.is_hovered) and io.mouse_wheel:
+        if (imgui.is_window_hovered() or st.is_rmb_dragged) and io.mouse_wheel:
             factor = 1.3 ** io.mouse_wheel
 
             if st.fix_axis != 'x':
@@ -123,21 +141,33 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None):
         view_c = [left_s, top_s, right_s, bottom_s]
 
         content_value = None
+        # coord_to_content = lambda x:
         try:
-            new_tf = TF(c2s, s2c, view_c, view_s, imgui.is_window_hovered())
+            new_tf = TF(c2s, s2c, view_c, view_s)
             if tf is None or tf != new_tf:
                 tf = new_tf
-                content = content_gen(tf)
+                w, h = tf.view_s[2] - tf.view_s[0], tf.view_s[3] - tf.view_s[1]
+                content = orr([
+                    content_gen(tf),
+                    cmap(lambda k: (k[0], [tf.s2c[0,0] * k[1].x, tf.s2c[1,1] * k[1].y]),
+                        optional(drag_tag is not None,
+                            draggable, drag_tag, forever(invisible_button, "", w, h)
+                            )
+                        ),
+                    ])
             next(content)
         except StopIteration as e:
             content_value = e.value
         finally:
             imgui.end_child()
         changed = st != state
+
+        if down_tag and not st.is_rmb_dragged and imgui.is_mouse_clicked() and is_window_hovered:
+            return name, (None, (down_tag, tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
+
         if changed or content_value is not None:
             return name, (st if changed else None, content_value)
-        else:
-            yield
+        yield
 
 
 class PanZoom(object):
@@ -157,8 +187,8 @@ class PanZoom(object):
         self.reset_view(top_left, bottom_right)
          # Include cases where cursor is outside the element, but was inside when the drag started.
          # Exclude cases where cursor is inside the element, but was outside when the drag started.
-        self.is_hovered = False
-        self.was_mouse_down = False
+        self.is_rmb_dragged = False
+        self.is_lmb_dragged = False
         self.margins = margins
 
         self.keep_aspect = keep_aspect
@@ -203,14 +233,12 @@ class TF(object):
         s2c:      Screen-to-content transformation matrix.
         view_s:   Screen-space viewport coordinates as a list [left, top, right, bottom].
         view_c:   Image-space viewport coordinates as a list [left, top, right, bottom].
-        hovered:  `True` if the image widget is hovered over.
     """
-    def __init__(self, c2s, s2c, view_c, view_s, hovered):
+    def __init__(self, c2s, s2c, view_c, view_s):
         self.c2s = c2s
         self.s2c = s2c
         self.view_c = view_c
         self.view_s = view_s
-        self.hovered = hovered
 
     def __eq__(self, other):
         return \
@@ -218,9 +246,12 @@ class TF(object):
             np.array_equal(self.s2c, other.s2c) and \
             self.view_c == other.view_c and \
             self.view_s == other.view_s and \
-            self.hovered == other.hovered and \
             True
 
     def transform(self, points):
-        """Transform a given NumPy array of `n` points of shape `(n, 2)`."""
+        """Transform a given NumPy array of `n` points of shape `(n, 2)` from content-space to screen-space."""
         return np.tensordot(np.hstack([points, np.ones((points.shape[0], 1))]), self.c2s, (1, 1))
+
+    def inv_transform(self, points):
+        """Transform a given NumPy array of `n` points of shape `(n, 2)` from screen-space to content-space."""
+        return np.tensordot(np.hstack([points, np.ones((points.shape[0], 1))]), self.s2c, (1, 1))

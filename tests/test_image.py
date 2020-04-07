@@ -87,6 +87,22 @@ def test_viewport_movement_outside(tester):
 
 
 @c.testing.test_widget
+def test_viewport_start_movement_outside(tester):
+    def actions(q):
+        yield from tester.move_cursor(50, 5)
+        yield from tester.mouse_dn(1)
+        yield from tester.move_cursor(100, 100)
+        yield from tester.mouse_up(1)
+        yield
+        q.put(None)
+        yield from c.nothing()
+
+    q = Queue()
+    im1, im2 = yield from c.orr([actions(q), image_ui(q)])
+    assert is_viewport_close(im1, im2)
+
+
+@c.testing.test_widget
 def test_viewport_scroll_outside(tester):
     def actions1(q):
         yield from tester.move_cursor(-1, -1)
