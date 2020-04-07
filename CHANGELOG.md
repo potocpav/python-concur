@@ -1,12 +1,17 @@
 
-## 0.7.0 (planned)
+## 0.7.0 (planned release - master branch)
 
 **Breaking Changes**
 
-* [x] Change colored widget `text_colored` and `color_button` to use the same color spec as the draw functions.
+* [x] Change colored widgets `text_colored` and `color_button` to use the same color spec as the draw functions.
 * [x] Rename `key_pressed` to `key_press`
 * [ ] Rename `TF.is_hovered` to something more fitting
 * [x] Remove the name parameter from `mouse_click`.
+
+**Other changes**
+
+* Make `scatter` also work with empty one-dimensional arrays
+* Add an `invisible_button`
 
 ## 0.6.4
 

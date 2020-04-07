@@ -94,6 +94,18 @@ def button(label, tag=None):
     return tag if tag is not None else label, None
 
 
+def invisible_button(label, width, height, tag=None):
+    """ Invisible button with a given width and height.
+
+    Can be interacted with as a normal button, including clicking and dragging.
+
+    Returns `(label, None)` on click, or `(tag, None)` if tag is specified.
+    """
+    while not imgui.invisible_button(label, width, height):
+        yield
+    return tag if tag is not None else label, None
+
+
 def color_button(label, color, tag=None):
     """ Colored button. Color can be specified in multiple ways listed in
     [concur.draw].
