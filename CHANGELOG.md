@@ -10,6 +10,7 @@
 * [x] Add left mouse interaction support to `image` and `frame`. New arguments `drag_tag` and `down_tag`.
   - `pan_zoom.is_hovered` is no longer present.
   - `image` event handling was substantially reworked. Starting the drag outside image window no longer triggers panning.
+* [ ] Make `polylines` handle a color list
 
 **Other changes**
 
