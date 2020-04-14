@@ -14,7 +14,7 @@ from concur.core import orr, forever, optional, map as cmap
 from concur.extra_widgets.draggable import draggable
 
 
-def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=None, down_tag=None):
+def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=None, down_tag=None, hover_tag=None):
     """ Create the Pan & Zoom widget, serving as a container for a thing given by `content_gen`.
 
     This widget is mostly not used directly. Instead, a special-purpose wrapper can be used,
@@ -33,6 +33,8 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
         drag_tag: The event tag for LMB drag events. If `None`, no drag events are fired.
         down_tag: The event tag for LMB down events. If `None`, no down events are fired.
             Useful in combination with `drag_tag` to indicate when the dragging started.
+        hover_tag: The event tag for mouse hover when no mouse buttons are down.
+            If `None`, no hover events are fired. Events are fired only when the mouse is moving.
 
     Returns:
         To ease integration with other widgets, this widget returns events in a special format:
@@ -164,9 +166,10 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
 
         if down_tag and not st.is_rmb_dragged and imgui.is_mouse_clicked() and is_window_hovered:
             return name, (None, (down_tag, tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
-
         if changed or content_value is not None:
             return name, (st if changed else None, content_value)
+        if hover_tag and not st.is_rmb_dragged and not any(imgui.is_mouse_clicked(i) for i in [0,1,2]) and is_window_hovered and (delta[0] or delta[1]):
+            return name, (None, (hover_tag, tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
         yield
 
 

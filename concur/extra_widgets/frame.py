@@ -88,7 +88,7 @@ def _frame(content_gen, show_grid, tf):
     ])
 
 
-def frame(name, state, content_gen=None, drag_tag=None, down_tag=None, show_grid=True):
+def frame(name, state, content_gen=None, drag_tag=None, down_tag=None, hover_tag=None, show_grid=True):
     """The frame widget.
 
     `state` is an instance of `Frame`. See the
@@ -98,4 +98,4 @@ def frame(name, state, content_gen=None, drag_tag=None, down_tag=None, show_grid
     Content is specified using `content_gen`, analogously to how it's done in `concur.extra_widgets.image.image`.
     """
     return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
-        pan_zoom(name, state, content_gen=partial(_frame, content_gen, show_grid), drag_tag=drag_tag, down_tag=down_tag))
+        pan_zoom(name, state, content_gen=partial(_frame, content_gen, show_grid), drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag))
