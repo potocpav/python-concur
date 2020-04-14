@@ -18,6 +18,7 @@
 * Make `scatter` also work with empty one-dimensional arrays
 * Add an `invisible_button`
 * Enable empty polylines
+* Add `drag_int2`, `drag_int3`, and `drag_int4` widgets
 
 ## 0.6.4
 
