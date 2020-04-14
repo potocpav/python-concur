@@ -135,15 +135,19 @@ def input_text(name, value, buffer_length=255, tag=None):
             yield
 
 
-def key_press(name, key_index, repeat=True):
+def key_press(name, key_index, ctrl=False, shift=False, alt=False, super=False, repeat=True):
     """ Invisible widget that waits for a given key to be pressed.
 
     No widget must be active at the time to prevent triggering hotkeys by editing text fields.
-    Key codes are specified by the integration layer, e.g. `glfw.KEY_A`, or `glfw.KEY_SPACE`.
+    Key codes are specified by glfw, e.g. `glfw.KEY_A`, or `glfw.KEY_SPACE`.
+    Upper-case ASCII codes also work, such as ord('A').
     """
+    io = imgui.get_io()
     while True:
-        if not imgui.is_any_item_active() and imgui.is_key_pressed(key_index, repeat):
-            return name, None
+        if imgui.is_key_pressed(key_index, repeat):
+            if not imgui.is_any_item_active() and \
+                ctrl == io.key_ctrl and shift == io.key_shift and alt == io.key_alt and super == io.key_super:
+                return name, None
         yield
 
 

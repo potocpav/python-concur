@@ -19,6 +19,8 @@
 * Add an `invisible_button`
 * Enable empty polylines
 * Add `drag_int2`, `drag_int3`, and `drag_int4` widgets
+* Add modifier key support to `key_press`
+* Make `key_press` respect local keyboard layout
 
 ## 0.6.4
 

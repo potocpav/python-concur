@@ -3,14 +3,33 @@
 
 import glfw
 import OpenGL.GL as gl
+import time
 
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
+
 from concur.integrations.opengl import create_offscreen_fb, get_fb_data
-import time
 
 
 __pdoc__ = dict(create_window=False, begin_maximized_window=False, create_window_dock=False)
+
+
+class PatchedGlfwRenderer(GlfwRenderer):
+    """ Custom variant of Glfwrenderer in PyImGui:
+
+    https://github.com/swistakm/pyimgui/blob/master/imgui/integrations/glfw.py
+
+    This works around the issue that GLFW uses EN_US keyboard to specify the key codes
+    in `keyboard_callback`. This meant that keyboard shortcuts were broken on non-querty
+    keyboard layouts.
+
+    See https://github.com/ocornut/imgui/issues/2959 for details.
+    """
+    def keyboard_callback(self, window, key, scancode, action, mods):
+        if key < 0x100:
+            # Translate characters to the correct keyboard layout.
+            key = ord(glfw.get_key_name(key, 0).upper())
+        super(PatchedGlfwRenderer, self).keyboard_callback(window, key, scancode, action, mods)
 
 
 def create_window(window_name, width, height, visible=True):
@@ -80,7 +99,7 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE # | imgui.CONFIG_VIEWPORTS_ENABLE
 
     window = create_window(name, width, height)
-    impl = GlfwRenderer(window)
+    impl = PatchedGlfwRenderer(window)
 
     ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
     # glfw.swap_interval(-1)
