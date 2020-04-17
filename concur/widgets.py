@@ -87,6 +87,24 @@ def collapsing_header(text, widget, open=True):
         yield
 
 
+def tree_node(text, widget, open=True):
+    """Display a collapsible tree node. It can be open or closed by default (parameter `open`).
+
+    Tree node content has left offset, unlike `collapsing_header`.
+    """
+    while True:
+        expanded = imgui.tree_node(text, flags=open and imgui.TREE_NODE_DEFAULT_OPEN)
+        try:
+            if expanded:
+                next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            if expanded:
+                imgui.tree_pop()
+        yield
+
+
 def button(label, tag=None):
     """ Button. Returns `(label, None)` on click, or `(tag, None)` if tag is specified. """
     while not imgui.button(label):

@@ -2,6 +2,7 @@
 ## master
 
 * [ ] Make `polylines` handle a color list
+* [x] Add `tree_node`
 
 ## 0.7.0
 
