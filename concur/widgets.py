@@ -169,17 +169,17 @@ def key_press(name, key_index, ctrl=False, shift=False, alt=False, super=False, 
         yield
 
 
-def mouse_click(button=0):
+def mouse_click(name, button=0):
     """ Invisible widget that waits for a given mouse button to be clicked (default: LMB).
 
     This function is triggered only when no widgets are interacted with using mouse.
-    Event is returned in the format `(x, y)`, where `(x, y)` are the coordinates
+    Event is returned in the format `(name, (x, y))`, where `(x, y)` are the coordinates
     of the clicked position.
     """
     io = imgui.get_io()
     while True:
         if not imgui.is_any_item_active() and imgui.is_mouse_clicked(button):
-            return io.mouse_pos
+            return name, io.mouse_pos
         yield
 
 
