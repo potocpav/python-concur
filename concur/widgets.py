@@ -165,6 +165,7 @@ def key_press(name, key_index, ctrl=False, shift=False, alt=False, super=False, 
             if not imgui.is_any_item_active() and \
                 ctrl == io.key_ctrl and shift == io.key_shift and alt == io.key_alt and super == io.key_super:
                 return name, None
+
         yield
 
 
@@ -217,6 +218,58 @@ def tooltip(tooltip_widget, widget):
             finally:
                 imgui.end_tooltip()
         yield
+
+
+def main_menu_bar(widget):
+    """ Create a main menu bar.
+
+    This requires setting `menu_bar=True` in the `concur.integrations.glfw.main` method.
+    Otherwise, space wouldn't be reserved for the menu bar, and it would lay on top of
+    window contents.
+
+    Main menu bar must be created outside any windows.
+
+    See [examples/extra/menu_bar.py](https://github.com/potocpav/python-concur/tree/master/examples/extra/menu_bar.py)
+    for an usage example.
+    """
+    while True:
+        assert imgui.begin_main_menu_bar(), "Main menu bar must be created outside a window."
+        try:
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.end_main_menu_bar()
+        yield
+
+def menu(label, widget, enabled=True):
+    """ Create an expandable menu in the `main_menu_bar`.
+
+    Widgets commonly used in menus are `menu_item`, and `separator`.
+    """
+    while True:
+        expanded = imgui.begin_menu(label, enabled)
+        try:
+            if expanded:
+                next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            if expanded:
+                imgui.end_menu()
+        yield
+
+def menu_item(label, shortcut=None, selected=False, enabled=True, *args, **kwargs):
+    """ Create a menu item.
+
+    Menu items should be nested inside `menu`.
+
+    Item shortcuts are displayed for convenience, but are not processed in any way.
+    They are easily handled by `key_press` outside the menu code If `key_press` was
+    inside the menu, it would not be active when the menu is not expanded.
+    Items may have a check-box (`selected`), and may or may not be `enabled`.
+    """
+    return interactive_elem(imgui.menu_item, label, shortcut, selected, enabled, *args, **kwargs)
 
 
 def separator():

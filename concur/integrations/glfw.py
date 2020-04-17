@@ -60,26 +60,31 @@ def create_window(window_name, width, height, visible=True):
     return window
 
 
-def begin_maximized_window(name, glfw_window):
+def begin_maximized_window(name, glfw_window, menu_bar=False):
     imgui.set_next_window_position(0, 0)
     imgui.set_next_window_size(*glfw.get_window_size(glfw_window))
     imgui.push_style_var(imgui.STYLE_WINDOW_ROUNDING, 0)
     imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
-    window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | imgui.WINDOW_NO_DOCKING
+    window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | \
+        imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | \
+        imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | \
+        imgui.WINDOW_NO_DOCKING
+    if menu_bar:
+        window_flags |= imgui.WINDOW_MENU_BAR
     imgui.begin(name, True, window_flags)
     imgui.pop_style_var(2)
 
 
-def create_window_dock(glfw_window):
+def create_window_dock(glfw_window, menu_bar=False):
     imgui.set_next_window_bg_alpha(0)
     imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
-    begin_maximized_window("Background Window", glfw_window)
+    begin_maximized_window("Background Window", glfw_window, menu_bar)
     imgui.pop_style_var(1)
     imgui.dock_space("Window Dock Space", 0., 0., 1 << 3)
     imgui.end()
 
 
-def main(name, widget, width, height, fps=60, save_screencast=None, screencast_fps=60):
+def main(name, widget, width, height, fps=60, save_screencast=None, screencast_fps=60, menu_bar=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     To create a maximized window, pass width and height larger than the screen.
@@ -92,6 +97,7 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
         save_screencast: Capture and save the UI into a specified video file (experimental). Main window shouldn't
             be resized while the application is running when using this option.
         screencast_fps: Save the screencast video with a given FPS.
+        menu_bar: Reserve space for `concur.widgets.main_menu_bar` at the top of the window.
     """
     imgui.create_context()
 
@@ -116,8 +122,8 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
 
         imgui.new_frame()
 
-        create_window_dock(window)
-        begin_maximized_window("Default##Concur", window)
+        create_window_dock(window, menu_bar=menu_bar)
+        begin_maximized_window("Default##Concur", window, menu_bar=menu_bar)
 
         try:
             next(widget)

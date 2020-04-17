@@ -22,6 +22,7 @@
 * Enable empty polylines
 * Add `drag_int2`, `drag_int3`, and `drag_int4` widgets
 * Add modifier key support to `key_press`
+* Add `main_menu_bar`, `menu`, and `menu_item`
 
 
 ## 0.6.4
