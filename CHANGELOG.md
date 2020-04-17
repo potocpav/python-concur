@@ -11,16 +11,18 @@
   - `pan_zoom.is_hovered` is no longer present.
   - `image` event handling was substantially reworked. Starting the drag outside image window no longer triggers panning.
 * [ ] Make `polylines` handle a color list
+* [x] `key_press` now respects local keyboard layout
 
 **Other changes**
 
 * add `TF.inv_transform` to tranasform from screen-space to content-space
 * Make `scatter` also work with empty one-dimensional arrays
-* Add an `invisible_button`
+* Add an `invisible_button`, and an `image_button`
+* Add `selectable` text
 * Enable empty polylines
 * Add `drag_int2`, `drag_int3`, and `drag_int4` widgets
 * Add modifier key support to `key_press`
-* Make `key_press` respect local keyboard layout
+
 
 ## 0.6.4
 

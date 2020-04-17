@@ -94,6 +94,23 @@ def button(label, tag=None):
     return tag if tag is not None else label, None
 
 
+def image_button(name, texture_id, width, height, uv0=(0,0), uv1=(1,1), tint_color='white', border_color='black', frame_padding=-1):
+    """ Image button. Returns `(name, None)` on click.
+
+    Args:
+        texture_id: OpenGL texture ID
+        size: image display size two-tuple
+        uv0: UV coordinates for 1st corner (lower-left for OpenGL)
+        uv1: UV coordinates for 2nd corner (upper-right for OpenGL)
+        tint_color: Image tint color
+        border_color: Image border color
+        frame_padding: Frame padding (0: no padding, <0 default padding)
+    """
+    while not imgui.image_button(texture_id, width, height, uv0=uv0, uv1=uv1, tint_color=color_to_rgba_tuple(tint_color), border_color=color_to_rgba_tuple(border_color), frame_padding=frame_padding):
+        yield
+    return name, None
+
+
 def invisible_button(label, width, height, tag=None):
     """ Invisible button with a given width and height.
 
@@ -226,6 +243,22 @@ def text_colored(s, color):
     """ Passive colored text display widget. """
     r, g, b, a = color_to_rgba_tuple(color)
     return lift(imgui.text_colored, s, r, g, b, a)
+
+def selectable(label, selected, *args, **kwargs):
+    """ Selectable line.
+
+    This widget marks the whole line as selectable. To add widgets to `selectable`,
+    simply append them using `orr_same_line`:
+
+    ```python
+    c.orr_same_line([
+        c.selectable("Selectable", False),
+        c.text("Extra text"),
+        ])
+    ```
+     """
+    return interactive_elem(imgui.selectable, label, selected, *args, **kwargs)
+
 
 def checkbox(label, checked, *args, **kwargs):
     """ Two-state checkbox. """
