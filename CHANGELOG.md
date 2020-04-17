@@ -1,16 +1,19 @@
 
-## 0.7.0 (planned release - master branch)
+## master
+
+* [ ] Make `polylines` handle a color list
+
+## 0.7.0
 
 **Breaking Changes**
 
-* [x] Change colored widgets `text_colored` and `color_button` to use the same color spec as the draw functions.
-* [x] Rename `key_pressed` to `key_press`
-* [x] Remove `TF.hovered`. Left mouse click & drag is now handled by the `pan_zoom` object.
-* [x] Add left mouse interaction support to `image` and `frame`. New arguments `drag_tag` and `down_tag`, and `hover_tag`.
+* Change colored widgets `text_colored` and `color_button` to use the same color spec as the draw functions.
+* Rename `key_pressed` to `key_press`
+* Remove `TF.hovered`. Left mouse click & drag is now handled by the `pan_zoom` object.
+* Add left mouse interaction support to `image` and `frame`. New arguments `drag_tag` and `down_tag`, and `hover_tag`.
   - `pan_zoom.is_hovered` is no longer present.
   - `image` event handling was substantially reworked. Starting the drag outside image window no longer triggers panning.
-* [x] `key_press` now respects local keyboard layout
-* [ ] Make `polylines` handle a color list
+* `key_press` now respects local keyboard layout
 
 **Other changes**
 
