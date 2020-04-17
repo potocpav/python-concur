@@ -194,22 +194,18 @@ def text(string, x, y, color, tf=None):
         yield
 
 
-def image(tex_id, w, h, tf):
+def image(tex_id, w, h, tf, x=0, y=0):
     """ Draw an image with the given width and height.
 
     This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
     """
-    x0, y0, x1, y1 = 0, 0, w, h
-    if tf is not None:
-        [x0, y0], [x1, y1] = tf.transform(np.array([[x0, y0], [x1, y1]]))
     draw_list = imgui.get_window_draw_list()
-    l, t, r, b = tf.view_s
-    a_s = tf.view_s[:2]
-    b_s = tf.view_s[2:]
-    a_i = tf.view_c[0] / w, tf.view_c[1] / h
-    b_i = tf.view_c[2] / w, tf.view_c[3] / h
+    p1 = np.array([x, y])
+    size = np.array([w, h])
+    p2 = p1 + size
+    p1, p2 = tf.transform(np.stack((p1, p2), axis=0))
     while True:
-        draw_list.add_image(tex_id, tuple(a_s), tuple(b_s), tuple(a_i), tuple(b_i))
+        draw_list.add_image(tex_id, tuple(p1), tuple(p2))
         yield
 
 
