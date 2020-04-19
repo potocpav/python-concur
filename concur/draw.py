@@ -267,6 +267,7 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
     `"x"`  | cross
     `"+"`  | plus sign
     `"o"`  | non-filled circle
+    `"s"`  | non-filled square
     """
     if len(pts) == 0:
         pts = pts.reshape(-1, 2)
@@ -303,6 +304,14 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
         n_verts = 7
         t = np.linspace(0, np.pi * 2, n_verts, endpoint=False)
         polys = np.empty((len(pts), n_verts, 2))
+        polys[...,0] = np.sin(t) * r
+        polys[...,1] = np.cos(t) * r
+        polys += pts.reshape(-1, 1, 2)
+        return polylines(polys, color, True, thickness)
+    elif marker in ['s', 'S']:
+        r = marker_size / 2
+        t = np.pi/4 + np.linspace(0, np.pi * 2, 4, endpoint=False)
+        polys = np.empty((len(pts), 4, 2))
         polys[...,0] = np.sin(t) * r
         polys[...,1] = np.cos(t) * r
         polys += pts.reshape(-1, 1, 2)

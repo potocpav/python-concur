@@ -170,6 +170,19 @@ def input_text(name, value, buffer_length=255, tag=None):
             yield
 
 
+def input_text_multiline(name, value, buffer_length=4000, width=0, height=0, flags=0, tag=None):
+    """ Multiline text input.
+
+    Flags are [defined by PyImGui](https://pyimgui.readthedocs.io/en/latest/guide/inputtext-flags.html#inputtext-flag-options).
+    """
+    while True:
+        changed, new_value = imgui.input_text_multiline(name, value, buffer_length, width, height, flags)
+        if changed:
+            return (name if tag is None else tag), new_value
+        else:
+            yield
+
+
 def key_press(name, key_index, ctrl=False, shift=False, alt=False, super=False, repeat=True):
     """ Invisible widget that waits for a given key to be pressed.
 
@@ -309,6 +322,15 @@ def same_line():
 def text(s):
     """ Passive text display widget. """
     return lift(imgui.text, s)
+
+def text_wrapped(s):
+    """ Word wrapping text display widget. Recommended for long chunks of text. """
+    def f():
+        imgui.push_text_wrap_pos()
+        imgui.text(s)
+        imgui.pop_text_wrap_pos()
+    return lift(f)
+
 
 def text_colored(s, color):
     """ Passive colored text display widget. """

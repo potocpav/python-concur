@@ -2,7 +2,11 @@
 ## master
 
 * [ ] Make `polylines` handle a color list
-* [x] Add `tree_node`
+* [x] Add:
+  * widget `tree_node`
+  * widget `input_text_multiline`
+  * widget `text_wrapped`
+  * scatter square markers (`'s'`)
 
 ## 0.7.0
 
