@@ -150,7 +150,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
                 tf = new_tf
                 w, h = tf.view_s[2] - tf.view_s[0], tf.view_s[3] - tf.view_s[1]
                 content = orr([
-                    content_gen(tf),
+                    content_gen(tf=tf),
                     cmap(lambda k: (k[0], [tf.s2c[0,0] * k[1].x, tf.s2c[1,1] * k[1].y]),
                         optional(drag_tag is not None,
                             draggable, drag_tag, forever(invisible_button, "", w, h)

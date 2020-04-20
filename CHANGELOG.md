@@ -3,6 +3,7 @@
 
 **Breaking Changes**
 
+* `content_gen` for the PanZoom-derived widgets is now passed a keyword argument `tf`, instead of a positional argument. This will break code which used other names for the transformation info.
 * `concur.draw.image` argument list was reworked. It now takes additional mandatory arguments `x` and `y`, and non-mandotory arguments `uv_a`, `uv_b`.
 
 **Fixes**
