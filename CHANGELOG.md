@@ -2,6 +2,7 @@
 ## master
 
 * [ ] Make `polylines` handle a color list
+* [x] New windows are now fixed size on creation, if they aren't in imgui.ini. Previously, they were fit to contents, which works OK only when the contents do not fit to window. In the common case of a window containing only an image widget, the window would have been created outright tiny. This could lead to user not even noticing it.
 * [x] Add:
   * widget `tree_node`
   * widget `input_text_multiline`

@@ -50,6 +50,8 @@ def window(title: str,
             imgui.set_next_window_position(*position)
         if size is not None:
             imgui.set_next_window_size(*size)
+        else:
+            imgui.set_next_window_size(400, 300, imgui.FIRST_USE_EVER)
         expanded, opened = imgui.begin(title, flags=flags)
         try:
             if expanded and opened:
