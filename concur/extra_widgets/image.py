@@ -37,11 +37,20 @@ def image(name, state, width=None, height=None, content_gen=None, drag_tag=None,
     _, im = yield from c.image("Image", im, content_gen=c.partial(overlay, pos))
     ```
     """
+    def content_gen_with_image(tf, events=None):
+        if drag_tag or down_tag or hover_tag:
+            kwargs = dict(tf=tf, events=events)
+        else:
+            kwargs = dict(tf=tf)
+        return orr([
+            raw_image(state.tex_id, state.tex_w, state.tex_h, tf),
+            optional(content_gen is not None, content_gen, **kwargs),
+        ])
+
     while True:
-        _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr([
-            raw_image(state.tex_id, 0, 0, state.tex_w, state.tex_h, uv_b=state.tex_uv_b, tf=tf),
-            optional(content_gen is not None, content_gen, tf),
-        ]), drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag)
+        _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height,
+            content_gen=content_gen_with_image,
+            drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag)
         if st is not None:
             new_state = copy.deepcopy(state)
             new_state.pan_zoom = st

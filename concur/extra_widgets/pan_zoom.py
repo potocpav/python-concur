@@ -7,10 +7,11 @@ higher-level widgets `concur.extra_widgets.image.image`, or `concur.extra_widget
 
 import copy
 import numpy as np
+import queue
 
 import imgui
 from concur.widgets import child, invisible_button
-from concur.core import orr, forever, optional, map as cmap
+from concur.core import multi_orr, orr, forever, listen, optional, map as cmap
 from concur.extra_widgets.draggable import draggable
 
 
@@ -45,6 +46,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
     """
     assert content_gen is not None
     tf, content = None, None
+    event_queue = queue.Queue()
     while True:
         assert not state.keep_aspect or not state.fix_axis, \
             "Can't fix axis and keep_aspect at the same time."
@@ -143,33 +145,43 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
         view_c = [left_s, top_s, right_s, bottom_s]
 
         content_value = None
-        # coord_to_content = lambda x:
+        content_returned = False
+
+        new_tf = TF(c2s, s2c, view_c, view_s)
+        if down_tag \
+                and not st.is_rmb_dragged \
+                and imgui.is_mouse_clicked() \
+                and is_window_hovered:
+            event_queue.put((down_tag, new_tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
+        if hover_tag \
+                and not st.is_rmb_dragged \
+                and not any(imgui.is_mouse_down(i) for i in [0,1,2]) \
+                and is_window_hovered \
+                and (delta[0] or delta[1]):
+            event_queue.put((hover_tag, new_tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
+        if drag_tag \
+                and not st.is_rmb_dragged:
+            imgui.invisible_button("", w, h)
+            dx, dy = io.mouse_delta
+            if imgui.is_item_active() and (dx or dy):
+                event_queue.put((drag_tag, np.array([new_tf.s2c[0,0] * dx, new_tf.s2c[1,1] * dy])))
+            imgui.set_item_allow_overlap()
         try:
-            new_tf = TF(c2s, s2c, view_c, view_s)
+            from concur.core import lift
             if tf is None or tf != new_tf:
                 tf = new_tf
                 w, h = tf.view_s[2] - tf.view_s[0], tf.view_s[3] - tf.view_s[1]
-                content = orr([
-                    content_gen(tf=tf),
-                    cmap(lambda k: (k[0], [tf.s2c[0,0] * k[1].x, tf.s2c[1,1] * k[1].y]),
-                        optional(drag_tag is not None,
-                            draggable, drag_tag, forever(invisible_button, "", w, h)
-                            )
-                        ),
-                    ])
+                content = content_gen(tf=tf, events=lambda: listen(event_queue))
             next(content)
         except StopIteration as e:
             content_value = e.value
+            content_returned = True
         finally:
             imgui.end_child()
         changed = st != state
 
-        if down_tag and not st.is_rmb_dragged and imgui.is_mouse_clicked() and is_window_hovered:
-            return name, (None, (down_tag, tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
-        if changed or content_value is not None:
+        if changed or content_returned:
             return name, (st if changed else None, content_value)
-        if hover_tag and not st.is_rmb_dragged and not any(imgui.is_mouse_clicked(i) for i in [0,1,2]) and is_window_hovered and (delta[0] or delta[1]):
-            return name, (None, (hover_tag, tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
         yield
 
 
