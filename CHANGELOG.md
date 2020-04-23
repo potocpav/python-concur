@@ -10,7 +10,7 @@
 * `concur.extra_widgets.image` now correctly handles images with dimensions not divisible by 4. Previously, those may get severely distorted.
 * `concur.extra_widgets.image` now has transparent background even for images without alpha channel.
 * `concur.widgets.key_press`: fixed a a crash on glfw.KEY_SPACE keypress.
-
+* Made the system clipboard work by upgrading PyImGui to v1.3.1.
 
 ### v0.7.1
 
