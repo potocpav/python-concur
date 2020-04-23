@@ -194,18 +194,20 @@ def text(string, x, y, color, tf=None):
         yield
 
 
-def image(tex_id, w, h, tf, x=0, y=0):
-    """ Draw an image with the given width and height.
+def image(tex_id, x, y, width, height, uv_a=(0, 0), uv_b=(1, 1), tf=None):
+    """ Draw an image with the given origin (x, y), width and height.
 
-    This is a raw drawing function. Use `concur.extra_widgets.image.image` instead if you want an image widget.
+    This is a raw drawing function. Use `concur.extra_widgets.image.image` instead
+    if you want an image widget. Note that OpenGL textures may be rendered incorrectly
+    if width or height isn't divisible by 4.
     """
+    p1, p2 = [x, y], [x + width, y + height]
+    if tf is not None:
+        p1, p2 = tf.transform(np.array([p1, p2]))
+
     draw_list = imgui.get_window_draw_list()
-    p1 = np.array([x, y])
-    size = np.array([w, h])
-    p2 = p1 + size
-    p1, p2 = tf.transform(np.stack((p1, p2), axis=0))
     while True:
-        draw_list.add_image(tex_id, tuple(p1), tuple(p2))
+        draw_list.add_image(tex_id, tuple(p1), tuple(p2), uv_a, uv_b)
         yield
 
 

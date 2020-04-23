@@ -28,7 +28,9 @@ class PatchedGlfwRenderer(GlfwRenderer):
     def keyboard_callback(self, window, key, scancode, action, mods):
         if key < 0x100:
             # Translate characters to the correct keyboard layout.
-            key = ord(glfw.get_key_name(key, 0).upper())
+            key_name = glfw.get_key_name(key, 0)
+            if key_name is not None:
+                key = ord(key_name.upper())
         super(PatchedGlfwRenderer, self).keyboard_callback(window, key, scancode, action, mods)
 
 

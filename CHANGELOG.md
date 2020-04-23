@@ -1,7 +1,16 @@
 
 ## master
 
-* [ ] Make `polylines` handle a color list
+**Breaking Changes**
+
+* `concur.draw.image` argument list was reworked. It now takes additional mandatory arguments, `x` and `y`, and non-mandotory arguments `uv_a`, `uv_b`.
+
+**Other changes**
+
+* `concur.extra_widgets.image` now correctly handles images with dimensions not divisible by 4. Previously, those may get severely distorted.
+* `concur.extra_widgets.image` now has transparent background even for images without alpha channel.
+* `concur.widgets.key_press`: fixed a a crash on glfw.KEY_SPACE keypress.
+
 
 ## 0.7.1
 

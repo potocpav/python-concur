@@ -39,7 +39,7 @@ def image(name, state, width=None, height=None, content_gen=None, drag_tag=None,
     """
     while True:
         _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height, content_gen=lambda tf: orr([
-            raw_image(state.tex_id, state.tex_w, state.tex_h, tf),
+            raw_image(state.tex_id, 0, 0, state.tex_w, state.tex_h, uv_b=state.tex_uv_b, tf=tf),
             optional(content_gen is not None, content_gen, tf),
         ]), drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag)
         if st is not None:
@@ -62,6 +62,7 @@ class Image(object):
         self.tex_id = None
         self.garbage_tex_id = None
         self.pan_zoom = PanZoom((0, 0), (1, 1))
+        self.tex_uv_b = 1, 1
         self.change_image(image)
 
     def change_image(self, image):
@@ -70,6 +71,14 @@ class Image(object):
         If None, a black placeholder image is displayed.
 
         `change_image` must be called at most once per each frame for one Image.
+        For performance, it is beneficial to use NumPy textures:
+
+        * with dimensions divisible by four,
+        * with type `numpy.uint8`,
+        * with three or four channels (RGB, RGBA),
+        * in C order.
+
+        Otherwise, the array will be copied & converted.
         """
         from concur.integrations.opengl import texture, rm_texture
         if self.garbage_tex_id is not None:
@@ -82,8 +91,21 @@ class Image(object):
         else:
             if not isinstance(image, np.ndarray):
                 image = np.array(image) # support PyTorch tensors and PIL images
-            self.tex_id = texture(image)
-            self.tex_w, self.tex_h = image.shape[1], image.shape[0]
+
+            assert len(image.shape) in [2, 3]
+            w, h = image.shape[1], image.shape[0]
+            if w % 4 or h % 4:
+                # Expand weirdly shaped images
+                nw, nh = w + (-w) % 4, h + (-h) % 4
+                new_image = np.ones((nh, nw, image.shape[2]) if len(image.shape) == 3 else (nw, nh)) * 255
+                new_image[:h, :w] = image
+                self.tex_id = texture(new_image)
+                self.tex_uv_b = w / nw, h / nh
+            else:
+                self.tex_id = texture(image)
+                self.tex_uv_b = 1, 1
+
+            self.tex_w, self.tex_h = w, h
 
             if self.last_w != self.tex_w or self.last_h != self.tex_h:
                 self.last_w, self.last_h = self.tex_w, self.tex_h

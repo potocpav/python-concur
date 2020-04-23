@@ -127,3 +127,28 @@ def test_viewport_scroll_outside(tester):
     assert is_viewport_close(im1, im2)
     im1, im3 = yield from c.orr([actions2(q), image_ui(q)])
     assert not is_viewport_close(im1, im3)
+
+
+def test_npot_textures():
+    """ Test non-power-of-two textures.
+
+    Frequently, texture dimensions not divisible by four are corrupted. The Image
+    widget should correctly wor around this by creating a larger texture.
+    """
+    @c.testing.test_widget
+    def app(tester):
+        m = np.ones((16, 32, 3), 'u1') * 0
+        # m[50:150, :, 1] = 256
+        m[:, 7:20, 0] = 255
+        im = c.Image(m)
+        return c.orr([
+            c.image("", c.Image(m[:,:28]), height=100),
+            c.image("", c.Image(m[:,:29]), height=100),
+            c.image("", c.Image(m[:,:30]), height=100),
+            c.image("", c.Image(m[:,:31]), height=100),
+            tester.pause(),
+            ])
+    im = np.array(app(return_sshot=True, draw_cursor=False))
+    assert np.all(im[...,[1,2]] < 50)
+    column_hot_counts = (im[:,:,0] == 255).sum(axis=0)
+    assert list(np.unique(column_hot_counts)) == [0, 100, 200, 300, 400]

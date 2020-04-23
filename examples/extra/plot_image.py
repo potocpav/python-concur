@@ -14,14 +14,14 @@ def graph(tex_id, tex_w, tex_h, tf):
     pts = np.stack([x, y]).T
 
     return c.orr([
-        c.draw.image(tex_id, tex_w, tex_h, tf=tf),
+        c.draw.image(tex_id, 100, 200, tex_w/2, tex_h/2, (0.3, 0.4), (0.7, 0.8), tf=tf),
         c.draw.polyline(pts, 'black', thickness=1, tf=tf),
         ])
 
 
 def app():
     view = c.Frame((0, 0), (512, 512), keep_aspect=True)
-    arr = np.array(Image.open("examples/lenna.png").convert('RGBA')) # RGBA for transparent backgound
+    arr = np.array(Image.open("examples/lenna.png"))
     tex = c.integrations.opengl.texture(arr)
 
     while True:

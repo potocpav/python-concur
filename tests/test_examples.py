@@ -18,3 +18,9 @@ def test_all_examples(tester):
 def test_menu_bar(tester):
     import extra.menu_bar as example
     yield from c.orr([example.app(), tester.pause()])
+
+
+@c.testing.test_widget
+def test_plot_image(tester):
+    import extra.plot_image as example
+    yield from c.orr([example.app(), tester.pause()])
