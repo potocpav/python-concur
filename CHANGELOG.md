@@ -1,18 +1,18 @@
 
-## master
+## master (v0.8.0)
 
 **Breaking Changes**
 
-* `concur.draw.image` argument list was reworked. It now takes additional mandatory arguments, `x` and `y`, and non-mandotory arguments `uv_a`, `uv_b`.
+* `concur.draw.image` argument list was reworked. It now takes additional mandatory arguments `x` and `y`, and non-mandotory arguments `uv_a`, `uv_b`.
 
-**Other changes**
+**Fixes**
 
 * `concur.extra_widgets.image` now correctly handles images with dimensions not divisible by 4. Previously, those may get severely distorted.
 * `concur.extra_widgets.image` now has transparent background even for images without alpha channel.
 * `concur.widgets.key_press`: fixed a a crash on glfw.KEY_SPACE keypress.
 
 
-## 0.7.1
+### v0.7.1
 
 * [x] New windows are now fixed size on creation, if they aren't in imgui.ini. Previously, they were fit to contents, which works OK only when the contents do not fit to window. In the common case of a window containing only an image widget, the window would have been created outright tiny. This could lead to user not even noticing it.
 * [x] Add:
@@ -21,7 +21,7 @@
   * widget `text_wrapped`
   * scatter square markers (`'s'`)
 
-## 0.7.0
+## v0.7.0
 
 **Breaking Changes**
 
@@ -45,20 +45,20 @@
 * Add `main_menu_bar`, `menu`, and `menu_item`
 
 
-## 0.6.4
+### v0.6.4
 
 * Fix a bug where long polylines were sometimes corrupted (use-after-free).
 
-## 0.6.3
+### v0.6.3
 
 * Move the documentation and homepage to a [separate repository](https://github.com/potocpav/python-concur-docs)
 
-## 0.6.2
+### v0.6.2
 
 * Implement the square marker `'.'` for scatter plot.
 * Implement `draw.polygon` and `draw.polygons` - filled convex polygons.
 
-## 0.6.1
+### v0.6.1
 
 * Add `concur.widgets.mouse_click` widget, which returns mouse position on click
 * Add `c.quick_*` functions for quick asynchronous plotting without worrying about the threading and event details
@@ -66,7 +66,7 @@
     - this is breaking if screencast arguments were used positionally.
 * Flexible [color specification](https://potocpav.github.io/python-concur-docs/master/draw.html) including [xkcd strings](https://xkcd.com/color/rgb/). Colors like `(0,1,1)`, `'dark red'`, `('blue', 0.5)`, or `0xffaa0000` are now possible.
 
-## 0.6.0
+## v0.6.0
 
 **Breaking Changes**
 
