@@ -1,47 +1,36 @@
 #!/usr/bin/env python3
 
 import concur as c
-from PIL import Image
+from   copy import deepcopy
+import numpy as np
+from   PIL import Image
 
 
-def overlay(tf, events):
-    while True:
-        key, value = yield from c.orr([
-            c.draw.line(20, 20, 20, 200, 'yellow', 2, tf=tf),
-            c.draw.rect(40, 20, 100, 200, 'yellow', 2, 5, tf=tf),
-            c.draw.circle(70, 110, 20, 'yellow', 2, 16, tf=tf),
-            c.draw.text("Overlay text", 120, 20, 'blue', tf=tf),
-            c.draw.polyline([(50, 30), (90, 30), (70, 50)], 'yellow', True, 2, tf=tf),
-            c.transform(120, 50, c.button("Rotate"), tf=tf),
-            c.transform(120, 80, c.button("Rotate"), tf=tf),
-            events(),
-            ])
-        if key == "drag":
-            print("Drag")
-        elif key == "hover":
-            print("Hover")
-        elif key == "down":
-            print("Down")
-        else:
-            return key, value
-        yield
+def overlay(lines, tf, event_gen=c.nothing):
+    key, value = yield from c.orr([
+        c.draw.polylines(np.array(lines), 'yellow', thickness=4, tf=tf),
+        event_gen(),
+        ])
+    if key == "Drag":
+        lines[-1][1] += value
+    elif key == "Down":
+        lines.append([value, value.copy()])
+    return "Draw", lines
 
 
 def app():
-    image = Image.open("examples/lenna.png")
-    view = c.Image(image)
+    view = c.Image(Image.open("examples/lenna.png"))
+    lines = []
     while True:
         tag, value = yield from c.orr([
-            c.text("Drag using right mouse button,\nscroll using mouse wheel."),
-            c.image("Image", view, content_gen=overlay, drag_tag="drag", hover_tag="hover", down_tag="down"),
+            c.text("Create lines by dragging with the left mouse button."),
+            c.image("Image", view, content_gen=c.partial(overlay, deepcopy(lines)),
+                drag_tag="Drag", down_tag="Down"),
             ])
         if tag == "Image":
             view = value
-        elif tag == "Rotate":
-            image = image.transpose(Image.ROTATE_270)
-            view.change_image(image)
-        else:
-            print("leaked", tag, value)
+        elif tag == "Draw":
+            lines = value
         yield
 
 

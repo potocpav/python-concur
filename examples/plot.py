@@ -12,7 +12,7 @@ def graph(tf):
 def app():
     view = c.Frame((-1, 2), (1, -2), keep_aspect=False, fix_axis='y')
     while True:
-        _, view = yield from c.frame("Frame", view, graph)
+        _, view = yield from c.frame("Frame", view, content_gen=graph)
         yield
 
 

@@ -26,7 +26,7 @@ def app():
 
     while True:
         tag, value = yield from c.orr([
-            c.window("Graph", c.frame("Frame", view, c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
+            c.window("Graph", c.frame("Frame", view, content_gen=c.partial(graph, tex, arr.shape[0], arr.shape[1]))),
             c.window("Controls", c.button("Reset View")),
             ])
         if tag == "Frame":

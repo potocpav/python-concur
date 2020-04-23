@@ -24,3 +24,9 @@ def test_menu_bar(tester):
 def test_plot_image(tester):
     import extra.plot_image as example
     yield from c.orr([example.app(), tester.pause()])
+
+
+@c.testing.test_widget
+def test_image_events(tester):
+    import extra.image_events as example
+    yield from c.orr([example.app(), tester.pause()])

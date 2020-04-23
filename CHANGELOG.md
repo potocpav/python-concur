@@ -3,7 +3,18 @@
 
 **Breaking Changes**
 
-* `content_gen` for the PanZoom-derived widgets is now passed a keyword argument `tf`, instead of a positional argument. This will break code which used other names for the transformation info.
+* `concur.extra_widgets.frame` has new arguments `width`, `height` consistent with `concur.extra_widgets.image`.
+* PanZoom-derived widgets now handle hover, down, and drag events in a different way. Instead of being yielded, they are
+passed to the `content_gen` as a widget. This makes it possible to react to the events in `content_gen`, which is better for
+modularization, and it is newly possible to use the information in `tf` as a part of the reaction. The cost is more complicated
+`content_gen` signature. Better solution might be possible. Affected widgets:
+  * `concur.extra_widgets.pan_zoom`
+  * `concur.extra_widgets.image`
+  * `concur.extra_widgets.frame`
+* PanZoom-derived widgets are now passed a keyword argument `tf`, instead of a positional argument. This will break code which used other names for the transformation info. Affected widgets:
+  * `concur.extra_widgets.pan_zoom`
+  * `concur.extra_widgets.image`
+  * `concur.extra_widgets.frame`
 * `concur.draw.image` argument list was reworked. It now takes additional mandatory arguments `x` and `y`, and non-mandotory arguments `uv_a`, `uv_b`.
 
 **Fixes**

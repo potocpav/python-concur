@@ -171,7 +171,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
             if tf is None or tf != new_tf:
                 tf = new_tf
                 w, h = tf.view_s[2] - tf.view_s[0], tf.view_s[3] - tf.view_s[1]
-                content = content_gen(tf=tf, events=lambda: listen(event_queue))
+                content = content_gen(tf=tf, event_gen=lambda: listen(event_queue))
             next(content)
         except StopIteration as e:
             content_value = e.value

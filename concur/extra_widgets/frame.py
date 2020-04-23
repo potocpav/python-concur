@@ -27,7 +27,7 @@ class Frame(PanZoom):
         super().__init__(top_left, bottom_right, keep_aspect=keep_aspect, fix_axis=fix_axis, margins=margins)
 
 
-def _frame(content_gen, show_grid, tf, events):
+def _frame(content_gen, show_grid, tf, event_gen):
 
     min_tick_spacing=50
     viewport_s = [r + o for r, o in zip(tf.view_s, margins)]
@@ -77,14 +77,10 @@ def _frame(content_gen, show_grid, tf, events):
         vlines = [draw.line(tick, tf.view_s[1], tick, tf.view_s[3], (0,0,0,0.3)) for tick in vticks_s]
         return orr(hlines + vlines)
 
-    # if drag_tag or down_tag or hover_tag:
-    #     kwargs = dict(tf=tf, events=events)
-    # else:
-    #     kwargs = dict(tf=tf)
     return orr([
         bg,
         lift(imgui.push_clip_rect, *viewport_s, True),
-        optional(content_gen is not None, content_gen, tf, events),
+        optional(content_gen is not None, content_gen, tf, event_gen),
         optional(show_grid, grid),
         lift(imgui.pop_clip_rect),
         draw.rect(*viewport_s, (0,0,0,1)),
@@ -92,7 +88,7 @@ def _frame(content_gen, show_grid, tf, events):
     ])
 
 
-def frame(name, state, content_gen=None, drag_tag=None, down_tag=None, hover_tag=None, show_grid=True):
+def frame(name, state, width=None, height=None, content_gen=None, drag_tag=None, down_tag=None, hover_tag=None, show_grid=True):
     """The frame widget.
 
     `state` is an instance of `Frame`. See the
@@ -101,11 +97,13 @@ def frame(name, state, content_gen=None, drag_tag=None, down_tag=None, hover_tag
 
     Content is specified using `content_gen`, analogously to how it's done in `concur.extra_widgets.image.image`.
     """
-    def content_gen_with_opt_events(tf, events):
+    def content_gen_with_opt_events(tf, event_gen):
         if drag_tag or down_tag or hover_tag:
-            kwargs = dict(tf=tf, events=events)
+            kwargs = dict(tf=tf, event_gen=event_gen)
         else:
             kwargs = dict(tf=tf)
         return optional(content_gen is not None, content_gen, **kwargs)
     return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
-        pan_zoom(name, state, content_gen=partial(_frame, content_gen_with_opt_events, show_grid), drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag))
+        pan_zoom(name, state, width, height,
+            content_gen=partial(_frame, content_gen_with_opt_events, show_grid),
+            drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag))

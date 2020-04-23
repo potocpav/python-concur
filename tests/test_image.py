@@ -152,3 +152,77 @@ def test_npot_textures():
     assert np.all(im[...,[1,2]] < 50)
     column_hot_counts = (im[:,:,0] == 255).sum(axis=0)
     assert list(np.unique(column_hot_counts)) == [0, 100, 200, 300, 400]
+
+
+def _test_events_generic(tester, state, widget):
+    # Event-less
+    yield from c.orr([
+        widget("", state, content_gen=lambda tf: c.nothing()),
+        tester.pause(),
+        ])
+    yield
+
+    # Hover, immediate re-firing of the events by `content_gen`
+    tag, _ = yield from c.orr([
+        widget("", state, content_gen=lambda tf, event_gen: event_gen(), hover_tag="hover"),
+        tester.move_cursor(50, 100),
+        ])
+    assert tag == "hover"
+    yield
+
+    # Mouse drag, no re-firing of events by `content_gen`. Drag is outside the image boundary
+    def content_gen(tf, event_gen):
+        dist_x = 0
+        while dist_x < 200:
+            key, value = yield from event_gen()
+            if key == 'drag':
+                print(tf.c2s)
+                dist_x += value[0] * tf.c2s[0,0]
+                print(dist_x)
+            yield
+        return "done", dist_x
+    def drag():
+        yield from tester.move_cursor(200, 100)
+        yield
+        yield from tester.mouse_dn(0)
+        yield
+        yield from tester.move_cursor(400, 100)
+        yield
+    key, value = yield from c.orr([
+        widget("", state, width=300, height=300, content_gen=content_gen, drag_tag="drag"),
+        drag(),
+        ])
+    assert key == "done" and value == 200.0
+    yield
+    yield from tester.mouse_up(0)
+    yield
+
+    # Mouse down precedes drag
+    def content_gen(tf, event_gen):
+        dragged=False
+        while True:
+            key, value = yield from event_gen()
+            if key == 'down':
+                assert not dragged
+                dragged = True
+            if key == 'drag':
+                assert dragged
+                return "done", None
+            yield
+    ev = yield from c.orr([
+        widget("", state, width=300, height=300, content_gen=content_gen, down_tag="down", drag_tag="drag"),
+        drag(),
+        ])
+    assert ev == ("done", None)
+
+
+@c.testing.test_widget
+def test_image_events(tester):
+    im = c.Image(np.ones((150, 150, 3)) * 128)
+    return _test_events_generic(tester, im, c.image)
+
+
+@c.testing.test_widget
+def test_frame_events(tester):
+    frame = c.Frame((0, 0), (150, 150))
+    return _test_events_generic(tester, frame, c.frame)
