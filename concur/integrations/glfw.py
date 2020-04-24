@@ -108,6 +108,7 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
 
     window = create_window(name, width, height)
     impl = PatchedGlfwRenderer(window)
+    impl.refresh_font_texture() # Refresh the font texture in case user changed it
 
     ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
     # glfw.swap_interval(-1)

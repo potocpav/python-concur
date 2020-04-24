@@ -23,6 +23,7 @@ modularization, and it is newly possible to use the information in `tf` as a par
 * `concur.extra_widgets.image` now has transparent background even for images without alpha channel.
 * `concur.widgets.key_press`: fixed a a crash on glfw.KEY_SPACE keypress.
 * Made the system clipboard work by upgrading PyImGui to v1.3.1.
+* Added a call to `refresh_font_texture` to GLFW initialization. This enables user to [specify a font](https://pyimgui.readthedocs.io/en/latest/guide/using-fonts.html) and have it integrated, and is hopefully harmless in all other cases.
 
 ### v0.7.1
 
