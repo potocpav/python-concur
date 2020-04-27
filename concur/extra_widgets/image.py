@@ -120,7 +120,7 @@ class Image(object):
             if w % 4 or h % 4:
                 # Expand weirdly shaped images
                 nw, nh = w + (-w) % 4, h + (-h) % 4
-                new_image = np.ones((nh, nw, image.shape[2]) if len(image.shape) == 3 else (nw, nh)) * 255
+                new_image = np.ones((nh, nw, image.shape[2]) if len(image.shape) == 3 else (nh, nw)) * 255
                 new_image[:h, :w] = image
                 self.tex_id = texture(new_image)
                 self.tex_uv_b = w / nw, h / nh
