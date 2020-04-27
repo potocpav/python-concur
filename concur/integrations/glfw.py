@@ -145,6 +145,8 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
             raise
 
         imgui.end()
+        gl.glClearColor(0.5, 0.5, 0.5, 1)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
         imgui.render()
 
         if save_screencast:

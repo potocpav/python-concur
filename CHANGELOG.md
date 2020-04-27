@@ -25,6 +25,7 @@ modularization, and it is newly possible to use the information in `tf` as a par
 * Make the system clipboard work by upgrading PyImGui to v1.3.1.
 * Add a call to `refresh_font_texture` to GLFW initialization. This enables user to [specify a font](https://pyimgui.readthedocs.io/en/latest/guide/using-fonts.html) and have it integrated, and is hopefully harmless in all other cases.
 * Fix a crash on certain greyscale NPOT images
+* Fix UI ghosts appearing because the buffer was not cleared.
 
 ### v0.7.1
 
