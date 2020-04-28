@@ -17,6 +17,10 @@ modularization, and it is newly possible to use the information in `tf` as a par
   * `concur.extra_widgets.frame`
 * `concur.draw.image` argument list was reworked. It now takes additional mandatory arguments `x` and `y`, and non-mandotory arguments `uv_a`, `uv_b`.
 
+**Additions**
+
+* `concur.widgets.font`: render a widget with a specific font
+
 **Fixes**
 
 * `concur.extra_widgets.image` now correctly handles images with dimensions not divisible by 4. Previously, those may get severely distorted.

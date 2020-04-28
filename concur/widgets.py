@@ -321,6 +321,31 @@ def same_line():
     return lift(imgui.same_line)
 
 
+def font(font_, widget):
+    """ Render `widget` with a given font.
+
+    The easiest way to create `font_` is probably to call this before the call to
+    `concur.integrations.glfw.main`:
+
+    ```python
+    imgui.create_context()
+    font = imgui.get_io().fonts.add_font_from_file_ttf("font_file.ttf", 16)
+    ```
+
+    See the [font guide in PyImGui](https://pyimgui.readthedocs.io/en/latest/guide/using-fonts.html)
+    for more details.
+    """
+    while True:
+        imgui.push_font(font_)
+        try:
+            next(widget)
+        except StopIteration as e:
+            return e.value
+        finally:
+            imgui.pop_font()
+        yield
+
+
 def text(s):
     """ Passive text display widget. """
     return lift(imgui.text, s)
