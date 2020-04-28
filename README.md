@@ -8,6 +8,7 @@
 </p>
 
 [![Build Status](https://travis-ci.com/potocpav/python-concur.svg?branch=master)](https://travis-ci.com/potocpav/python-concur)
+[![PyPI version](https://badge.fury.io/py/concur.svg)](https://pypi.org/project/concur/0.8.0/)
 
 * [**Documentation**](https://potocpav.github.io/python-concur-docs/master/)
 * [**Homepage**](https://potocpav.github.io/python-concur-docs/homepage.html)
