@@ -101,7 +101,8 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
         screencast_fps: Save the screencast video with a given FPS.
         menu_bar: Reserve space for `concur.widgets.main_menu_bar` at the top of the window.
     """
-    imgui.create_context()
+    if imgui.get_current_context() is None:
+        imgui.create_context()
 
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE # | imgui.CONFIG_VIEWPORTS_ENABLE
