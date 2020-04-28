@@ -18,7 +18,7 @@ def app():
 
     while True:
         tag, value = yield from c.orr([
-            c.window("Graph", c.frame("Frame", view, graph)),
+            c.window("Graph", c.frame("Frame", view, content_gen=graph)),
             c.window("Controls", c.checkbox("Antialiasing", style.anti_aliased_lines)),
             ])
         if tag == "Frame":

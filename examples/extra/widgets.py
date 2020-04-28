@@ -37,7 +37,7 @@ def app():
                 c.image("Im2", im2, width=30, height=20),
                 ])),
             c.input_text("Hello", "world!", 123),
-            c.key_pressed("Key", glfw.KEY_SPACE),
+            c.key_press("Key", glfw.KEY_SPACE),
             ])
         if k == "Im1":
             im1 = v
