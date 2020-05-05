@@ -29,10 +29,10 @@ class Frame(PanZoom):
 
 def _frame(content_gen, show_grid, tf, event_gen):
 
-    min_tick_spacing=50
+    min_tick_spacing = 50
     viewport_s = [r + o for r, o in zip(tf.view_s, margins)]
     viewport_c = np.concatenate([np.matmul(tf.s2c, [*viewport_s[:2], 1])[:2], np.matmul(tf.s2c, [*viewport_s[2:], 1])[:2]])
-    bg = draw.rect_filled(*tf.view_s, (1,1,1,1))
+    bg = draw.rect_filled(*tf.view_s, (1, 1, 1, 1))
     if viewport_s[2] <= viewport_s[0] or viewport_s[3] <= viewport_s[1]:
         return bg
 
@@ -68,13 +68,17 @@ def _frame(content_gen, show_grid, tf, event_gen):
             print(f"msd: {msd}, stride: {lsd}, n_chars: {1 + msd - lsd + (lsd < 0) + some_negative}")
             format_x = f"{{:<6.{-lsd}f}}"
             format_y = f"{{:>6.{-lsd}f}}"
-        xtick_labels = [draw.text(tick_format(vticks_c, "<").format(tc), ts, viewport_s[3], (0,0,0,1)) for ts, tc in zip(vticks_s, vticks_c)]
-        ytick_labels = [draw.text(tick_format(hticks_c, ">").format(tc), viewport_s[0] - 45, ts - 7, (0,0,0,1)) for ts, tc in zip(hticks_s, hticks_c)]
+        xtick_labels = [
+            draw.text(tick_format(vticks_c, "<").format(tc), ts, viewport_s[3], (0, 0, 0, 1))
+            for ts, tc in zip(vticks_s, vticks_c)]
+        ytick_labels = [
+            draw.text(tick_format(hticks_c, ">").format(tc), viewport_s[0] - 45, ts - 7, (0, 0, 0, 1))
+            for ts, tc in zip(hticks_s, hticks_c)]
         return orr(xtick_labels + ytick_labels)
 
     def grid():
-        hlines = [draw.line(tf.view_s[0], tick, tf.view_s[2], tick, (0,0,0,0.3)) for tick in hticks_s]
-        vlines = [draw.line(tick, tf.view_s[1], tick, tf.view_s[3], (0,0,0,0.3)) for tick in vticks_s]
+        hlines = [draw.line(tf.view_s[0], tick, tf.view_s[2], tick, (0, 0, 0, 0.3)) for tick in hticks_s]
+        vlines = [draw.line(tick, tf.view_s[1], tick, tf.view_s[3], (0, 0, 0, 0.3)) for tick in vticks_s]
         return orr(hlines + vlines)
 
     return orr([
@@ -83,7 +87,7 @@ def _frame(content_gen, show_grid, tf, event_gen):
         optional(content_gen is not None, content_gen, tf, event_gen),
         optional(show_grid, grid),
         lift(imgui.pop_clip_rect),
-        draw.rect(*viewport_s, (0,0,0,1)),
+        draw.rect(*viewport_s, (0, 0, 0, 1)),
         tick_labels(),
     ])
 
@@ -103,7 +107,12 @@ def frame(name, state, width=None, height=None, content_gen=None, drag_tag=None,
         else:
             kwargs = dict(tf=tf)
         return optional(content_gen is not None, content_gen, **kwargs)
-    return map(lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
-        pan_zoom(name, state, width, height,
+
+    return map(
+        lambda v: ((v[0], v[1][0]) if v[1][0] is not None else v[1][1]),
+        pan_zoom(
+            name, state, width, height,
             content_gen=partial(_frame, content_gen_with_opt_events, show_grid),
-            drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag))
+            drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag
+        )
+    )

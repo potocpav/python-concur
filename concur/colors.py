@@ -1,7 +1,6 @@
 """ Color dictionary. [XKCD colors](https://xkcd.com/color/rgb/) are used. """
 
 
-import imgui
 import sys
 
 
@@ -21,6 +20,7 @@ def color_to_rgba(c):
         return xkcd_colors[c[0]] - 0xff000000 + (min(255, max(0, int(MAX_COLOR * c[1]))) << 24)
     else:
         raise ValueError("Color must be RGBA tuple, RGB tuple, string, int, or (str, float) name & alpha tuple")
+
 
 def color_to_rgba_tuple(c):
     n = color_to_rgba(c)

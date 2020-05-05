@@ -12,7 +12,7 @@ from asyncio import Future
 from imgui import push_id, pop_id
 
 
-Widget = Any # It isn't possible to type Widget correctly using mypy. Prove me wrong.
+Widget = Any  # It isn't possible to type Widget correctly using mypy. Prove me wrong.
 
 
 def orr(widgets: Iterable[Widget]) -> Widget:
@@ -110,7 +110,6 @@ def forever(widget_gen: Callable[..., Widget], *args, **kwargs) -> Widget:
         yield
 
 
-
 def lift(f: Callable[..., Any], *args, **argv) -> Widget:
     """ Lift a function into a never-ending widget.
 
@@ -146,7 +145,8 @@ def interactive_elem(elem, name, *args, **kwargs):
 
 def nothing():
     """ Widget that does nothing forever. """
-    while True: yield
+    while True:
+        yield
 
 
 def event(ev):

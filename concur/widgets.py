@@ -15,7 +15,7 @@ All of the functions in this module are re-exported in the root module for conve
 __pdoc__ = dict(same_line=False)
 
 
-import numpy as np # for `transform`
+import numpy as np  # for `transform`
 from typing import Iterable, Any, Tuple
 import imgui
 
@@ -114,7 +114,7 @@ def button(label, tag=None):
     return tag if tag is not None else label, None
 
 
-def image_button(name, texture_id, width, height, uv0=(0,0), uv1=(1,1), tint_color='white', border_color='black', frame_padding=-1):
+def image_button(name, texture_id, width, height, uv0=(0, 0), uv1=(1, 1), tint_color='white', border_color='black', frame_padding=-1):
     """ Image button. Returns `(name, None)` on click.
 
     Args:
@@ -196,7 +196,10 @@ def key_press(name, key_index, ctrl=False, shift=False, alt=False, super=False, 
     while True:
         if imgui.is_key_pressed(key_index, repeat):
             if not imgui.is_any_item_active() and \
-                ctrl == io.key_ctrl and shift == io.key_shift and alt == io.key_alt and super == io.key_super:
+                    ctrl == io.key_ctrl and \
+                    shift == io.key_shift and \
+                    alt == io.key_alt and \
+                    super == io.key_super:
                 return name, None
 
         yield
@@ -275,6 +278,7 @@ def main_menu_bar(widget):
             imgui.end_main_menu_bar()
         yield
 
+
 def menu(label, widget, enabled=True):
     """ Create an expandable menu in the `main_menu_bar`.
 
@@ -291,6 +295,7 @@ def menu(label, widget, enabled=True):
             if expanded:
                 imgui.end_menu()
         yield
+
 
 def menu_item(label, shortcut=None, selected=False, enabled=True, *args, **kwargs):
     """ Create a menu item.
@@ -309,9 +314,11 @@ def separator():
     """ Horizontal separator. """
     return lift(imgui.separator)
 
+
 def spacing():
     """ Extra vertical space. """
     return lift(imgui.spacing)
+
 
 def same_line():
     """ Call between widgets to layout them horizontally.
@@ -350,6 +357,7 @@ def text(s):
     """ Passive text display widget. """
     return lift(imgui.text, s)
 
+
 def text_wrapped(s):
     """ Word wrapping text display widget. Recommended for long chunks of text. """
     def f():
@@ -363,6 +371,7 @@ def text_colored(s, color):
     """ Passive colored text display widget. """
     r, g, b, a = color_to_rgba_tuple(color)
     return lift(imgui.text_colored, s, r, g, b, a)
+
 
 def selectable(label, selected, *args, **kwargs):
     """ Selectable line.
@@ -384,51 +393,62 @@ def checkbox(label, checked, *args, **kwargs):
     """ Two-state checkbox. """
     return interactive_elem(imgui.checkbox, label, checked, *args, **kwargs)
 
+
 def drag_float(label, value, *args, **kwargs):
     """ Float selection widget without a slider. """
     return interactive_elem(imgui.drag_float, label, value, *args, **kwargs)
+
 
 def drag_float2(label, values, *args, **kwargs):
     """ Float selection widget without a slider for selecting two `values`. """
     value0, value1 = values
     return interactive_elem(imgui.drag_float2, label, value0, value1, *args, **kwargs)
 
+
 def drag_float3(label, values, *args, **kwargs):
     """ Float selection widget without a slider for selecting three `values`. """
     value0, value1, value2 = values
     return interactive_elem(imgui.drag_float3, label, value0, value1, value2, *args, **kwargs)
+
 
 def drag_float4(label, values, *args, **kwargs):
     """ Float selection widget without a slider for selecting four `values`. """
     value0, value1, value2, value3 = values
     return interactive_elem(imgui.drag_float4, label, value0, value1, value2, value3, *args, **kwargs)
 
+
 def drag_int(label, value, *args, **kwargs):
     """ Integer selection widget without a slider. """
     return interactive_elem(imgui.drag_int, label, value, *args, **kwargs)
+
 
 def drag_int2(label, values, *args, **kwargs):
     """ Integer selection widget without a slider for selecting two `values`. """
     value0, value1 = values
     return interactive_elem(imgui.drag_int2, label, value0, value1, *args, **kwargs)
 
+
 def drag_int3(label, values, *args, **kwargs):
     """ Integer selection widget without a slider for selecting three `values`. """
     value0, value1, value2 = values
     return interactive_elem(imgui.drag_int3, label, value0, value1, value2, *args, **kwargs)
+
 
 def drag_int4(label, values, *args, **kwargs):
     """ Integer selection widget without a slider for selecting four `values`. """
     value0, value1, value2, value3 = values
     return interactive_elem(imgui.drag_int4, label, value0, value1, value2, value3, *args, **kwargs)
 
+
 def input_float(label, value, *args, **kwargs):
     """ Float input widget. """
     return interactive_elem(imgui.input_float, label, value, *args, **kwargs)
 
+
 def slider_int(label, value, min_value, max_value, *args, **kwargs):
     """ Int selection slider. """
     return interactive_elem(imgui.slider_int, label, value, min_value, max_value, *args, **kwargs)
+
 
 def slider_float(label, value, min_value, max_value, *args, **kwargs):
     """ Float selection slider. """

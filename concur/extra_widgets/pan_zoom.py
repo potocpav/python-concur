@@ -64,7 +64,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
         w = max(1, w)
         h = max(1, h)
 
-        zoom_x = frame_w / (state.right  - state.left)
+        zoom_x = frame_w / (state.right - state.left)
         zoom_y = frame_h / (state.bottom - state.top)
 
         left, right = state.left, state.right
@@ -75,17 +75,20 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
             if abs(zoom_x) > abs(zoom_y) * aspect:
                 zoom_x = np.sign(zoom_x) * abs(zoom_y) * aspect
                 center_x = (left + right) / 2
-                left  = center_x - frame_w / zoom_x / 2
+                left = center_x - frame_w / zoom_x / 2
                 right = center_x + frame_w / zoom_x / 2
             if abs(zoom_y) > abs(zoom_x) / aspect:
                 zoom_y = np.sign(zoom_y) * abs(zoom_x) / aspect
                 center_y = (top + bottom) / 2
-                top    = center_y - frame_h / zoom_y / 2
+                top = center_y - frame_h / zoom_y / 2
                 bottom = center_y + frame_h / zoom_y / 2
 
         origin = imgui.get_cursor_screen_pos()
 
-        imgui.begin_child("Pan-zoom", w, h, False, flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE) # needs to be before is_window_hovered
+        # needs to be before is_window_hovered
+        imgui.begin_child(
+            "Pan-zoom", w, h, False,
+            flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE)
 
         # Interaction
         st = copy.deepcopy(state)
@@ -131,7 +134,6 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
         top_s =   top - st.margins[1] / zoom_y
         right_s = right - st.margins[2] / zoom_x
         bottom_s = bottom - st.margins[3] / zoom_y
-
 
         s2c = np.array([ # Screen to Content
             [1 / zoom_x, 0, left_s - origin[0] / zoom_x],

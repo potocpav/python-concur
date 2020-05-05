@@ -9,7 +9,7 @@ See the [tests directory](https://github.com/potocpav/python-concur/tree/master/
 
 import os
 import imgui
-import numpy as np # for floating point ranges
+import numpy as np  # for floating point ranges
 from functools import partial
 from concur.integrations.puppet import PuppetRenderer, main
 from concur.draw import polyline
@@ -18,8 +18,10 @@ from concur.core import orr, optional
 
 __pdoc__ = dict(test=False)
 
+
 def test(widget_gen, slow=None, draw_cursor=True, width=512, height=512, *args, **argv):
-    return main("Automatic Tester",
+    return main(
+        "Automatic Tester",
         lambda puppet_renderer: widget_gen(draw_cursor, Testing(puppet_renderer, slow)),
         width, height,
         *args, **argv)
@@ -55,9 +57,11 @@ def test_widget(f):
         io = imgui.get_io()
         io.mouse_draw_cursor = draw_cursor
         yield from f(tester)
+
     def g(*args, **argv):
         draw_cursor = 'draw_cursor' in argv and argv['draw_cursor']
         return test(widget_gen, *args, **argv)
+
     return g
 
 
@@ -69,12 +73,15 @@ def benchmark_widget(f_gen):
     TODO: improve, document
     """
     f = f_gen()
+
     def widget(_):
         for _ in range(240):
             next(f)
             yield
+
     def g(benchmark):
         benchmark.pedantic(main, ("Perf Tester", widget, 512, 512), dict(fps=None), rounds=1)
+
     return g
 
 
@@ -107,7 +114,7 @@ class Testing(object):
     def click_next(self):
         "Click the next widget."
         x, y = imgui.get_cursor_screen_pos()
-        yield from self.move_cursor(x+5, y+5)
+        yield from self.move_cursor(x + 5, y + 5)
         yield from self.pause()
         yield from self.click()
         # Give the widget time to react
@@ -142,7 +149,7 @@ class Testing(object):
         yield
         if self.slow:
             for f in np.linspace(0, 1, 30):
-                self.puppet.set_mouse_pos(x * f + ox * (1-f), y * f + oy * (1-f))
+                self.puppet.set_mouse_pos(x * f + ox * (1 - f), y * f + oy * (1 - f))
                 yield
         else:
             self.puppet.set_mouse_pos(x, y)

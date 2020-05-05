@@ -63,7 +63,8 @@ def image(name, state, width=None, height=None, content_gen=None, drag_tag=None,
             optional(content_gen is not None, content_gen, **kwargs),
         ])
 
-    _, (st, child_event) = yield from pan_zoom(name, state.pan_zoom, width, height,
+    _, (st, child_event) = yield from pan_zoom(
+        name, state.pan_zoom, width, height,
         content_gen=content_gen_with_image,
         drag_tag=drag_tag, down_tag=down_tag, hover_tag=hover_tag)
     if st is not None:
@@ -107,13 +108,13 @@ class Image(object):
         if self.garbage_tex_id is not None:
             rm_texture(self.garbage_tex_id)
             self.garbage_tex_id = None
-        self.garbage_tex_id = self.tex_id # Hold onto the old texture ID for (at least) one frame
+        self.garbage_tex_id = self.tex_id  # Hold onto the old texture ID for (at least) one frame
         if image is None:
-            self.tex_id = texture(np.zeros((1,1,3)))
+            self.tex_id = texture(np.zeros((1, 1, 3)))
             self.tex_w, self.tex_h = 1, 1
         else:
             if not isinstance(image, np.ndarray):
-                image = np.array(image) # support PyTorch tensors and PIL images
+                image = np.array(image)  # support PyTorch tensors and PIL images
 
             assert len(image.shape) in [2, 3]
             w, h = image.shape[1], image.shape[0]

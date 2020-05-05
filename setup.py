@@ -42,7 +42,7 @@ setuptools.setup(
         'numpy',
         'glfw',
         'PyOpenGL',
-        'imageio',       # Only needed for render-to-video
-        'imageio-ffmpeg' # Only needed for render-to-video
+        'imageio',        # Only needed for render-to-video
+        'imageio-ffmpeg'  # Only needed for render-to-video
     ],
 )

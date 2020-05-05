@@ -63,12 +63,12 @@ def rects(rects, color, thickness=1, tf=None):
     # Avoid issues with disappearing lines on very large rectangles
     rects = np.clip(rects, -8192, 8192)
     polys = np.empty((len(rects), 4, 2), dtype=rects.dtype)
-    polys[:,0] = rects[:,:2]
-    polys[:,1,0] = rects[:,0]
-    polys[:,1,1] = rects[:,3]
-    polys[:,2] = rects[:,2:]
-    polys[:,3,0] = rects[:,2]
-    polys[:,3,1] = rects[:,1]
+    polys[:, 0] = rects[:, :2]
+    polys[:, 1, 0] = rects[:, 0]
+    polys[:, 1, 1] = rects[:, 3]
+    polys[:, 2] = rects[:, 2:]
+    polys[:, 3, 0] = rects[:, 2]
+    polys[:, 3, 1] = rects[:, 1]
     draw_list = imgui.get_window_draw_list()
     col = color_to_rgba(color)
     while True:
@@ -93,9 +93,9 @@ def rect_filled(x0, y0, x1, y1, color, rounding=0, tf=None):
 def circle(cx, cy, radius, color, thickness=1, num_segments=16, tf=None):
     """ Circle specified by its center and radius. """
     if tf is not None:
-        assert np.allclose(np.abs(tf.c2s[0,0]), np.abs(tf.c2s[1,1])), \
+        assert np.allclose(np.abs(tf.c2s[0, 0]), np.abs(tf.c2s[1, 1])), \
             "`tf` must be aspect ratio preserving to draw circles. Use `ellipse` instead, if it isn't the case."
-        [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0,0]
+        [cx, cy], radius = np.matmul(tf.c2s, [cx, cy, 1]), radius * tf.c2s[0, 0]
     draw_list = imgui.get_window_draw_list()
     col = color_to_rgba(color)
     while True:
@@ -216,7 +216,7 @@ def ellipse(mean, cov, sd, color, thickness=1, num_segments=16, tf=None):
     [e1, e2], vs = np.linalg.eig(cov)
     assert e1 > 0 and e2 > 0, "cov must be positive-semidefinite"
     v1, v2 = vs.T
-    t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
+    t = np.linspace(0, np.pi * 2, num_segments, endpoint=False).reshape(-1, 1)
     el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
     return polyline(el + mean, color, True, thickness, tf=tf)
 
@@ -234,10 +234,10 @@ def ellipses(means, covs, sd, color, thickness=1, num_segments=16, tf=None):
     assert len(covs.shape) == 3 and covs.shape[1] == 2 and covs.shape[2] == 2
     es, vs = np.linalg.eig(covs)
     assert np.all(es > 0), "covariance matrices must be positive-semidefinite"
-    v1 = vs[...,0].reshape(-1, 1, 2)
-    v2 = vs[...,1].reshape(-1, 1, 2)
-    e1 = es[:,0].reshape(-1, 1, 1)
-    e2 = es[:,1].reshape(-1, 1, 1)
+    v1 = vs[..., 0].reshape(-1, 1, 2)
+    v2 = vs[..., 1].reshape(-1, 1, 2)
+    e1 = es[:, 0].reshape(-1, 1, 1)
+    e2 = es[:, 1].reshape(-1, 1, 1)
     t = np.linspace(0, np.pi*2, num_segments, endpoint=False).reshape(-1, 1)
     el = v1 * np.sin(t) * np.sqrt(e1) * sd + v2 * np.cos(t) * np.sqrt(e2) * sd
     return polylines(el + means.reshape(-1, 1, 2), color, True, thickness, tf=tf)
@@ -277,9 +277,9 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
         r = marker_size / 2
         polys = np.empty((len(pts), 4, 2))
         polys[:, 0, :] = pts + [-r, -r]
-        polys[:, 1, :] = pts + [ r, -r]
-        polys[:, 2, :] = pts + [ r,  r]
-        polys[:, 3, :] = pts + [-r,  r]
+        polys[:, 1, :] = pts + [r, -r]
+        polys[:, 2, :] = pts + [r, r]
+        polys[:, 3, :] = pts + [-r, r]
         return polygons(polys, color)
     elif marker == '+':
         r = marker_size / 2
@@ -302,16 +302,16 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
         n_verts = 7
         t = np.linspace(0, np.pi * 2, n_verts, endpoint=False)
         polys = np.empty((len(pts), n_verts, 2))
-        polys[...,0] = np.sin(t) * r
-        polys[...,1] = np.cos(t) * r
+        polys[..., 0] = np.sin(t) * r
+        polys[..., 1] = np.cos(t) * r
         polys += pts.reshape(-1, 1, 2)
         return polylines(polys, color, True, thickness)
     elif marker in ['s', 'S']:
         r = marker_size / 2
         t = np.pi/4 + np.linspace(0, np.pi * 2, 4, endpoint=False)
         polys = np.empty((len(pts), 4, 2))
-        polys[...,0] = np.sin(t) * r
-        polys[...,1] = np.cos(t) * r
+        polys[..., 0] = np.sin(t) * r
+        polys[..., 1] = np.cos(t) * r
         polys += pts.reshape(-1, 1, 2)
         return polylines(polys, color, True, thickness)
     else:
