@@ -11,13 +11,12 @@
 [![PyPI version](https://badge.fury.io/py/concur.svg)](https://pypi.org/project/concur)
 [![Python version](https://img.shields.io/pypi/pyversions/concur.svg)](https://pypi.org/project/concur)
 
-* [**Documentation**](https://potocpav.github.io/python-concur-docs/master/)
+* [**Introduction**](https://potocpav.github.io/python-concur-docs/Introduction.md)
+* [**Reference**](https://potocpav.github.io/python-concur-docs/master/)
 * [**Homepage**](https://potocpav.github.io/python-concur-docs/homepage.html)
 * [Examples](https://github.com/potocpav/python-concur/tree/master/examples)
 * [PyPI](https://pypi.org/project/concur/)
 * [Changelog](https://github.com/potocpav/python-concur/tree/master/CHANGELOG.md)
-
-<!-- Start docs -->
 
 Concur is a Python UI framework based on synchronous generators.
 
@@ -26,9 +25,6 @@ It is a port of [Concur for Purescript](https://github.com/ajnsit/purescript-con
 For introduction to core concepts, see the [documentation](file:///home/pavel/build/python-concur/docs/index.html#introduction). A more comprehensive introduction can be found in the [Documentation for the Haskell/Purescript versions](https://github.com/ajnsit/concur-documentation/blob/master/README.md). This obviously uses Haskell/Purescript syntax and semantics, but many of the concepts will apply to the Python version.
 
 Being an abstraction over ImGui, Concur is best used for debugging, prototyping and data analysis, rather than user-facing applications. ImGui functions can be used directly for any functionality that is not wrapped by Concur. See the [PyImGui docs](https://pyimgui.readthedocs.io/en/latest/) for additional widgets, or [ImGui itself](https://github.com/ocornut/imgui) if you need to poke really deep.
-
-<!-- End docs -->
-
 
 ## Installation
 
