@@ -1,4 +1,4 @@
-""" Functions providing core functionality, widget creation, manipulation, and composition.
+""" Core functionality, widget creation, manipulation, and composition.
 
 All of the functions in this module are re-exported in the root module for convenience.
 """

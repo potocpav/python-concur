@@ -11,8 +11,8 @@
 [![PyPI version](https://badge.fury.io/py/concur.svg)](https://pypi.org/project/concur)
 [![Python version](https://img.shields.io/pypi/pyversions/concur.svg)](https://pypi.org/project/concur)
 
-* [**Introduction**](https://potocpav.github.io/python-concur-docs/Introduction.md)
-* [**Reference**](https://potocpav.github.io/python-concur-docs/master/)
+* [**Introduction**](https://github.com/potocpav/python-concur-docs/blob/master/Introduction.md)
+* [**API Reference**](https://potocpav.github.io/python-concur-docs/master/)
 * [**Homepage**](https://potocpav.github.io/python-concur-docs/homepage.html)
 * [Examples](https://github.com/potocpav/python-concur/tree/master/examples)
 * [PyPI](https://pypi.org/project/concur/)
@@ -28,7 +28,14 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 
 ## Installation
 
-The only dependencies are a C++ compiler, [GLFW](https://github.com/glfw/glfw) and Python >= 3.6. Concur [is available on PyPI](https://pypi.org/project/concur/) and can be installed using pip:
+The only dependencies are a C++ compiler, [GLFW](https://github.com/glfw/glfw) and Python >= 3.6. GLFW is included in major Linux distros, and there are [pre-compiled binaries](https://www.glfw.org/download.html) for Windows and OS X:
+
+```sh
+sudo apt install libglfw3-dev # Ubuntu
+sudo pacman -S glfw           # Arch
+```
+
+Concur can be installed using pip:
 
 ```sh
 pip install concur

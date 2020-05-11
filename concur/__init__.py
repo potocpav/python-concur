@@ -1,7 +1,7 @@
 """
 
 Most of the functions and classes from submodules are re-exported in the
-`concur` root module. The most convenient way to access them is by importing `concur` qualified:
+`concur` root module. The idiomatic way to access them is by importing `concur` qualified:
 
 ```python
 import concur as c
@@ -9,8 +9,8 @@ import concur as c
 # nearly anything can be accessed using `c.anything` now.
 ```
 
-A notable exception is the `concur.draw` functions: they have a bit different semantics (no layout,
-no user interaction), so they are separate and can be accessed using `c.draw.something`.
+A notable exception is the `concur.draw` functions: they have a bit different semantics, so they are in a separate
+module, `c.draw`.
 """
 
 import concur.extra_widgets
