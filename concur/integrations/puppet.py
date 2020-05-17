@@ -136,8 +136,6 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         imgui.get_io().add_input_character(c)
 
 
-
-
 def main(name, widget_gen, width, height, save_screencast=None, return_sshot=False, headless=False, fps=60):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
@@ -160,63 +158,55 @@ def main(name, widget_gen, width, height, save_screencast=None, return_sshot=Fal
     if save_screencast:
         writer = imageio.get_writer(save_screencast, mode='I', fps=60)
 
-    while not glfw.window_should_close(window):
-        t0 = time.perf_counter()
-        glfw.poll_events()
-        impl.process_inputs()
+    try:
+        while not glfw.window_should_close(window):
+            t0 = time.perf_counter()
+            glfw.poll_events()
+            impl.process_inputs()
 
-        imgui.new_frame()
+            imgui.new_frame()
 
-        create_window_dock(window)
-        begin_maximized_window("Default##Concur", window)
+            create_window_dock(window)
+            begin_maximized_window("Default##Concur", window)
 
-        try:
-            next(widget)
-        except StopIteration:
-            imgui.end()
-            imgui.render()
-            break
-        except:
-            # Cleanup on exception for iPython
-            imgui.end()
-            imgui.render()
-            impl.shutdown()
-            glfw.terminate()
-            raise
+            try:
+                next(widget)
+            except StopIteration:
+                break
+            finally:
+                imgui.end()
 
-        imgui.end()
-        imgui.render()
+                gl.glClearColor(0.5, 0.5, 0.5, 1)
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+                imgui.render()
 
-        if save_screencast:
+                if save_screencast:
+                    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+                    impl.render(imgui.get_draw_data())
+                    image = get_fb_data(offscreen_fb, width, height)
+                    writer.append_data(image)
+                gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
+
+                impl.render(imgui.get_draw_data())
+                glfw.swap_buffers(window)
+
+            t1 = time.perf_counter()
+            if fps is not None and t1 - t0 < 1/fps:
+                time.sleep(1/fps - (t1 - t0))
+
+        if return_sshot:
             gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
             impl.render(imgui.get_draw_data())
             image = get_fb_data(offscreen_fb, width, height)
-            writer.append_data(image)
+            ret = image
+        else:
+            ret = None
 
-        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
-        impl.render(imgui.get_draw_data())
-        glfw.swap_buffers(window)
+    finally:
+        impl.shutdown()
+        imgui.destroy_context(imgui.get_current_context())
+        glfw.terminate()
+        if save_screencast:
+            writer.close()
 
-        t1 = time.perf_counter()
-        if fps is not None and t1 - t0 < 1/fps:
-            time.sleep(1/fps - (t1 - t0))
-
-    if save_screencast:
-        writer.close()
-
-    if return_sshot:
-        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
-        impl.render(imgui.get_draw_data())
-        image = get_fb_data(offscreen_fb, width, height)
-        ret = image
-    else:
-        ret = None
-
-    # # retrieve pixels from framebuffer and write to file
-    # file_path = "test.png"
-    # image = get_fb_data(offscreen_fb, width, height)
-    # image.save(file_path)
-
-    impl.shutdown()
-    glfw.terminate()
     return ret

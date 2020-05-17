@@ -1,9 +1,14 @@
 
 ## master
 
+**Breaking Changes**
+
+
+
 **Fixes**
 
 * Destroy contexts on `main` exit correctly. This enables multiple `main` invocations with fresh ImGui state.
+* Better cleanup on exceptions. Sigkill in IPython doesn't hang the window.
 
 ## v0.8.0
 

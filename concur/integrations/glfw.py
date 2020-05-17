@@ -7,6 +7,7 @@ import time
 
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
+from contextlib import contextmanager
 
 from concur.integrations.opengl import create_offscreen_fb, get_fb_data
 
@@ -86,6 +87,17 @@ def create_window_dock(glfw_window, menu_bar=False):
     imgui.end()
 
 
+@contextmanager
+def managed_resource():
+    # Code to acquire resource, e.g.:
+    resource = acquire_resource(*args, **kwds)
+    try:
+        yield resource
+    finally:
+        # Code to release resource, e.g.:
+        release_resource(resource)
+
+
 def main(name, widget, width, height, fps=60, save_screencast=None, screencast_fps=60, menu_bar=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
@@ -119,56 +131,44 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
         offscreen_fb = create_offscreen_fb(width, height)
         writer = imageio.get_writer(save_screencast, mode='I', fps=screencast_fps)
 
-    while not glfw.window_should_close(window):
-        t0 = time.perf_counter()
-        glfw.poll_events()
-        impl.process_inputs()
+    try:
+        while not glfw.window_should_close(window):
+            t0 = time.perf_counter()
+            glfw.poll_events()
+            impl.process_inputs()
 
-        imgui.new_frame()
+            imgui.new_frame()
 
-        create_window_dock(window, menu_bar=menu_bar)
-        begin_maximized_window("Default##Concur", window, menu_bar=menu_bar)
+            create_window_dock(window, menu_bar=menu_bar)
+            begin_maximized_window("Default##Concur", window, menu_bar=menu_bar)
 
-        try:
-            next(widget)
-        except StopIteration:
-            imgui.end()
-            imgui.render()
-            break
-        except:
-            # Cleanup on exception for iPython
-            imgui.end()
-            imgui.render()
+            try:
+                next(widget)
+            except StopIteration:
+                break
+            finally:
+                imgui.end()
+                imgui.render()
 
-            impl.shutdown()
-            imgui.destroy_context(imgui.get_current_context())
-            glfw.terminate()
-            if save_screencast:
-                writer.close()
-            raise
+                gl.glClearColor(0.5, 0.5, 0.5, 1)
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
-        imgui.end()
-        gl.glClearColor(0.5, 0.5, 0.5, 1)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
-        imgui.render()
+                if save_screencast:
+                    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
+                    impl.render(imgui.get_draw_data())
+                    image = get_fb_data(offscreen_fb, width, height)
+                    writer.append_data(image)
+                gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
 
+                impl.render(imgui.get_draw_data())
+                glfw.swap_buffers(window)
+
+            t1 = time.perf_counter()
+            if t1 - t0 < 1/fps:
+                time.sleep(1/fps - (t1 - t0))
+    finally:
+        impl.shutdown()
+        imgui.destroy_context(imgui.get_current_context())
+        glfw.terminate()
         if save_screencast:
-            gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, offscreen_fb)
-            impl.render(imgui.get_draw_data())
-            image = get_fb_data(offscreen_fb, width, height)
-            writer.append_data(image)
-            gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
-
-        impl.render(imgui.get_draw_data())
-        glfw.swap_buffers(window)
-
-        t1 = time.perf_counter()
-        if t1 - t0 < 1/fps:
-            time.sleep(1/fps - (t1 - t0))
-
-    if save_screencast:
-        writer.close()
-
-    impl.shutdown()
-    imgui.destroy_context(imgui.get_current_context())
-    glfw.terminate()
+            writer.close()
