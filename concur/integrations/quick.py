@@ -85,7 +85,7 @@ def quick_window(widget_gen, w, h, max_fps=60):
 
     t.start()
     x0 = q.get()
-    main("Quick Window", quick_window_w(quit_q, q, x0), w, h)
+    main(quick_window_w(quit_q, q, x0), "Quick Window", w, h)
 
 
 def quick_image_w(quit_q, q, x0):
@@ -115,4 +115,4 @@ def quick_image(overlay_gen, w, h, max_fps=60):
 
     t.start()
     x0 = q.get()
-    main("Quick Plot", quick_image_w(quit_q, q, x0), w, h)
+    main(quick_image_w(quit_q, q, x0), "Quick Plot", w, h)

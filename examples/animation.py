@@ -19,9 +19,9 @@ def graph(tf):
 def app():
     view = c.Frame((-1.5, 1.5), (1.5, -1.5))
     while True:
-        _, view = yield from c.frame("Frame", view, graph)
+        _, view = yield from c.frame("Frame", view, content_gen=graph)
         yield
 
 
 if __name__ == "__main__":
-    c.main("Plot", app(), 400, 288)
+    c.main(app(), "Plot", 400, 288)

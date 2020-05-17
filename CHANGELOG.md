@@ -3,7 +3,7 @@
 
 **Breaking Changes**
 
-
+* `c.main` argument order switched up to [this](https://potocpav.github.io/python-concur-docs/master/integrations/glfw.html). Widget is now first, then the window name (newly optional), then width and height (also newly optional). This simplifies the Hello, world application and other simple examples considerably.
 
 **Fixes**
 

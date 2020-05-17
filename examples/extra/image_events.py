@@ -35,4 +35,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.main("Image Events", app(), 500, 500)
+    c.main(app(), "Image Events")

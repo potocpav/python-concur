@@ -16,7 +16,7 @@ def computation():
         yield c.partial(draw, i)
     print("Computation done.")
 
-# c.quick_plot(computation())
+c.quick_plot(computation(), 500, 500)
 
 def computation():
     def draw(i):

@@ -17,4 +17,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.main("Plot", app(), 800, 500)
+    c.main(app(), "Plot")

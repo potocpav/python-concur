@@ -20,4 +20,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.main("Timers", app(), 500, 500)
+    c.main(app(), "Timers")

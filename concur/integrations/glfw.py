@@ -98,13 +98,14 @@ def managed_resource():
         release_resource(resource)
 
 
-def main(name, widget, width, height, fps=60, save_screencast=None, screencast_fps=60, menu_bar=False):
+def main(widget, name="Concur", width=640, height=480, fps=60, save_screencast=None, screencast_fps=60, menu_bar=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     To create a maximized window, pass width and height larger than the screen.
 
     Arguments:
         widget: The widget to display inside the window. When the widget returns, the application exits.
+        name: Window name, displayed in the title bar and other OS outputs.
         width: Desired window width.
         height: Desired window height.
         fps: Maximum number of frames per second

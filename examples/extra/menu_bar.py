@@ -24,4 +24,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.main("Main Menu Bar", app(), 500, 500, menu_bar=True)
+    c.main(app(), "Main Menu Bar", menu_bar=True)

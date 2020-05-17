@@ -11,10 +11,9 @@
 [![PyPI version](https://badge.fury.io/py/concur.svg)](https://pypi.org/project/concur)
 [![Python version](https://img.shields.io/pypi/pyversions/concur.svg)](https://pypi.org/project/concur)
 
-* [**Introduction**](https://github.com/potocpav/python-concur-docs/blob/master/Introduction.md)
 * [**API Reference**](https://potocpav.github.io/python-concur-docs/master/)
-* [**Homepage**](https://potocpav.github.io/python-concur-docs/homepage.html)
-* [Examples](https://github.com/potocpav/python-concur/tree/master/examples)
+* [Documentaion Repository](https://github.com/potocpav/python-concur-docs/)
+* [Homepage](https://potocpav.github.io/python-concur-docs/homepage.html)
 * [PyPI](https://pypi.org/project/concur/)
 * [Changelog](https://github.com/potocpav/python-concur/tree/master/CHANGELOG.md)
 
@@ -44,7 +43,7 @@ pip install concur
 This command should produce a very simple GUI app:
 
 ```sh
-python -c 'import concur as c; c.main("Hello", c.button("Close"), 500, 500)'
+python -c 'import concur as c; c.main(c.button("Close"))'
 ```
 
 Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.

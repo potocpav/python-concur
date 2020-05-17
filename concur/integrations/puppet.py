@@ -136,7 +136,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         imgui.get_io().add_input_character(c)
 
 
-def main(name, widget_gen, width, height, save_screencast=None, return_sshot=False, headless=False, fps=60):
+def main(widget_gen, name="Concur Puppet", width=640, height=480, save_screencast=None, return_sshot=False, headless=False, fps=60):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     The resulting window is not hooked up to the user input. Instead, input is handled

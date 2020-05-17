@@ -47,4 +47,4 @@ def app():
         yield
 
 if __name__ == "__main__":
-    c.main("Counter", app(), 500, 500)
+    c.main(app(), "Counter")

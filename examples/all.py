@@ -10,4 +10,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.main("All Examples", app(), 800, 600)
+    c.main(app(), "All Examples", 800, 600)

@@ -14,4 +14,4 @@ def app():
 
 
 if __name__ == "__main__":
-    c.main("Columns", app(), 500, 500)
+    c.main(app(), "Columns")
