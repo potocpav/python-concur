@@ -131,6 +131,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         imgui.get_io().keys_down[key] = False
 
     def write_char(self, c):
+        """Write a character with a given char code."""
         assert 0 < c < 0x10000
         imgui.get_io().add_input_character(c)
 

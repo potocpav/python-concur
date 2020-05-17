@@ -1,7 +1,9 @@
 
 ## master
 
-Nothing here yet.
+**Fixes**
+
+* Destroy contexts on `main` exit correctly. This enables multiple `main` invocations with fresh ImGui state.
 
 ## v0.8.0
 

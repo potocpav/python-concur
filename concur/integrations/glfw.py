@@ -139,7 +139,9 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
             # Cleanup on exception for iPython
             imgui.end()
             imgui.render()
+
             impl.shutdown()
+            imgui.destroy_context(imgui.get_current_context())
             glfw.terminate()
             if save_screencast:
                 writer.close()
@@ -168,4 +170,5 @@ def main(name, widget, width, height, fps=60, save_screencast=None, screencast_f
         writer.close()
 
     impl.shutdown()
+    imgui.destroy_context(imgui.get_current_context())
     glfw.terminate()

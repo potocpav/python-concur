@@ -18,7 +18,7 @@
 * [PyPI](https://pypi.org/project/concur/)
 * [Changelog](https://github.com/potocpav/python-concur/tree/master/CHANGELOG.md)
 
-Concur is a Python UI framework based on synchronous generators.
+Concur is a Python GUI framework based on synchronous generators.
 
 It is a port of [Concur for Purescript](https://github.com/ajnsit/purescript-concur), implemented on top of the [Dear ImGui](https://github.com/ocornut/imgui) C++ UI library.
 
@@ -28,7 +28,7 @@ Being an abstraction over ImGui, Concur is best used for debugging, prototyping 
 
 ## Installation
 
-The only dependencies are a C++ compiler, [GLFW](https://github.com/glfw/glfw) and Python >= 3.6. GLFW is included in major Linux distros, and there are [pre-compiled binaries](https://www.glfw.org/download.html) for Windows and OS X:
+The only dependencies are a C++ compiler, [GLFW](https://github.com/glfw/glfw) and Python >= 3.6. GLFW is included in major Linux distros, and there are [pre-compiled binaries](https://www.glfw.org/download.html) for Windows and OS X.
 
 ```sh
 sudo apt install libglfw3-dev # Ubuntu
