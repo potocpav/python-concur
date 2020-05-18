@@ -7,7 +7,6 @@ import time
 
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
-from contextlib import contextmanager
 
 from concur.integrations.opengl import create_offscreen_fb, get_fb_data
 
@@ -85,17 +84,6 @@ def create_window_dock(glfw_window, menu_bar=False):
     imgui.pop_style_var(1)
     imgui.dock_space("Window Dock Space", 0., 0., 1 << 3)
     imgui.end()
-
-
-@contextmanager
-def managed_resource():
-    # Code to acquire resource, e.g.:
-    resource = acquire_resource(*args, **kwds)
-    try:
-        yield resource
-    finally:
-        # Code to release resource, e.g.:
-        release_resource(resource)
 
 
 def main(widget, name="Concur", width=640, height=480, fps=60, save_screencast=None, screencast_fps=60, menu_bar=False):

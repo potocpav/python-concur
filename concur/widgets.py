@@ -7,7 +7,7 @@ Most widgets are just thin wrappers over [widgets in PyImGui](https://pyimgui.re
 If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing
 generators by hand, or by using helper functions `concur.core.interactive_elem` or `concur.core.lift`.
 
-Some widgets (`transform`, `key_pressed`, etc.) don't do any drawing and serve purely for control flow, or user interaction.
+Some widgets (`transform`, `key_press`, etc.) don't do any drawing and serve purely for control flow, or user interaction.
 
 All of the functions in this module are re-exported in the root module for convenience.
 """
