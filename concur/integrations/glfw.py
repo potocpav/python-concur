@@ -91,7 +91,7 @@ def main(widget, name="Concur", width=640, height=480, fps=60, save_screencast=N
 
     To create a maximized window, pass width and height larger than the screen.
 
-    Arguments:
+    Args:
         widget: The widget to display inside the window. When the widget returns, the application exits.
         name: Window name, displayed in the title bar and other OS outputs.
         width: Desired window width.

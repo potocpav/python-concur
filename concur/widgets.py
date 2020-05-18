@@ -1,7 +1,9 @@
 """ A collection of widgets based off of ImGui.
 
-By convention, all widgets take a string identifier as the first parameter, and return the `(identifier, value)` pair.
-This is done for convenience, as Python syntax for mapping values is a bit busy.
+By convention, most widgets take a string identifier as the first parameter, and return the `(identifier, value)` pair.
+This is done for convenience, as Python syntax for mapping values is a bit busy. If you want to return a different
+identifier to what is displayed on screen, use the `tag` keyword argument which is available for all widgets where
+it makes sense.
 
 Most widgets are just thin wrappers over [widgets in PyImGui](https://pyimgui.readthedocs.io/en/latest/reference/imgui.core.html).
 If any widget from ImGui is not listed here, it is mostly trivial to add it. New widgets can be created by writing

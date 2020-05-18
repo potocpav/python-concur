@@ -27,7 +27,7 @@ def image(name, state, width=None, height=None, content_gen=None, drag_tag=None,
     _, im = yield from c.image("Image", im, content_gen=c.partial(overlay, pos))
     ```
 
-    Arguments:
+    Args:
         name: Widget name, serves as the identifier for state change events
         state: Instance of `concur.extra_widgets.image.Image`.
         width: Widget width in pixels. If not specified, the widget stretches to fill the parent widget.

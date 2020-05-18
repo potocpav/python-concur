@@ -252,7 +252,7 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
     Some markers are more performant than others, depending on the amount of
     generated geometry.
 
-    Arguments:
+    Args:
       pts: NumPy array with shape `(n, 2)`, where `n` is the point count.
       color: Color to draw the markers.
       marker: Marker type. See the table below.

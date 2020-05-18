@@ -69,8 +69,6 @@ def benchmark_widget(f_gen):
     """ Benchmark a widget (experimental).
 
     See tests/test_draw.py for example usage.
-
-    TODO: improve, document
     """
     f = f_gen()
 

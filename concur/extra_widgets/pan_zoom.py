@@ -21,7 +21,7 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
     This widget is mostly not used directly. Instead, a special-purpose wrapper can be used,
     such as `concur.extra_widgets.image.image`, or `concur.extra_widgets.frame.frame`.
 
-    Arguments:
+    Args:
         name: widget name. Also serves as an event identifier
         state: `PanZoom` object representing state.
         width: widget width in pixels. If `None`, it fills the available space.
@@ -38,9 +38,8 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
             If `None`, no hover events are fired. Events are fired only when the mouse is moving.
 
     Returns:
-        To ease integration with other widgets, this widget returns events in a special format:
-        `(name, state, event)`. `state` or `event` may be `None` in case `state` didn't change,
-        or there is no `event`.
+        To ease integration with other widgets, this widget returns events in a special format, `(name, state, event)`.
+        `state` or `event` may be `None` in case `state` didn't change, or there is no `event`.
 
         If `drag_tag`, or `down_tag` arguments are used, these are fired in the `event` member of the return tuple.
     """
@@ -191,11 +190,11 @@ class PanZoom(object):
     """ Pan & zoom state. """
     def __init__(self, top_left, bottom_right, keep_aspect=True, fix_axis=None, margins=[0, 0, 0, 0]):
         """
-        Arguments:
+        Args:
             top_left:     Coordinates of the top left corner of the displayed content area.
             bottom_right: Coordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
-                          if keep_aspect==True, it is equivalent to keep_aspect==1.
+                          If keep_aspect==True, it is equivalent to keep_aspect==1.
             fix_axis:     Do not zoom in a given axis (`'x'`, `'y'`, or `None`).
             margins:      Margins (left, top, right, bottom) of the view area in pixels.
                           If the view area should be inset by 5 px on each side, then use

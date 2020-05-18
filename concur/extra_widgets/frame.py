@@ -17,7 +17,7 @@ class Frame(PanZoom):
         """
         Simple PanZoom re-export with specified margins.
 
-        Arguments:
+        Args:
             top_left:     Coordinates of the top left corner of the displayed content area.
             bottom_right: Coordinates of the bottom right corner of the displayed content area.
             keep_aspect:  Keep aspect ratio (x/y) equal to a given constant and zoom proportionally.
