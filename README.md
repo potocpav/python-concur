@@ -46,7 +46,7 @@ This command should produce a very simple GUI app:
 python -c 'import concur as c; c.main(c.button("Close"))'
 ```
 
-Use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.
+See the [introductory tutorial](https://github.com/potocpav/python-concur-docs/blob/master/Introduction.md) to get started, or use any of the [examples](https://github.com/potocpav/python-concur/tree/master/examples) as a starting point for your app.
 
 ## Development
 
