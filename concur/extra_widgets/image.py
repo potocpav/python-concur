@@ -35,8 +35,10 @@ def image(name, state, width=None, height=None, content_gen=None, drag_tag=None,
         content_gen: Function which generates a widget which is displayed as an overlay. This function
             should accept one or two keyword arguments:
 
-            * **event_gen**: Widget which yields events specified by the `drag_tag`, `down_tag`, and
-              `hover_tag` arguments. The `event_gen` argument is only expected if any of those tags is not `None`.
+            * **event_gen** (optional): Widget generator which yields events specified by the `drag_tag`,
+              `down_tag`, and `hover_tag` arguments. The `event_gen` argument is only used if any of those
+              tags is not `None`. For example usage, see the
+              [image_events example](https://github.com/potocpav/python-concur/blob/master/examples/extra/image_events.py).
             * **tf**: Instance of `concur.extra_widgets.pan_zoom.TF`. It can be used to transform between
               screen-space and image-space coordinates. The geometrical objects in `concur.draw` take `tf`
               as an optional argument. Widgets which don't accept the `tf` argument, such as buttons, can be

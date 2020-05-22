@@ -2,7 +2,7 @@
 
 All these widgets have the following in common:
 
-* They are passive, so they don't need names. For active overlay, use normal widgets, such as buttons, wrapped inside `concur.widgets.transform`.
+* They are passive, so they don't need names. For active overlay, several mechanisms can be used, listed below.
 * They don't do automatic layout. Instead the exact position is specified by hand.
 * Color can be specified in several ways:
     * RGBA tuple with values between 0 and 1. For example, `(0.5, 0.5, 1, 1)` is light blue.
@@ -15,6 +15,27 @@ All these widgets have the following in common:
 
 Theses widgets are not re-exported in the root module, and are normally used as `c.draw.line(...)`, etc.
 They can be composed normally using the `concur.core.orr` function.
+
+## Creating Interactive Overlays
+
+There are several ways of creating overlays which react to user input.
+
+* **Using interactive widgets as overlay**. Widgets, such as buttons, can be displayed as overlay at a specified
+  position using the `concur.widgets.transform` function. This can be used also for dragging stuff by wrapping the
+  widget in a `concur.extra_widgets.draggable.draggable`. To create rectangular clickable areas,
+  the `concur.widgets.invisible_button` widget can be used. See the
+  [image example](https://github.com/potocpav/python-concur/blob/master/examples/image.py) for a basic usage example.
+
+* **Using the events managed by `concur.extra_widgets.image.image` and `concur.extra_widgets.frame.frame`**. The
+  `drag_tag`, `down_tag`, and `hover_tag` arguments can be used to implement complex interactions, such as control point
+  editing. See the
+  [image_events](https://github.com/potocpav/python-concur/blob/master/examples/extra/image_events.py) example for
+  a basic usage example. This option will give you click/hover positions and drag deltas, but it is up to you to
+  implement any logic on top of that, such as highlighting the hovered line, etc.
+
+* **Using the `concur.widgets.mouse_click` widget**. This widget just returns mouse position for any click not inside any
+  widget. This is the simplest option, but it is probably better to use the other options. See the
+  [annotation tool](https://github.com/potocpav/annotation-tool/blob/master/annotator.py) example for an usage example.
 """
 
 import numpy as np
