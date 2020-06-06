@@ -12,7 +12,7 @@
 [![Python version](https://img.shields.io/pypi/pyversions/concur.svg)](https://pypi.org/project/concur)
 
 * [**API Reference**](https://potocpav.github.io/python-concur-docs/master/)
-* [Documentaion Repository](https://github.com/potocpav/python-concur-docs/)
+* [**Documentation**](https://github.com/potocpav/python-concur-docs/)
 * [Homepage](https://potocpav.github.io/python-concur-docs/homepage.html)
 * [PyPI](https://pypi.org/project/concur/)
 * [Changelog](https://github.com/potocpav/python-concur/tree/master/CHANGELOG.md)
