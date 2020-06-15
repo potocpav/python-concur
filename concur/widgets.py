@@ -45,7 +45,7 @@ def window(title: str,
            flags: int = 0) -> Widget:
     """ Create a window with a given `widget` inside.
 
-    Window title must be unique. Contents are drawn only if the window is opened.
+    Contents are drawn only if the window is opened. Window title must be unique. Windows must not be nested.
     """
     while True:
         if position is not None:
