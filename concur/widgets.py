@@ -66,7 +66,26 @@ def window(title: str,
 
 
 def child(name, widget, width, height, border=False, flags=0):
-    """ Create a sized box with a `widget` inside a window. """
+    r""" Create a sized box with a `widget` inside.
+
+    If the contents overflow, scrollbars will be created by default.
+    Sizing of the child widget allows for three modes, depending on the sign of parameters `width` and `height`:
+
+    * ==0 - use the remaining window size
+    * \>0 - fixed size in pixels
+    * <0 - use remaining window size minus abs(size) in pixels
+
+    Args:
+        name: Child name. This has no effect, and will be removed in the future.
+        widget: Widget to display inside the box.
+        width: Box width.
+        height: Box height.
+        border: Toggle border visibility.
+        flags: Advanced customization flags. See the
+            [list of available flags](https://pyimgui.readthedocs.io/en/latest/guide/window-flags.html#window-flag-options).
+
+
+    """
     while True:
         imgui.begin_child(name, width, height, border, flags)
         try:
