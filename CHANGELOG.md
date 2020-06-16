@@ -3,6 +3,10 @@
 
 Nothing here yet.
 
+## v0.9.1
+
+* Update ImGui to the newest version in the `docking` branch
+
 ## v0.9.0
 
 Mainly interactive invocation and documentation improvements.
