@@ -3,9 +3,16 @@
 
 Nothing here yet.
 
+## v0.10.0
+
+**Breaking Changes**
+
+Remove the `name` argument from `c.child`
+
 ## v0.9.1
 
 * Update ImGui to the newest version in the `docking` branch
+* Improve some docstrings
 
 ## v0.9.0
 

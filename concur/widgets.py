@@ -83,8 +83,6 @@ def child(name, widget, width, height, border=False, flags=0):
         border: Toggle border visibility.
         flags: Advanced customization flags. See the
             [list of available flags](https://pyimgui.readthedocs.io/en/latest/guide/window-flags.html#window-flag-options).
-
-
     """
     while True:
         imgui.begin_child(name, width, height, border, flags)
