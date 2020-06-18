@@ -5,7 +5,7 @@
 
 Remove the `name` argument from `c.child`
 
-## master
+## v0.9.2
 
 * `concur.widgets.dummy` implemented
 * `concur.widgets.input_text` flags argument added. This enables creating a password input field, among other use-cases.
