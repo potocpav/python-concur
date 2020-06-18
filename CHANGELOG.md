@@ -1,13 +1,14 @@
 
-## master
-
-Nothing here yet.
-
-## v0.10.0
+## v0.10.0 (planned)
 
 **Breaking Changes**
 
 Remove the `name` argument from `c.child`
+
+## master
+
+* `concur.widgets.dummy` implemented
+* `concur.widgets.input_text` flags argument added. This enables creating a password input field, among other use-cases.
 
 ## v0.9.1
 

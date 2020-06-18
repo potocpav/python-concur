@@ -181,10 +181,22 @@ def radio_button(label, active, tag=None):
     return (tag if tag is not None else label), None
 
 
-def input_text(name, value, buffer_length=255, tag=None):
-    """ Text input. """
+def dummy(width, height):
+    """ Add a dummy element of a given `width` and `height`.
+
+    Useful for custom-sized vertical and horizontal spacings.
+    """
+    return lift(imgui.dummy, width, height)
+
+
+def input_text(name, value, buffer_length=255, tag=None, flags=0):
+    """ Text input.
+
+    Flags are [defined by PyImGui](https://pyimgui.readthedocs.io/en/latest/guide/inputtext-flags.html#inputtext-flag-options).
+    `buffer_length` doesn't affect widget size on screen, it limits the maximum character count only.
+    """
     while True:
-        changed, new_value = imgui.input_text(name, value, buffer_length)
+        changed, new_value = imgui.input_text(name, value, buffer_length, flags)
         if changed:
             return (name if tag is None else tag), new_value
         else:
