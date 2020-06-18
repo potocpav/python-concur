@@ -31,11 +31,10 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
             takes two keyword arguments:
 
             * **tf**: `concur.extra_widgets.pan_zoom.TF` object with transformation information
-            * **event_gen** (optional): only used if any of the `*_tag` arguments is present. It is
-              an event generator which returns the drag, down, and hover events when they occur.
+            * **event_gen**: This is an event generator which returns the drag, down, and hover events when they occur.
 
             It is up to the widget to do the necessary transformations
-            using the `TF` object, and react to the events created by `event_gen`.
+            using the `TF` object, and optionally react to the events created by `event_gen`.
         drag_tag: The event tag for LMB drag events. If `None`, no drag events are fired.
         down_tag: The event tag for LMB down events. If `None`, no down events are fired.
             Useful in combination with `drag_tag` to indicate when the dragging started.

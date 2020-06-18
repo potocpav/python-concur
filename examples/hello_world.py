@@ -5,12 +5,7 @@ import imgui
 
 
 def app():
-    # make_next_win_fullscreen = c.lift(lambda: imgui.set_next_window_size(*imgui.get_io().display_size))
-    return c.orr([
-        c.window("Title", c.orr([
-            c.button("Close"),
-            ])),
-        ])
+    return c.button("Close")
 
 
 if __name__ == "__main__":
