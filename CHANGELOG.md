@@ -9,6 +9,7 @@ Remove the `name` argument from `c.child`
 
 * `concur.widgets.dummy` implemented
 * `concur.widgets.input_text` flags argument added. This enables creating a password input field, among other use-cases.
+* Make the `imageio` dependency non-mandatory.
 
 ## v0.9.1
 

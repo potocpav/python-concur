@@ -12,7 +12,6 @@ import OpenGL.GL as gl
 
 # Save as video
 from PIL import Image
-import imageio
 import numpy as np
 
 from concur.integrations.glfw import create_window, create_window_dock, begin_maximized_window
@@ -156,6 +155,7 @@ def main(widget_gen, name="Concur Puppet", width=640, height=480, save_screencas
     offscreen_fb = create_offscreen_fb(width, height)
 
     if save_screencast:
+        import imageio
         writer = imageio.get_writer(save_screencast, mode='I', fps=60)
 
     try:
