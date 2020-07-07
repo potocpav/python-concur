@@ -179,6 +179,18 @@ def map(f: Any, elem: Widget) -> Widget:
     return f(v)
 
 
+def replace_tag(tag: Any, elem: Widget) -> Widget:
+    """ Replace the first element of any returned pair with `tag`. """
+    _, v = yield from elem
+    return tag, v
+
+
+def replace_value(value: Any, elem: Widget) -> Widget:
+    """ Replace the second element of any returned pair with `value`. """
+    t, _ = yield from elem
+    return t, value
+
+
 def stateful(elem: Callable[[Any], Widget], initial_state: Any) -> Widget:
     """Thread state from the widget into itself, creating a stateful never-ending widget.
 

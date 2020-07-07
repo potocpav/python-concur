@@ -5,6 +5,10 @@
 
 Remove the `name` argument from `c.child`
 
+## v0.9.3
+
+* `concur.core.replace_tag`, `concur.core.replace_value` added. These make it convenient to transform events without lambdas. Lambdas don't work properly inside loops/comprehensions in Python.
+
 ## v0.9.2
 
 * `concur.widgets.dummy` implemented
