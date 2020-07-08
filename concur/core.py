@@ -179,6 +179,12 @@ def map(f: Any, elem: Widget) -> Widget:
     return f(v)
 
 
+def replace(event: Any, elem: Widget) -> Widget:
+    """ Replace the event returned by `elem` with `event`. """
+    _ = yield from elem
+    return event
+
+
 def replace_tag(tag: Any, elem: Widget) -> Widget:
     """ Replace the first element of any returned pair with `tag`. """
     _, v = yield from elem
