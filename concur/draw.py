@@ -287,6 +287,8 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
     `"+"`  | plus sign
     `"o"`  | non-filled circle
     `"s"`  | non-filled square
+    `"|"`  | vertical line
+    `"-"`  | horizontal line
     """
     if len(pts) == 0:
         pts = pts.reshape(-1, 2)
@@ -335,5 +337,17 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
         polys[..., 1] = np.cos(t) * r
         polys += pts.reshape(-1, 1, 2)
         return polylines(polys, color, True, thickness)
+    elif marker == '|':
+        r = marker_size / 2
+        polys = np.empty((len(pts), 2, 2))
+        polys[:, 0, :] = pts - [0, r]
+        polys[:, 1, :] = pts + [0, r]
+        return polylines(polys, color, False, thickness)
+    elif marker == '-':
+        r = marker_size / 2
+        polys = np.empty((len(pts), 2, 2))
+        polys[:, 0, :] = pts - [r, 0]
+        polys[:, 1, :] = pts + [r, 0]
+        return polylines(polys, color, False, thickness)
     else:
         raise ValueError('Invalid marker')

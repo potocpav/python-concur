@@ -1,6 +1,8 @@
 
 ## v0.10.0 (planned)
 
+* Add new scatter plot markers: `"|"`, and `"-"`
+
 **Breaking Changes**
 
 Remove the `name` argument from `c.child`
