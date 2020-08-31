@@ -2,6 +2,7 @@
 ## v0.10.0 (planned)
 
 * Add new scatter plot markers: `"|"`, and `"-"`
+* Add drag-and-drop functionality (`drag_drop_source`, `drag_drop_target`)
 
 **Breaking Changes**
 
