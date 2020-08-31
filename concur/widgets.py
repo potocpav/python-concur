@@ -530,13 +530,16 @@ def drag_drop_source(tag, payload, widget, dragged_widget=None, flags=0):
         yield
 
 
-def drag_drop_target(tag, widget, value=None):
+def drag_drop_target(tag, value, widget):
     """ Drag-and-Drop Target Widget.
 
-    This widget is used in conjunction with `concur.widgets.drag_drop_source`.
+    This widget is used in conjunction with `concur.widgets.drag_drop_source`. On widget drop,
+    an event is generated which contains the payload from source, and the value from targed,
+    and is shaped like this: `(tag, (source_payload, value))`.
 
     Args:
         tag: Drag-and-Drop event tag. Must match the tag in `drag_drop_source`.
+        value: Value added to the event.
         widget: Widget which accepts the drag-and-drop event.
     """
     while True:
@@ -551,7 +554,7 @@ def drag_drop_target(tag, widget, value=None):
             payload = imgui.accept_drag_drop_payload(tag)
             imgui.end_drag_drop_target()
             if payload is not None:
-                return tag, (value, pickle.loads(payload))
+                return tag, (pickle.loads(payload), value)
         yield
 
 

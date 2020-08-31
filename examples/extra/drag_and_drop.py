@@ -12,8 +12,8 @@ def app():
             c.text("Drag & drop example:"),
             c.drag_drop_source("Drag", 123, c.button("Hello, 123")),
             c.drag_drop_source("Drag", 456, c.text("Hello, 456")),
-            c.drag_drop_target("Drag", c.button("Drop here"), value='abc'),
-            c.drag_drop_target("Drag", c.button("or here"), value='def'),
+            c.drag_drop_target("Drag", 'abc', c.button("Drop here")),
+            c.drag_drop_target("Drag", 'def', c.button("or here")),
             ])
         if tag == "Hello":
             print("Hello")
