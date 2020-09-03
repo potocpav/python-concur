@@ -249,7 +249,7 @@ class TF(object):
     It may be useful to transform stuff by hand in cases when default behavior is not sufficient,
     such as specifying the line width in image coordinates.
 
-    The `TF.hovered` attribute is useful to highlight elements on mouse hover. Use `imgui.get_io().mouse_pos`
+    The `hovered` attribute is useful to highlight elements on mouse hover. Use `imgui.get_io().mouse_pos`
     to get mouse position in screen-space and transform it using `TF.inv_transform` into
     image coordinates.
 
