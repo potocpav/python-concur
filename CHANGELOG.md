@@ -3,6 +3,7 @@
 
 * Add new scatter plot markers: `"|"`, and `"-"`
 * Add drag-and-drop functionality (`drag_drop_source`, `drag_drop_target`)
+* Add `TF.hover` attribute for more robust hover functionality than `Image.hover_tag`.
 
 **Breaking Changes**
 

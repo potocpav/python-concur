@@ -161,9 +161,10 @@ def pan_zoom(name, state, width=None, height=None, content_gen=None, drag_tag=No
         if hover_tag \
                 and not st.is_rmb_dragged \
                 and not any(imgui.is_mouse_down(i) for i in [0,1,2]) \
-                and is_window_hovered \
-                and (delta[0] or delta[1]):
-            event_queue.put((hover_tag, new_tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
+                and is_window_hovered:
+            new_tf.hovered = True
+            if (delta[0] or delta[1]):
+                event_queue.put((hover_tag, new_tf.inv_transform(np.array([[*io.mouse_pos]]))[0]))
         if drag_tag \
                 and not st.is_rmb_dragged:
             imgui.invisible_button("", w, h)
@@ -248,6 +249,10 @@ class TF(object):
     It may be useful to transform stuff by hand in cases when default behavior is not sufficient,
     such as specifying the line width in image coordinates.
 
+    The `TF.hovered` attribute is useful to highlight elements on mouse hover. Use `imgui.get_io().mouse_pos`
+    to get mouse position in screen-space and transform it using `TF.inv_transform` into
+    image coordinates.
+
     Attributes:
         c2s:      Content-to-screen transformation matrix.
         s2c:      Screen-to-content transformation matrix.
@@ -259,6 +264,7 @@ class TF(object):
         self.s2c = s2c
         self.view_c = view_c
         self.view_s = view_s
+        self.hovered = False
 
     def __eq__(self, other):
         return \
