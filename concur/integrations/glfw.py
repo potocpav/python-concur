@@ -34,7 +34,7 @@ class PatchedGlfwRenderer(GlfwRenderer):
         super(PatchedGlfwRenderer, self).keyboard_callback(window, key, scancode, action, mods)
 
 
-def create_window(window_name, width, height, visible=True):
+def create_window(window_name, width, height, visible=True, maximized=False):
     """ Create a GLFW window. """
     if not glfw.init():
         print("Could not initialize OpenGL context")
@@ -47,6 +47,8 @@ def create_window(window_name, width, height, visible=True):
     glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, gl.GL_TRUE)
     if not visible:
         glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
+    if maximized:
+        glfw.window_hint(glfw.MAXIMIZED, glfw.TRUE)
 
     # Create a windowed mode window and its OpenGL context
     window = glfw.create_window(
@@ -86,7 +88,10 @@ def create_window_dock(glfw_window, menu_bar=False):
     imgui.end()
 
 
-def main(widget, name="Concur", width=640, height=480, fps=60, save_screencast=None, screencast_fps=60, menu_bar=False):
+def main(
+        widget, name="Concur", width=640, height=480,
+        fps=60, save_screencast=None, screencast_fps=60,
+        menu_bar=False, maximized=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     To create a maximized window, pass width and height larger than the screen.
@@ -101,6 +106,7 @@ def main(widget, name="Concur", width=640, height=480, fps=60, save_screencast=N
             be resized while the application is running when using this option.
         screencast_fps: Save the screencast video with a given FPS.
         menu_bar: Reserve space for `concur.widgets.main_menu_bar` at the top of the window.
+        maximized: Create a maximized window.
     """
     if imgui.get_current_context() is None:
         imgui.create_context()
@@ -108,7 +114,7 @@ def main(widget, name="Concur", width=640, height=480, fps=60, save_screencast=N
     # Set config flags
     imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE # | imgui.CONFIG_VIEWPORTS_ENABLE
 
-    window = create_window(name, width, height)
+    window = create_window(name, width, height, maximized=maximized)
     impl = PatchedGlfwRenderer(window)
     impl.refresh_font_texture() # Refresh the font texture in case user changed it
 
