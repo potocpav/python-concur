@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="concur",
-    version="0.9.5",
+    version="0.10.0",
     author="Pavel Potocek",
     author_email="pavelpotocek@gmail.com",
     description="Concur UI Framework for Python",
@@ -37,7 +37,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'concur-imgui >= 1.3.6',
+        'concur-imgui >= 1.3.7',
         'Pillow',
         'numpy',
         'glfw',

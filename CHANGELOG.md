@@ -5,6 +5,7 @@
 * Add drag-and-drop functionality (`drag_drop_source`, `drag_drop_target`)
 * Add `TF.hover` attribute for more robust hover functionality than `Image.hover_tag`.
 * Re-introduce the `maximizied` window flag, because just setting window size to a large number doesn't properly work on Windows
+* Fix a [crash on slider and drag widgets](https://github.com/potocpav/python-concur/issues/24)
 
 **Breaking Changes**
 
