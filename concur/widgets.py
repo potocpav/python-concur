@@ -561,18 +561,18 @@ def drag_drop_target(tag, value, widget):
         yield
 
 
-def columns(elems, identifier=None, vert_borders=True, hor_borders=True, widths=None) -> Widget:
+def columns(elems, identifier=None, vert_borders=True, hor_borders=True, widths=None):
     """
     Table, using the imgui columns API.
-    :param List[List[Widget]] elems: 2D array of widgets. A list containing another list for
-    each row. len() of the first row defines the amount of columns, that will be rendered.
-    :param identifier: TODO
-    :param bool hor_borders: Toggle horizontal borders on/off
-    :param List[Union[int,float]] widths: is a optional vector of column widths in pixels. May
-    contain  None values.
-    :param bool vert_borders: Toggle horizontal borders on/off
-    :return: orr() wrapping the column widget
-    :rtype: WidgetWrapper
+    Args:
+        elems (List[List[Widget]]): 2D array of widgets. A list containing another list for each row. len() of the first row defines the amount of columns, that will be rendered.
+        identifier (str): Name of the widget.
+        vert_borders (bool): Toggle vertical borders on/off.
+        hor_borders (bool): Toggle horizontal borders on/off.
+        widths (List[Union[int,float]]): is an optional vector of column widths in pixels. May contain None values.
+
+    Returns:
+        `concur.core.orr` wrapping the column widget including all its rows.
     """
 
     n_columns = len(elems[0])
