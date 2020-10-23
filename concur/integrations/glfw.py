@@ -24,14 +24,24 @@ class PatchedGlfwRenderer(GlfwRenderer):
     keyboard layouts.
 
     See https://github.com/ocornut/imgui/issues/2959 for details.
+
+    # Temporary try except fix until we find a better solution, if we don't apply this,
+    # the app will crash if certain special keys are pressed.
     """
     def keyboard_callback(self, window, key, scancode, action, mods):
-        if key < 0x100:
-            # Translate characters to the correct keyboard layout.
-            key_name = glfw.get_key_name(key, 0)
-            if key_name is not None:
-                key = ord(key_name.upper())
-        super(PatchedGlfwRenderer, self).keyboard_callback(window, key, scancode, action, mods)
+        try:
+            _key = key
+            if _key < 0x100:
+                # Translate characters to the correct keyboard layout.
+                key_name = glfw.get_key_name(key, 0)
+                if key_name is not None:
+                    _key = ord(key_name.upper())
+            super(PatchedGlfwRenderer, self).keyboard_callback(window, _key, scancode, action, mods)
+        except:
+            try:
+                super(PatchedGlfwRenderer, self).keyboard_callback(window, key, scancode, action, mods)
+            except:
+               pass
 
 
 def create_window(window_name, width, height, visible=True, maximized=False):
@@ -91,7 +101,7 @@ def create_window_dock(glfw_window, menu_bar=False):
 def main(
         widget, name="Concur", width=640, height=480,
         fps=60, save_screencast=None, screencast_fps=60,
-        menu_bar=False, maximized=False):
+        menu_bar=False, maximized=False, is_retina=False):
     """ Create a GLFW window, spin up the main loop, and display a given widget inside.
 
     To create a maximized window, pass width and height larger than the screen.
@@ -107,6 +117,7 @@ def main(
         screencast_fps: Save the screencast video with a given FPS.
         menu_bar: Reserve space for `concur.widgets.main_menu_bar` at the top of the window.
         maximized: Create a maximized window.
+        is_retina: Fix blurred fonts on retina displays
     """
     if imgui.get_current_context() is None:
         imgui.create_context()
@@ -116,9 +127,16 @@ def main(
 
     window = create_window(name, width, height, maximized=maximized)
     impl = PatchedGlfwRenderer(window)
-    impl.refresh_font_texture() # Refresh the font texture in case user changed it
 
-    ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
+    if is_retina:
+        win_w, win_h = glfw.get_window_size(window)
+        fb_w, fb_h = glfw.get_framebuffer_size(window)
+        font_scaling_factor = max(float(fb_w) / win_w, float(fb_h) / win_h)
+        imgui.get_io().font_global_scale /= font_scaling_factor
+
+    impl.refresh_font_texture()  # Refresh the font texture in case user changed it
+
+    # Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
     # glfw.swap_interval(-1)
     if save_screencast:
         import imageio
