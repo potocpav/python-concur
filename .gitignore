@@ -1,7 +1,11 @@
 __pycache__
 concur.egg-info
 .mypy_cache
-
+.idea
 docs/_build
 build
 dist
+tmp
+imgui.ini
+requirements.txt
+venv

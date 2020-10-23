@@ -16,18 +16,19 @@ All of the functions in this module are re-exported in the root module for conve
 
 __pdoc__ = dict(same_line=False)
 
+import pickle  # for drag and drop payload
+from typing import Tuple
 
-import numpy as np  # for `transform`
-from typing import Iterable, Any, Tuple
 import imgui
-import pickle # for drag and drop payload
+import numpy as np  # for `transform`
 
-from concur.core import orr, lift, Widget, interactive_elem
 from concur.colors import color_to_rgba_tuple
+from concur.core import nothing, orr, lift, Widget, interactive_elem
 
 
 def orr_same_line(widgets):
     """ Use instead of `concur.core.orr` to layout child widgets horizontally instead of vertically. """
+
     def intersperse(delimiter, seq):
         """ https://stackoverflow.com/questions/5655708/python-most-elegant-way-to-intersperse-a-list-with-an-element """
         from itertools import chain, repeat
@@ -392,10 +393,12 @@ def text(s):
 
 def text_wrapped(s):
     """ Word wrapping text display widget. Recommended for long chunks of text. """
+
     def f():
         imgui.push_text_wrap_pos()
         imgui.text(s)
         imgui.pop_text_wrap_pos()
+
     return lift(f)
 
 
@@ -558,22 +561,38 @@ def drag_drop_target(tag, value, widget):
         yield
 
 
-def columns(elems, identifier=None, border=True, widths=[]):
-    """ Table, using the imgui columns API.
-
-    `elems` is a 2D array of widgets
-    `widths` is a optional vector of column widths in pixels. May contain
-    None values.
+def columns(elems, identifier=None, vert_borders=True, hor_borders=True, widths=None) -> Widget:
     """
+    Table, using the imgui columns API.
+    :param List[List[Widget]] elems: 2D array of widgets. A list containing another list for
+    each row. len() of the first row defines the amount of columns, that will be rendered.
+    :param identifier: TODO
+    :param bool hor_borders: Toggle horizontal borders on/off
+    :param List[Union[int,float]] widths: is a optional vector of column widths in pixels. May
+    contain  None values.
+    :param bool vert_borders: Toggle horizontal borders on/off
+    :return: orr() wrapping the column widget
+    :rtype: WidgetWrapper
+    """
+
     n_columns = len(elems[0])
-    for e in elems:
-        assert len(e) == n_columns
-    accum = []
-    accum.append(lift(imgui.columns, n_columns, identifier, border))
+
+    if widths is None:
+        widths = []
+
+    if hor_borders:
+        sep = [separator(), *[nothing() for _ in range(n_columns - 1)]]
+        n, i = 1, 1
+        while i < len(elems):
+            elems.insert(i, sep)
+            i += (n + 1)
+
+    accum = [lift(imgui.columns, n_columns, identifier, vert_borders)]
     for i, w in enumerate(widths):
         if w is not None:
             accum.append(lift(imgui.set_column_width, i, w))
     for row in elems:
+        assert len(row) == n_columns
         for widget in row:
             accum.append(widget)
             accum.append(lift(imgui.next_column))

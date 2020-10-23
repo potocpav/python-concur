@@ -10,6 +10,9 @@ def app():
     return c.columns([
         [c.text("Hello,"), c.button("Click me")],
         [c.text("columns!"), c.button("Or me")],
+        [c.text("columns!"), c.button("Or me")],
+        [c.text("columns!"), c.button("Or me")],
+        [c.text("columns!"), c.button("Or me")],
         ], "start", True)
 
 
