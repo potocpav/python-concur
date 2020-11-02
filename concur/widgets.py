@@ -566,6 +566,7 @@ def columns(elems, identifier=None, vert_borders=True, hor_borders=True, widths=
     Table, using the imgui columns API.
     Args:
         elems (List[List[Widget]]): 2D array of widgets. A list containing another list for each row. len() of the first row defines the amount of columns, that will be rendered.
+        > Do note, that despite the first row defines the amount of rendered columns, all rows still must have the the same len(). <
         identifier (str): Name of the widget.
         vert_borders (bool): Toggle vertical borders on/off.
         hor_borders (bool): Toggle horizontal borders on/off.
