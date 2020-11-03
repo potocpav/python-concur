@@ -47,7 +47,12 @@ def window(title: str,
            flags: int = 0) -> Widget:
     """ Create a window with a given `widget` inside.
 
-    Contents are drawn only if the window is opened. Window title must be unique. Windows must not be nested.
+    Contents are drawn only if the window is opened.
+
+    * **Window title must be unique.** Contents of windows with an identical title will appear
+      inside a single window.
+    * **Windows must not be nested.** Nested windows may lead to visibility feedback loops,
+      which manifests as flicker on some docking operations.
     """
     while True:
         if position is not None:
