@@ -24,14 +24,21 @@ class PatchedGlfwRenderer(GlfwRenderer):
     keyboard layouts.
 
     See https://github.com/ocornut/imgui/issues/2959 for details.
+
+    # Temporary try except fix until we find a better solution, if we don't apply this,
+    # the app will crash if certain special keys are pressed.
     """
     def keyboard_callback(self, window, key, scancode, action, mods):
-        if key < 0x100:
-            # Translate characters to the correct keyboard layout.
-            key_name = glfw.get_key_name(key, 0)
-            if key_name is not None:
-                key = ord(key_name.upper())
-        super(PatchedGlfwRenderer, self).keyboard_callback(window, key, scancode, action, mods)
+        try:
+            _key = key
+            if _key < 0x100:
+                # Translate characters to the correct keyboard layout.
+                key_name = glfw.get_key_name(key, 0)
+                if key_name is not None:
+                    _key = ord(key_name.upper())
+            super(PatchedGlfwRenderer, self).keyboard_callback(window, _key, scancode, action, mods)
+        except:
+            super(PatchedGlfwRenderer, self).keyboard_callback(window, key, scancode, action, mods)
 
 
 def create_window(window_name, width, height, visible=True, maximized=False):
@@ -116,9 +123,14 @@ def main(
 
     window = create_window(name, width, height, maximized=maximized)
     impl = PatchedGlfwRenderer(window)
-    impl.refresh_font_texture() # Refresh the font texture in case user changed it
 
-    ## Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
+    win_w, win_h = glfw.get_window_size(window)
+    fb_w, fb_h = glfw.get_framebuffer_size(window)
+    font_scaling_factor = max(float(fb_w) / win_w, float(fb_h) / win_h)
+    imgui.get_io().font_global_scale /= font_scaling_factor
+    impl.refresh_font_texture()  # Refresh the font texture in case user changed it
+
+    # Using this feels significantly choppier than sleeping manually. TODO: investigate & fix
     # glfw.swap_interval(-1)
     if save_screencast:
         import imageio
