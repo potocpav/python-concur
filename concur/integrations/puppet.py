@@ -31,7 +31,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
         self._map_keys()
         self._gui_time = None
 
-        self._click = [False] * 3
+        # self._click = [False] * 3
         self._mouse_buttons = [False] * 3
         self._mouse_pos = 100, 100
         self._mouse_wheel = 0.0
@@ -61,7 +61,7 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
 
     def process_inputs(self):
         """Process the virtual user inputs. Called by `main` at the beginning of each frame."""
-        io = imgui.get_io()
+        io = self.io
 
         window_size = glfw.get_window_size(self.window)
         fb_size = glfw.get_framebuffer_size(self.window)
@@ -79,28 +79,27 @@ class PuppetRenderer(ProgrammablePipelineRenderer):
 
         self._gui_time = current_time
 
-        for i, b in enumerate(self._click):
-            if b:
-                io.mouse_down[i] = True
-                self._click[i] = False
-            else:
-                io.mouse_down[i] = False
+        # for i, b in enumerate(self._click):
+        #     if b:
+        #         io.mouse_down[i] = True
+        #         self._click[i] = False
+        #     else:
+        #         io.mouse_down[i] = False
         for i, b in enumerate(self._mouse_buttons):
-            if b:
-                io.mouse_down[i] = True
+            io.mouse_down[i] = b
 
         io.mouse_pos = self._mouse_pos
         io.mouse_wheel = self._mouse_wheel
         self._mouse_wheel = 0.0
 
-    def click(self, button=0):
-        """Simulate a mouse button click.
+    # def click(self, button=0):
+    #     """Simulate a mouse button click.
 
-        * 0 .. left button
-        * 1 .. right button
-        * 2 .. middle button
-        """
-        self._click[button] = True
+    #     * 0 .. left button
+    #     * 1 .. right button
+    #     * 2 .. middle button
+    #     """
+    #     self._click[button] = True
 
     def set_mouse_pos(self, x, y):
         'Set the mouse cursor position to a specified value.'

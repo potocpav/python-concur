@@ -66,6 +66,9 @@ To run the tests, you need PyTest and PyTest-benchmark:
 pip install pytest pytest-benchmark
 
 pytest # Run the tests
+
+# Alternatively, run the tests slowly
+SLOW_TEST=1 pytest
 ```
 
 To build documentation, install [pdoc3](https://pdoc3.github.io/pdoc/) (`pip install pdoc3`), clone the submodules (`git submodule update --init`), and run the script `./mkdocs.sh`.

@@ -2,14 +2,6 @@ import concur as c
 
 
 @c.testing.test_widget
-def test_window(tester):
-    res = yield from c.window("Window",
-        c.child("Child", c.orr([tester.click_next(), c.button("Click me!")]), 100, 100),
-        position=(20, 20), size=(300, 100))
-    assert res == ("Click me!", None)
-
-
-@c.testing.test_widget
 def test_orr_same_line(tester):
     res = yield from c.orr([
         c.orr_same_line([c.button("Apples"), tester.mark("X", c.button("Oranges"))]),
@@ -99,7 +91,7 @@ def test_text_colored(tester):
         tester.pause(),
         ])
     yield
-    
+
 
 # @c.testing.test_widget
 # def test_input_text(tester):

@@ -14,7 +14,7 @@ def test_sliders(tester):
                        width=20.0, height=100, value=1.0,
                        min_value=1, max_value=10,
                        format="%0.3f",
-                       flags=imgui.SLIDER_LOGARITHMIC),
+                       flags=imgui.SLIDER_FLAGS_LOGARITHMIC),
             ]),
         c.interactive_elem(imgui.slider_float, "Slider", 1.0, 1, 10),
         c.interactive_elem(imgui.slider_float2, "Slider2", 1.0, 2.0, 1, 10),

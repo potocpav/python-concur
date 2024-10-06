@@ -14,6 +14,7 @@ from functools import partial
 from concur.integrations.puppet import PuppetRenderer, main
 from concur.draw import polyline
 from concur.core import orr, optional
+import concur.widgets
 
 
 __pdoc__ = dict(test=False)
@@ -56,7 +57,8 @@ def test_widget(f):
     def widget_gen(draw_cursor, tester):
         io = imgui.get_io()
         io.mouse_draw_cursor = draw_cursor
-        yield from f(tester)
+        # FIXME: Nesting everything inside a window here can lead to nested windows, if `f` contains a window as well.
+        yield from window(f(tester))
 
     def g(*args, **argv):
         draw_cursor = 'draw_cursor' in argv and argv['draw_cursor']
@@ -81,6 +83,12 @@ def benchmark_widget(f_gen):
         benchmark.pedantic(main, (widget, "Perf Tester", 512, 512), dict(fps=None), rounds=1)
 
     return g
+
+
+def window(widget):
+    # NOTE: for events to register, all widgets must be inside a window.
+    # This is not the case with the ImGui Docking branch. There, windows don't need to be created in tests.
+    return concur.widgets.window("Window", widget, position=(5, 5), size=(500, 500))
 
 
 class Testing(object):
@@ -138,6 +146,8 @@ class Testing(object):
         yield from self.move_cursor(x0 + x, y0 + y)
         yield from self.pause()
         yield from self.click()
+        # Give the widget time to react
+        yield
         yield
 
     def move_cursor(self, x, y):
