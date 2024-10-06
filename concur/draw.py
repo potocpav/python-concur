@@ -131,7 +131,7 @@ def prepare_polyline_points(points, tf):
         points = np.array(points)
     if tf is not None:
         points = tf.transform(points)
-    return points
+    return list(points)
 
 
 def polyline(points, color, closed=False, thickness=1, tf=None):
@@ -159,6 +159,18 @@ def polygon(points, color, tf=None):
         draw_list.add_convex_poly_filled(points, col)
         yield
 
+def triangle(points, color, tf=None):
+    """ Filled triangle.
+
+    `points` is a list of (x, y) tuples, or a NumPy array of equivalent shape.
+    """
+    points = prepare_polyline_points(points, tf)
+    draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
+    while True:
+        draw_list.add_triangle_filled(points[0][0], points[0][1], points[1][ 0], points[1][ 1], points[2][ 0], points[2][ 1], col)
+        yield
+
 
 def polylines(points, color, closed=False, thickness=1, tf=None):
     """ Multiple polygonal lines with the same length and parameters.
@@ -177,7 +189,10 @@ def polylines(points, color, closed=False, thickness=1, tf=None):
     draw_list = imgui.get_window_draw_list()
     col = color_to_rgba(color)
     while True:
-        draw_list.add_polylines(points, col, closed, thickness)
+        # TODO: reintroduce native add_polylines for optimization
+        for polyline_pts in points:
+            draw_list.add_polyline(list(polyline_pts), col, closed, thickness)
+        # draw_list.add_polylines(points, col, closed, thickness)
         yield
 
 
@@ -195,7 +210,42 @@ def polygons(points, color, tf=None):
     draw_list = imgui.get_window_draw_list()
     col = color_to_rgba(color)
     while True:
-        draw_list.add_convex_polys_filled(points, col)
+        # TODO: reintroduce native add_polylines for optimization
+        for polygon_pts in points:
+            draw_list.add_convex_poly_filled(list(polygon_pts), col, closed, thickness)
+        # draw_list.add_convex_polys_filled(points, col)
+        yield
+
+
+def triangles(points, color, tf=None):
+    """ Multiple filled triangles with the same color.
+
+    `points` is a NumPy array with shape `(n, 3, 2)`, where `n` is the number of quads
+    """
+    if tf is not None:
+        points = tf.transform(points.reshape(-1, 2)).reshape(points.shape)
+    draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
+    while True:
+        # TODO: introduce native add_triangles for optimization, or remove this function and use polygons()
+        for pts in points:
+            draw_list.add_triangle_filled(pts[0,0], pts[0,1], pts[1, 0], pts[1, 1], pts[2, 0], pts[2, 1], col)
+        yield
+
+
+def quads(points, color, tf=None):
+    """ Multiple filled quads with the same color.
+
+    `points` is a NumPy array with shape `(n, 4, 2)`, where `n` is the number of quads
+    """
+    if tf is not None:
+        points = tf.transform(points.reshape(-1, 2)).reshape(points.shape)
+    draw_list = imgui.get_window_draw_list()
+    col = color_to_rgba(color)
+    while True:
+        # TODO: introduce native add_quads for optimization, or remove this function and use polygons()
+        for pts in points:
+            draw_list.add_quad_filled(pts[0,0], pts[0,1], pts[1, 0], pts[1, 1], pts[2, 0], pts[2, 1], pts[3, 0], pts[3, 1], col)
         yield
 
 
@@ -303,7 +353,8 @@ def scatter(pts, color, marker, marker_size=10, thickness=1, tf=None):
         polys[:, 1, :] = pts + [r, -r]
         polys[:, 2, :] = pts + [r, r]
         polys[:, 3, :] = pts + [-r, r]
-        return polygons(polys, color)
+        # return polygons(polys, color) # TODO: add add_convex_poly_filled function
+        return quads(polys, color)
     elif marker == '+':
         r = marker_size / 2
         polys = np.empty((len(pts) * 2, 2, 2))

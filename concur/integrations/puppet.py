@@ -147,7 +147,7 @@ def main(widget_gen, name="Concur Puppet", width=640, height=480, save_screencas
     imgui.create_context()
 
     # Set config flags
-    imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
+    # imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE | imgui.CONFIG_VIEWPORTS_ENABLE
 
     window = create_window(name, width, height, visible=not headless)
     impl = PuppetRenderer(window)

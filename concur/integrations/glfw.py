@@ -78,8 +78,8 @@ def begin_maximized_window(name, glfw_window, menu_bar=False):
     imgui.push_style_var(imgui.STYLE_WINDOW_BORDERSIZE, 0)
     window_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | \
         imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | \
-        imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS | \
-        imgui.WINDOW_NO_DOCKING
+        imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS | imgui.WINDOW_NO_NAV_FOCUS # | \
+        # imgui.WINDOW_NO_DOCKING
     if menu_bar:
         window_flags |= imgui.WINDOW_MENU_BAR
     imgui.begin(name, True, window_flags)
@@ -91,7 +91,7 @@ def create_window_dock(glfw_window, menu_bar=False):
     imgui.push_style_var(imgui.STYLE_WINDOW_PADDING, (0, 0))
     begin_maximized_window("Background Window", glfw_window, menu_bar)
     imgui.pop_style_var(1)
-    imgui.dock_space("Window Dock Space", 0., 0., 1 << 3)
+    # imgui.dock_space("Window Dock Space", 0., 0., 1 << 3)
     imgui.end()
 
 
@@ -119,7 +119,7 @@ def main(
         imgui.create_context()
 
     # Set config flags
-    imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE # | imgui.CONFIG_VIEWPORTS_ENABLE
+    # imgui.get_io().config_flags |= imgui.CONFIG_DOCKING_ENABLE # | imgui.CONFIG_VIEWPORTS_ENABLE
 
     window = create_window(name, width, height, maximized=maximized)
     impl = PatchedGlfwRenderer(window)
